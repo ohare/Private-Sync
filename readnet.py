@@ -9,7 +9,7 @@ def main():
     upload = 0
     download = 0
     for split in splitput:
-        if(split == "eth3"):
+        if(split == "eth1"):
             eth3 = True
         elif(nex != ""):
             sp = split.split(":")
@@ -26,7 +26,9 @@ def main():
             if(split == "RX" or split == "TX"):
                 nex = split
 
-    print "Eth3 download: " + str(download) + " upload: " + str(upload)
+    f = open("./log/interface.log",'a')
+    f.write("Eth1 download: " + str(download) + " upload: " + str(upload) + "\n")
+    f.close()
 
 if __name__ == "__main__":
     main()
