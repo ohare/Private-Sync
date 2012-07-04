@@ -1,4 +1,7 @@
 import pyinotify
+import os
+
+wm = pyinotify.WatchManager()
 
 class MyEventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
@@ -7,10 +10,17 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "Delete:",event.pathname
     def process_IN_CREATE(self, event):
         print "Modify:",event.pathname
+        if os.path.isdir(event.pathname):
+            print "Watching: ",event.pathname
+            wm.add_watch(event.pathname,pyinotify.ALL_EVENTS, rec=True)
 
 def main():
-    wm = pyinotify.WatchManager()
-    wm.add_watch('/home/cal/Documents/one',pyinotify.ALL_EVENTS, rec=True)
+
+    f = open('./folderstowatch','r')
+    for folder in f:
+        wm.add_watch(folder.rstrip(),pyinotify.ALL_EVENTS, rec=True)
+        print "Watching: ", folder.rstrip()
+
 
     eh = MyEventHandler()
 
