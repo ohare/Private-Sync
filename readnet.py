@@ -1,4 +1,5 @@
 import subprocess
+import datetime
 
 interfacename = "eth1"
 
@@ -29,7 +30,7 @@ def main():
                 nex = split
 
     f = open("/home/cal/Documents/Private-Sync/log/interface.log",'a')
-    f.write(interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")
+    f.write(str(datetime.datetime.now()) + " " + interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")
     f.close()
 
 if __name__ == "__main__":

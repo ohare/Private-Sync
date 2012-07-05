@@ -18,8 +18,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
             print "Watching: ",event.pathname
         for folder in watchedfolders:
             if folder in event.pathname:
+                subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
                 subprocess.call(["ls","-l",folder])
-
+                subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
 
 #class watchfolders():
 def main():
