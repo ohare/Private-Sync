@@ -19,9 +19,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
         for folder in watchedfolders.keys():
             if folder in event.pathname:
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
-                #subprocess.call(["scp","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
+                subprocess.call(["scp","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
                 #subprocess.call(["rsync","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
-                subprocess.call(["unison",folder,watchedfolders[folder][0] + watchedfolders[folder][1]])
+                #subprocess.call(["unison",folder,watchedfolders[folder][0] + watchedfolders[folder][1]])
                 #print "scp","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
 
@@ -31,10 +31,13 @@ def main():
     f = open('./folderstowatch','r')
 
     for folder in f:
-        info = folder.split()
-        wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
-        print "Watching: ", info[0].rstrip()
-        watchedfolders[info[0].rstrip()] = [info[1], info[2]]
+        if(folder[0] == '#'):
+            pass
+        else:
+            info = folder.split()
+            wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
+            print "Watching: ", info[0].rstrip()
+            watchedfolders[info[0].rstrip()] = [info[1], info[2]]
 
 
     eh = MyEventHandler()
