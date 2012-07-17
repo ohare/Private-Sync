@@ -21,7 +21,7 @@ no centralised server, just many cooperating client nodes.
 running different operating systems. Clients may run on different networks, with different costs of access (including being disconnected from the Internet at times).
 
 \item Allow for fine-grained user control for the majority of the program's
-functions, \emph{e.g.}, how often, and what, to replicate within different sets of files. 'What' could be filename, filetype, filesize \emph{etc}.
+functions, \emph{e.g.}, how often, and what, to replicate within different sets of files. 'What' could be file name, file type, file size \emph{etc}.
 
 \item Show statistics about which files are being replicated, efficiency,
 cost (bandwidth, disk space). These statistics could also possible lead
@@ -55,7 +55,7 @@ a bottleneck on the central server. It also
 means that replication is not automatic and has
 to be manually invoked.
 
-
+%Add more here?
 
 \subsection*{Example use case}
 %Here is how I would use such a tool as an example use case.
@@ -85,6 +85,8 @@ I also have different synchronisation requirements for different
 types of data. An effective file synchronisation tool would be of
 great use to me personally.
 
+-- Insert image of personal graph, discuss coporate graph too --
+
 \section{Achievements to date}
 \subsection{Virtual Machines, Node networks}
 For testing my program I needed to have a network
@@ -104,7 +106,7 @@ network configurations very easy as I can just
 run a different script depending on what network
 topology I would like to test.
 
-I have decided to use some basic topolgies to
+I have decided to use some basic topologies to
 test my program to start with as shown below.
 
 -- Insert network graphs --
@@ -116,6 +118,8 @@ supports many different platforms (Windows, Linux, OS X).
 This is useful because it means I will (hopefully)
 encounter fewer compatibility problems when running
 my program across different operating systems in the future.
+
+%multiproccessing module
 
 \subsection{User control}
 One of the main goals of my project is to allow the user
@@ -131,8 +135,67 @@ of files may become unwieldy and because I replicate
 directories recursively I can replicate large amounts
 of data without a cluttered configuration file.
 
+\subsection{Monitoring Directories}
+The application need to monitor directories for changes
+so that it knows when to perform a sync. The reason I have
+chosen to do this is because syncing a directory that
+has not been changed is a waste of time and my application
+is designed to be as efficient as possible. I do not
+however want to be continually polling the watched
+directories to see if there have been changes made.
+This would be a terrible waste of CPU time. Instead
+I have looked into ways of being notified of a
+change in the file system below the watched directory.
+\begin{itemize}
+    \item Inotify
+        \begin{itemize}
+        \item Linux kernel feature that has been
+        included in the linux kernel since version 2.6.
+        inotify is used to watch directories for changes
+        and notify listeners when a change occurs. inotify
+        is inode based and replaced dnotify an older system
+        which provided the same function, however it was
+        inefficient, it opened up the file descriptors for
+        each directory it was watching which meant the backing
+        device could not be unmounted. It also had a poor
+        user-space interface which uses SIGIO. Inotify only
+        uses one file descriptor and returns events to the
+        listener as they occur. It works well and does
+        what I need it to do. There is a python module
+        called pyinotify which provides a python interface
+        to inotify which I have used and tested in my program.
+        \end{itemize}
 
-\subsection{Inotify}
+    \item FSEvents
+        \begin{itemize}
+        \item FSEvents is an API in Mac OS X. It is similar
+        to inotify in that it provides a notifaction to other
+        applications when a directory is changed however
+        it doesn't notify you which file in the directory
+        was changed. This does not matter for my
+        application since unison is smart enough not to copy
+        unchanged files in a directory. The is a python module
+        for FSEvents, as well. 
+        
+        I also looked at using the kqueue system call which is
+        supported by OS X and FreeBSD. It notifies the user
+        when a kernel event occurs. I decided against using
+        kqueue as the high level approach of FSEvents,
+        suits the applications needs.
+        \end{itemize}
+
+    \item ReadDirectoryChangesW
+        \begin{itemize}
+        \item Windows like the other operating systems
+        I have looked up provides a nice way of doing this
+        too. There is a function called ReadDirectoryChangesW.
+        I have looked at how I might implement this and have
+        come across the FileSystemWatcher Class in .NET 4 and
+        up. IronPython might prove to be a good choice for a
+        windows implementation although I will need to look
+        into it further.
+        \end{itemize}
+\end{itemize}
 
 \subsection{Point-to-Point synchronisation}
 After some preliminary analysis of the available file synchronisation
@@ -159,51 +222,114 @@ transfer subsequent edits to the file meant much less data had to
 be transmitted over the network which meant the node graph
 became up to date much more quickly.
 
+%More detail here
+
 \section{Future work}
 \subsection{Full node graph replication}
+I am going to be looking into the most efficient way to
+replicate data between many nodes in a graph, where nodes are machines
+running the program and edges in the graph are connections
+between machines such as over Wi-Fi,USB, or through the internet \emph{etc}.
+Each connection may have different properties associated
+with it, for example each link may have a different cost
+associated with it, the two costs I am most interested in
+are data throughput and latency. There may be data caps to worry about
+(3G especially) or cost associated with usage
+(this could be money charged per megabyte used or
+the time cost of sending a lot of data over an (potentially)
+already busy/important channel). The link may be down
+temporarily or may rarely be up. The task here will be
+to find as near optimal algorithms as possible,
+given certain conditions and preferences,
+to shift data between all the necessary nodes
+efficiently and with minimal cost. 
+Cost will most likely involve keeping the number
+of bytes passed over the network(s) to a minimum.
+Efficiency will depend on personal preference and
+the situation, ideally one would not want to have
+to be waiting on replication to occur but this
+should not come at the expense of extreme cost however.
+There will be an infinite number of use cases for this
+project which means an infinite number of graphs,
+however I will attempt to look at common use cases
+and as many different types of graph as possible.
+
+\subsection{Sub-Nodes}
+
+The other aspect of the multiple nodes in the graph problem
+is that each node will most likely be made up of many smaller nodes.
+Each user will be unlikely to select the root directory of the
+file system to synchronise which means they may select a few
+different directories on the file system. This gives us ‘sub nodes’
+that the main node is still the machine as above. The sub nodes are
+the individual directories that are set to be replicated.
+The reason this is interesting is because each of these ‘sub nodes’
+may have different synchronisation settings (see fine-grained controls).
+This leaves us with the possibility of machines being fully up to date,
+partially up to date, or completely out of date with all other nodes in
+the graph. An example of this potential situation is shown below.
+This sort of graph ties in with the statistics/feedback side of the
+project. How out of date is the graph at any given time?
+If the graph contains out of date data, do we ever expect it
+to get back  to being completely up to date? How long do we expect
+this to take? How do these facts reflect on the synchronisation settings
+we chose? Can we improve on the ‘performance’ by tweaking the settings?
+
+-- insert sub node image --
 
 \subsection{Mobile nodes}
 
+Connections between nodes in the graph (edges) may
+change over time. This could be because one of the nodes
+is a laptop and joins different networks at different
+times or because a network/machine is unreliable and is
+not up at a given point in time. I have represented
+edges that behave in this way as grey on the diagram below.
+I will refer to nodes with grey edges as 'mobile' nodes
+
+It will be interesting to see how mobile nodes effect how
+up to date the nodes in the graph are. We might expect that
+nodes that are not available for very long periods lag behind
+others that are. We might also expect that if a mobile
+node is a link between two parts of the network that
+these two parts fall out of sync a bit. I want to look
+at how nodes in the graph may get smarter about how
+they use unreliable edges. I will do this by having
+the edges up or down at different points in time
+and taking snapshots of the graph as it is at that time.
+
+-- insert mobile node image --
+
+Say node two intermittently has a connection to a subset of
+nodes 1,3 and 4
+
 \subsection{More user control}
+
+Due to the highly unpredictable nature of the graph there
+should be a lot of room to tweak how the program runs. 
+Users should be able to set what, when, where, and how when
+it comes to replicating their data. Which directories to replicate,
+how often to replicate it, where to replicate it to and any
+conditions on how the replication should occur. For example replicate
+‘my documents’ /Users/Calum/Documents on my laptop every hour to
+work but only when connected to the work Wi-Fi.
+There should be some intelligent indication of how certain options
+may affect performance which relates to the next section.
 
 \subsection{Feedback}
 
-\section{Objectives}
-\subsection*{Primary}
-\begin{itemize}
-    \item Preliminary analysis
-        \begin{itemize}
-        \item Research into which tools would be best to use to build the system. What is the closest thing out there to what I'm trying to build and how does it work \emph{etc}.
-        \end{itemize}
+Look into what statistics can be gleaned from running
+the program over a large period of time.
+Number of bits transferred total? Number of bits saved by
+using unison? How up to date is each part of the graph?
+How much is each edge (link) being used? Is this what we
+expect given the users preferences? What other statistics
+can we generate from the graph and the execution of the
+program? How can we display them in interesting / meaningful ways?
 
-    \item Program that keeps two directories in sync on the computer(s)
-        \begin{itemize}
-        \item First simple step in building the program it just needs to replicate files between two directories.
-        \end{itemize}
-
-
-    \item Sync multiple directories across multiple nodes
-        \begin{itemize}
-        \item The program should be able to sync files between many nodes of a graph where the nodes are devices with files and the edges of the graph are network links that may or may not be up at any given time. The program may need to work out an efficient strategy for propagating changes throughout the entire graph.
-        \end{itemize}
-
-
-    \item Implement fine-grained control (settings)
-        \begin{itemize}
-        \item Provide a way for the user to control what is being replicated and when. Also give them useful information on these choice such as the cost of doing the replication.
-        \end{itemize}
-% dme: elaborate on what settings would be
-
-%- Timeliness, Risk of loss, Cost
-
-    \item Implement statistics about replication
-        \begin{itemize}
-        \item Create a user front end that shows interesting statistics about what replication is happening and when. In a clear and easy to understand way.
-        \end{itemize}
-
-\end{itemize}
-
-\section{Future Work}
+\section{References and Related Links}
+%TODO make proper references
+inotify - www.kernel.org/pub/linux/kernel/people/rml/inotify/README
 
 
 \end{document}
