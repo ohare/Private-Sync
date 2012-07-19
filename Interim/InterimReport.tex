@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{verbatim}
 %\usepackage{titling}
 %\setlength{\droptitle}{-12em}
 \title{COSC480 Project \\ Interim Report}
@@ -114,17 +115,16 @@ I want to know which machines my files are going to and when.
 I want to feel confident that I will always be able to access
 my data even if Dropbox closes down or my internet connection
 dies.
-% illustrate why Dropbox isn't enough.
 
 \begin{figure}[htb]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[scale=0.35]{PersonalGraph.png}
+        \includegraphics[scale=0.3]{images/PersonalGraph.png}
         \caption{Personal Network}
         \label{fig:personal_graph}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[scale=0.35]{CorporateGraph.png}
+        \includegraphics[scale=0.3]{images/CorporateGraph.png}
         \caption{Corporate Network}
         \label{fig:corp_graph}
     \end{subfigure}
@@ -135,9 +135,17 @@ is another example use case. It will have many of the same
 basic needs as the personal graph. The coloured rings represent
 the need for different policies for different machines in a network.
 Something which dropbox will not provide but private dropbox will.
+
 % do you need a section to discuss the design of your solution?
 
 \section{Achievements to date}
+So far I have written a program in python which reads user
+settings from a file. Synchronises the appropriate files
+to the appropriate machines when they have been modified.
+Using an efficient two way file synchronising tool called
+unison. I will discuss what I have done and how I have tested
+it in this section.
+
 \subsection{Virtual Machines, Node networks}
 For testing my program I needed to have a network
 of computers that can be linked together in different
@@ -156,18 +164,47 @@ network configurations very easy as I can just
 run a different script depending on which network
 topology I would like to test.
 
-I have decided to use some basic topologies to
-test my program to start with as shown below.
-% why basic? is this enough? I think you need to provide some sort of justification
+I have decided to start testing my program with
+some simple topologies to see if I can gain any
+insight into how best to replicate data around
+a network with many nodes. The next step will
+be to use those principles and start running
+more complicated networks to see how the program
+performs.
 
--- Insert network graphs --
+\begin{comment}
+\begin{figure}[htb]
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[scale=0.55]{images/line-topo.png}
+        \caption{Line topology}
+        \label{fig:line_topology}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[scale=0.25]{images/circle-topo.png}
+        \caption{Circle topology}
+        \label{fig:circle_topology}
+    \end{subfigure}
 
-% I think you might need to give a conceptual roadmap of the subsections below, or they look a bit disconnected.
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[scale=0.25]{images/con-mesh-topo.png}
+        \caption{Connected mesh topology}
+        \label{fig:con_mesh_topology}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[scale=0.25]{images/other-topo.png}
+        \caption{Other topology}
+        \label{fig:other_topology}
+    \end{subfigure}
+    \caption{Simple network topologies}
+\end{figure}
+\end{comment}
 
 \subsection{Python}
 I have chosen to use Python to implement
 my program. Python appealed to me because it
-supports many different platforms (Windows, Linux, MacOS X).
+supports many different platforms (Windows, Linux, Mac OS X).
 This is useful because it means I will (hopefully)
 encounter fewer compatibility problems when running
 my program across different operating systems in the future.
@@ -206,21 +243,19 @@ change in the file system below the watched directory.
 \begin{itemize}
     \item Inotify
         \begin{itemize}
-        \item Linux kernel feature that has been
+        \item Inotify is a linux kernel feature that has been
         included in the Linux kernel since version 2.6.
-% this isn't a sentence.
-        inotify is used to watch directories for changes
-        and notify listeners when a change occurs. inotify
+        It is used to watch directories for changes
+        and notify listeners when a change occurs. Inotify
         is inode based and replaced dnotify, an older system
-        which provided the same function, however it was
+        which provided the same function. Dnotify however was
         inefficient, it opened up the file descriptors for
         each directory it was watching which meant the backing
         device could not be unmounted. 
-% split long setnence
-It also had a poor
+        It also had a poor
         user-space interface which uses SIGIO. Inotify only
         uses one file descriptor and returns events to the
-        listener as they occur. It works well and does
+        listener as they occur\cite{inotify-readme}. It works well and does
         what I need it to do. There is a Python module
         called pyinotify that provides a Python interface
         to inotify, which I have used and tested in my program.
@@ -244,20 +279,20 @@ It also had a poor
         suits the application's needs.
         \end{itemize}
 
+    \begin{comment}
     \item ReadDirectoryChangesW
         \begin{itemize}
         \item Windows, like the other operating systems
         I have looked up, provides a nice way of doing this
         too. There is a function called ReadDirectoryChangesW.
-        I have looked at how I might implement this
 % you're not implementing ReaddirectoryChangesW - rephrase?
- and have
-        come across the FileSystemWatcher Class in .NET version 4 and
+        There is a FileSystemWatcher Class in .NET version 4 and
         above. IronPython might prove to be a good choice for a
         Windows implementation although I will need to look
         into it further.
 % perhaps clarify why you think it wold be appropriate if you still have more to learn about it.
         \end{itemize}
+    \end{comment}
 \end{itemize}
 
 \subsection{Point-to-Point synchronisation}
@@ -268,7 +303,7 @@ It supports efficient (\emph{i.e.,} it attempts to only send changes between fil
 directories (including sub-folders) between two machines (or the same
 machine).
 
-I decided to run some tests on using this program
+I decided to run some tests using unison 
 % you mean unison?
 and the network
 I had set up to determine whether this would make a good base for
@@ -304,8 +339,7 @@ are data throughput and latency. There may be data caps to worry about
 the time cost of sending a lot of data over an (potentially)
 already busy/important channel). The link may be down
 temporarily or may rarely be up. The task here will be
-to find as near optimal algorithms as possible,
-% "algorithms that give as near to optimal as possible" perhaps, rather than the algorithms being near-optimal 
+to find algorithms that give as near to optimal as possible,
 given certain conditions and preferences,
 to shift data between all the necessary nodes
 efficiently and with minimal cost. 
@@ -328,14 +362,13 @@ Each user will be unlikely to select the root directory of the
 file system to synchronise, which means they may select a few
 different directories on the file system. This gives us ‘sub nodes’
 that the main node is still the machine as above. The sub nodes are
-the individual directories that are set to be replicated.
-% why not collections of directories as opposed to sub-node = directory?
+an individual directory or set of directories that are set to be replicated.
 The reason this is interesting is because each of these ‘sub nodes’
 may have different synchronisation settings (see fine-grained controls).
 This leaves us with the possibility of machines being fully up to date,
 partially up to date, or completely out of date with all other nodes in
 the graph. 
-%
+
 An example of this potential situation is shown below.
 This sort of graph ties in with the statistics/feedback side of the
 project. How out of date is the graph at any given time?
@@ -344,7 +377,7 @@ to get back  to being completely up to date? How long do we expect
 this to take? How do these facts reflect on the synchronisation settings
 we chose? Can we improve on the ‘performance’ by tweaking the settings?
 
--- insert sub node image --
+%Insert sub node image
 
 \subsection{Mobile nodes}
 
@@ -367,48 +400,56 @@ they use unreliable edges. I will do this by having
 the edges up or down at different points in time
 and taking snapshots of the graph as it is at that time.
 
--- insert mobile node image --
+%Insert mobile node image
 
 Say node two intermittently has a connection to a subset of
 nodes 1,3 and 4
 
 \subsection{More user control}
 
-Due to the highly unpredictable nature of the graph there
-should be a lot of room to tweak how the program runs. 
-% what do you mean by tweak here?
-Users should be able to set what, when, where, and how when
-it comes to replicating their data. Which directories to replicate,
-how often to replicate it, where to replicate it to and any
-conditions on how the replication should occur. 
-% sentence doesn't work starting "Which directories" I suspect
+Due to the highly unpredictable nature of the graph the user
+should be able to greatly affect how the program runs.
+A user should be able to set how often replication occurs and
+under what conditions it should occur \emph{e.g.} only when
+connected to a certain network.
+
 For example replicate
-‘my documents’ /Users/Calum/Documents on my laptop every hour to
-work but only when connected to the work Wi-Fi.
-% use texttt{} for the paths.
+‘my documents’ \texttt{/Users/Calum/Documents} on my laptop every hour to
+work but only when connected to the work Wi-Fi network.
 There should be some intelligent indication of how certain options
-may affect performance which relates to the next section.
-% how will you evaluate this?
+may affect performance which relates to the next section. This
+may be able to be estimated by looking at previous running settings
+and seeing what effect they had on the network. This ties in with the
+next section.
 
 \subsection{Feedback}
 % OK - I'm assuming this is into mental notes rather than proposed text. Overall, I think it wold be good for you to overview and justify your high-level plan, as well as the more detailed aspects.
-Look into what statistics can be gleaned from running
-the program over a large period of time.
-Number of bits transferred total? Number of bits saved by
-using unison? How up to date is each part of the graph?
-How much is each edge (link) being used? Is this what we
-expect given the users preferences? What other statistics
-can we generate from the graph and the execution of the
-program? How can we display them in interesting / meaningful ways?
 
-\section{References and Related Links}
-%TODO make proper references
-inotify - www.kernel.org/pub/linux/kernel/people/rml/inotify/README
+Private dropbox should keep logs of what is happening with
+the system at the current point in time. 
+It should log:
+\begin{itemize}
+    \item what the current user settings are.
+    \item how much data is being transferred between the nodes.
+    \item which links between nodes are being used the most.
+    \item how up to date each part of the graph is.
+\end{itemize}
+
+I will then look at presenting this information
+in a meaningful way to the user.
+One way to do this would be when the user changes the
+settings. Private dropbox could then estimate whether that
+change will speed up or slow down overall synchronisation
+of the graph and pass that (potentially) useful information
+to the user.
 
 \begin{thebibliography}{9}
 
 \bibitem{dotcom-trial}
 Foreman, Michael "Kim Dotcom v United States of America". Computerworld. 3 February 2012.
+
+\bibitem{inotify-readme}
+www.kernel.org/pub/linux/kernel/people/rml/inotify/README, 22 September 2004.
 
 \end{thebibliography}
 
