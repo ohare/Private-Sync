@@ -304,7 +304,6 @@ directories (including sub-folders) between two machines (or the same
 machine).
 
 I decided to run some tests using unison 
-% you mean unison?
 and the network
 I had set up to determine whether this would make a good base for
 my program or not.
@@ -314,7 +313,21 @@ different networks. Naive copying; using rsync, an application
 for efficiently copying files in one direction by looking at
 the differences in the files; and unison described above.
 
--- Insert graphs and diagrams here --
+\begin{figure}[htb]
+    \begin{subfigure}[b]{1\textwidth}
+        \centering
+        \includegraphics[scale=0.5]{images/two-point-comp-same.png}
+        \caption{Comparison of scp,rsync,unison}
+        \label{fig:point_comp_graph}
+    \end{subfigure}
+    \begin{comment}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[scale=0.3]{images/CorporateGraph.png}
+        \caption{Corporate Network}
+        \label{fig:corp_graph}
+    \end{subfigure}
+    \end{comment}
+\end{figure}
 
 As you can see rsync and unison performed significantly better
 than the naive copy method (as expected). After the initial file
