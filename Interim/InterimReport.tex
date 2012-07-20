@@ -3,15 +3,26 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{verbatim}
+\usepackage{url}
 %\usepackage{titling}
 %\setlength{\droptitle}{-12em}
-\title{COSC480 Project \\ Interim Report}
+
+%% Define a new 'leo' style for the package that will use a smaller font.
+\makeatletter
+\def\url@leostyle{%
+\@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\ttfamily}}}
+\makeatother
+%% Now actually use the newly defined style.
+\urlstyle{leo}
+
+
+\title{ Private Dropbox \\ Interim Report \\ COSC480}
 \author{Calum O'Hare \\ Supervisor: David Eyers}
 \date{}
 
 \begin{document}
 \maketitle
-
+\newpage
 \section{Project goal}
 The aim of this project is to develop a file synchronisation tool.
 Similar to  Dropbox (and others) its main function should be to
@@ -116,15 +127,15 @@ I want to feel confident that I will always be able to access
 my data even if Dropbox closes down or my internet connection
 dies.
 
-\begin{figure}[htb]
+\begin{figure}[htp]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[scale=0.3]{images/PersonalGraph.png}
+        \includegraphics[scale=0.35]{images/PersonalGraph.png}
         \caption{Personal Network}
         \label{fig:personal_graph}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[scale=0.3]{images/CorporateGraph.png}
+        \includegraphics[scale=0.35]{images/CorporateGraph.png}
         \caption{Corporate Network}
         \label{fig:corp_graph}
     \end{subfigure}
@@ -172,8 +183,7 @@ be to use those principles and start running
 more complicated networks to see how the program
 performs.
 
-\begin{comment}
-\begin{figure}[htb]
+\begin{figure}[htp]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
         \includegraphics[scale=0.55]{images/line-topo.png}
@@ -199,7 +209,13 @@ performs.
     \end{subfigure}
     \caption{Simple network topologies}
 \end{figure}
-\end{comment}
+
+Snippet from one of my network scripts:
+\begin{verbatim}
+VBoxManage modifyvm "Ubuntu-Test" --nic2 intnet
+VBoxManage modifyvm "Ubuntu-Test" --intnet2 "intnet"
+VBoxManage startvm "Ubuntu-Test"
+\end{verbatim}
 
 \subsection{Python}
 I have chosen to use Python to implement
@@ -263,7 +279,7 @@ change in the file system below the watched directory.
 
     \item FSEvents
         \begin{itemize}
-        \item FSEvents is an API in MacOS X. It is similar
+        \item FSEvents is an API in MacOS X\cite{fsevents-intro}. It is similar
         to inotify in that it provides a notifaction to other
         applications when a directory is changed however
         it does not inform you which file in the directory
@@ -272,7 +288,7 @@ change in the file system below the watched directory.
         unchanged files in a directory. There is a Python module
         for FSEvents, as well. 
         
-        I also looked at using the \texttt{kqueue} system call that is
+        I also looked at using the \texttt{kqueue}\cite{kqueue-man} system call that is
         supported by OS X and FreeBSD. It notifies the user
         when a kernel event occurs. I decided against using
         \texttt{kqueue} as the high level approach of FSEvents,
@@ -313,27 +329,26 @@ different networks. Naive copying; using rsync, an application
 for efficiently copying files in one direction by looking at
 the differences in the files; and unison described above.
 
-\begin{figure}[htb]
-    \begin{subfigure}[b]{1\textwidth}
-        \centering
-        \includegraphics[scale=0.5]{images/two-point-comp-same.png}
-        \caption{Comparison of scp,rsync,unison}
-        \label{fig:point_comp_graph}
-    \end{subfigure}
-    \begin{comment}
-    \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[scale=0.3]{images/CorporateGraph.png}
-        \caption{Corporate Network}
-        \label{fig:corp_graph}
-    \end{subfigure}
-    \end{comment}
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/two-point-comp-same.png}
+    \caption{Comparison of scp,rsync,unison}
+    \label{fig:point_comp_graph}
 \end{figure}
 
-As you can see rsync and unison performed significantly better
+Rsync and unison performed significantly better
 than the naive copy method (as expected). After the initial file
 transfer subsequent edits to the file meant much less data had to
 be transmitted over the network, which meant the node graph
 became up to date much more quickly.
+
+Figure \ref{fig:point_comp_graph} illustrates another advantage
+of unison over rysnc. The graph shows three zero filled
+binary files being copied from one node to another one after
+the other. Unison recognised that even though the files were named
+differently they were the same file. Another advantage of unison
+is that it handles replication in two directions without
+clobbering the files on the other side.
 
 %More detail here
 
@@ -391,7 +406,14 @@ this to take? How do these facts reflect on the synchronisation settings
 we chose? Can we improve on the ‘performance’ by tweaking the settings?
 
 %Insert sub node image
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/sub-node.png}
+    \caption{Graph of sub nodes within nodes}
+    \label{fig:sub_node}
+\end{figure}
 
+\newpage
 \subsection{Mobile nodes}
 
 Connections between nodes in the graph (edges) may
@@ -414,10 +436,19 @@ the edges up or down at different points in time
 and taking snapshots of the graph as it is at that time.
 
 %Insert mobile node image
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/mobile-node.png}
+    \caption{Node two moves within the graph}
+    \label{fig:mobile_node}
+\end{figure}
 
-Say node two intermittently has a connection to a subset of
-nodes 1,3 and 4
+In figure \ref{fig:mobile_node} node two intermittently has a 
+connection to a subset of
+nodes 1,3 and 4. The edges in grey are links that
+are not always present.
 
+\newpage
 \subsection{More user control}
 
 Due to the highly unpredictable nature of the graph the user
@@ -463,6 +494,12 @@ Foreman, Michael "Kim Dotcom v United States of America". Computerworld. 3 Febru
 
 \bibitem{inotify-readme}
 www.kernel.org/pub/linux/kernel/people/rml/inotify/README, 22 September 2004.
+
+\bibitem{fsevents-intro}
+Apple Inc. \url{https://developer.apple.com/library/mac/#documentation/Darwin/Conceptual/FSEvents_ProgGuide/Introduction/Introduction.html}, 11 October 2011.
+
+\bibitem{kqueue-man}
+Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man2/kqueue.2.html}
 
 \end{thebibliography}
 
