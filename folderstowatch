@@ -1,5 +1,7 @@
 #Local folder name to watch, host to copy to, remote dir name
 #Hash to comment
-/home/cal/Documents/one 193.168.3.2:/home/cal/Documents/
+#/home/cal/Documents/one 193.168.3.2:/home/cal/Documents/
+#/home/cal/Documents/test [fe80::a00:27ff:fe7f:a774%eth1]:/home/cal/Documents/
+/home/cal/Documents/test ssh://192.168.3.2//home/cal/Documents/test/
 #/home/cal/Documents/one ssh://193.168.3.2 //home/cal/Documents/
-/home/cal/Documents/bob 192.168.3.2 /home/cal/Documents/
+/home/cal/Documents/bob 192.168.3.2:/home/cal/Documents/

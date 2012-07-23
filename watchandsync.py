@@ -19,9 +19,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
         for folder in watchedfolders.keys():
             if folder in event.pathname:
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
-                subprocess.call(["scp","-r",folder,watchedfolders[folder]])
+                #subprocess.call(["scp","-r",folder,watchedfolders[folder]])
                 #subprocess.call(["rsync","-r",folder,watchedfolders[folder]])
-                #subprocess.call(["unison",folder,watchedfolders[folder]])
+                subprocess.call(["unison","-batch","-confirmbigdel=false",folder,watchedfolders[folder]])
                 #print "scp","-r",folder,watchedfolders[folder]
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
 
