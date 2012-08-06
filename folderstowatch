@@ -1,0 +1,3 @@
+#Local folder path to watch followed by remote path to copy too
+#/home/cal/Documents/one 192.168.2.2:/home/cal/Documents
+/home/cal/Documents/one ssh://192.168.2.2//home/cal/Documents
