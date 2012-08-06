@@ -1,20 +1,27 @@
 import subprocess
 import datetime
 
-interfacename = "eth1"
+interfacenames = []
 
 def main():
+    ifs = subprocess.check_output("ifconfig -s",shell=True)
+    ilines = ifs.split("\n")
+    for i in range(1,len(ilines)-1):
+	interfacenames.append(ilines[i].split()[0])
     output = subprocess.check_output("ifconfig",shell=True)
     splitput = output.split()
-    eth3 = False
+    interface = False
+    interfacename = ""
     nex = ""
     count = 0
     upload = 0
     download = 0
     for split in splitput:
-        if(split == interfacename):
-            eth3 = True
-        elif(nex != ""):
+        if split in interfacenames:
+            interface = True
+            interfacename = split
+            #print interfacename
+        if(nex != ""):
             sp = split.split(":")
             if(sp[0] == "bytes"):
                 if(nex == "RX"):
@@ -24,14 +31,17 @@ def main():
                 nex = ""
                 count += 1
                 if(count == 2):
-                    eth3 = False
-        elif(eth3):
+                    interface = False
+                    f = open("/home/cal/Documents/Private-Sync/log/interface-" + interfacename + ".log",'a')
+                    f.write(str(datetime.datetime.now()) + " " + interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")
+                    f.close()
+                    count = 0
+        elif(interface):
             if(split == "RX" or split == "TX"):
                 nex = split
+		print interfacename
+		print nex
 
-    f = open("/home/cal/Documents/Private-Sync/log/interface.log",'a')
-    f.write(str(datetime.datetime.now()) + " " + interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")
-    f.close()
 
 if __name__ == "__main__":
     main()
