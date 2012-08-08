@@ -39,8 +39,6 @@ def main():
         elif(interface):
             if(split == "RX" or split == "TX"):
                 nex = split
-		print interfacename
-		print nex
 
 
 if __name__ == "__main__":
