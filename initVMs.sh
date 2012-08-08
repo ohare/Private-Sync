@@ -1,20 +1,30 @@
+VBoxManage modifyvm "Ubuntu-Test" --nic1 none
+VBoxManage modifyvm "Ubuntu-Test" --nic1 nat
+VBoxManage modifyvm "Ubuntu-Test" --nic2 none
 VBoxManage modifyvm "Ubuntu-Test" --nic2 intnet
-VBoxManage modifyvm "Ubuntu-Test" --intnet2 "intnet"
+VBoxManage modifyvm "Ubuntu-Test" --intnet2 "lion"
 VBoxManage startvm "Ubuntu-Test"
-VBoxManage modifyvm "Ubuntu-Test2" --nic1 intnet
-VBoxManage modifyvm "Ubuntu-Test2" --intnet1 "intnet"
+VBoxManage modifyvm "Ubuntu-Test2" --nic1 none
+VBoxManage modifyvm "Ubuntu-Test2" --nic1 nat
+VBoxManage modifyvm "Ubuntu-Test2" --nic2 none
 VBoxManage modifyvm "Ubuntu-Test2" --nic2 intnet
-VBoxManage modifyvm "Ubuntu-Test2" --intnet2 "intnet2"
+VBoxManage modifyvm "Ubuntu-Test2" --intnet2 "lion"
+VBoxManage modifyvm "Ubuntu-Test2" --nic3 none
+VBoxManage modifyvm "Ubuntu-Test2" --nic3 intnet
+VBoxManage modifyvm "Ubuntu-Test2" --intnet3 "tiger"
 VBoxManage startvm "Ubuntu-Test2"
-VBoxManage modifyvm "Ubuntu-Test3" --nic1 intnet
-VBoxManage modifyvm "Ubuntu-Test3" --intnet1 "intnet2"
-VBoxManage modifyvm "Ubuntu-Test3" --nic2 intnet
-VBoxManage modifyvm "Ubuntu-Test3" --intnet2 "intnet3"
-VBoxManage startvm "Ubuntu-Test3"
-VBoxManage modifyvm "Ubuntu-Test4" --nic1 intnet
-VBoxManage modifyvm "Ubuntu-Test4" --intnet1 "intnet3"
+#VBoxManage modifyvm "Ubuntu-Test3" --nic1 intnet
+#VBoxManage modifyvm "Ubuntu-Test3" --intnet1 "intnet2"
+#VBoxManage modifyvm "Ubuntu-Test3" --nic2 intnet
+#VBoxManage modifyvm "Ubuntu-Test3" --intnet2 "intnet3"
+#VBoxManage startvm "Ubuntu-Test3"
+VBoxManage modifyvm "Ubuntu-Test4" --nic1 none
+VBoxManage modifyvm "Ubuntu-Test4" --nic1 nat
+VBoxManage modifyvm "Ubuntu-Test4" --nic2 none
 VBoxManage modifyvm "Ubuntu-Test4" --nic2 intnet
-VBoxManage modifyvm "Ubuntu-Test4" --intnet2 "intnet4"
+VBoxManage modifyvm "Ubuntu-Test4" --intnet2 "tiger"
+#VBoxManage modifyvm "Ubuntu-Test4" --nic2 intnet
+#VBoxManage modifyvm "Ubuntu-Test4" --intnet2 "intnet4"
 VBoxManage startvm "Ubuntu-Test4"
 #VBoxManage modifyvm "Ubuntu-Test5" --nic1 intnet
 #VBoxManage modifyvm "Ubuntu-Test5" --intnet1 "intnet4"

@@ -1,0 +1,15 @@
+
+set terminal png
+
+set title "Syncing between two nodes"
+
+set xlabel "Time (Seconds)"
+set ylabel "Data transferred (MB)"
+
+set key bottom right
+
+set style data linespoints
+
+plot "scp-point-to-point" using 1:2 title 'scp', \
+"rsync-point-to-point" using 1:2 title 'rsync', \
+"unison-point-to-point" using 1:2 title 'unison'
