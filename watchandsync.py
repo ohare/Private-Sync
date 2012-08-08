@@ -1,9 +1,12 @@
-import pyinotify
-import os
-import subprocess
+import pyinotify, os, subprocess, argparse
 
 wm = pyinotify.WatchManager()
 watchedfolders = {}
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-c","--scp",action="store_true",help="Copy using scp")
+parser.add_argument("-r","--rsync",action="store_true",help="Copy using rsync")
+args = parser.parse_args()
 
 #TODO stats and service and run command
 
@@ -19,9 +22,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
         for folder in watchedfolders.keys():
             if folder in event.pathname:
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
-                #subprocess.call(["scp","-r",folder,watchedfolders[folder]])
-                #subprocess.call(["rsync","-r",folder,watchedfolders[folder]])
-                subprocess.call(["unison","-batch","-confirmbigdel=false",folder,watchedfolders[folder]])
+                if args.scp:
+			subprocess.call(["scp","-r",folder,watchedfolders[folder]])
+                elif args.rsync:
+			subprocess.call(["rsync","-r",folder,watchedfolders[folder]])
+                else:
+			subprocess.call(["unison","-batch","-confirmbigdel=false",folder,watchedfolders[folder]])
                 #print "scp","-r",folder,watchedfolders[folder]
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
 
