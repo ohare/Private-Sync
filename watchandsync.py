@@ -23,12 +23,14 @@ class MyEventHandler(pyinotify.ProcessEvent):
             if folder in event.pathname:
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
                 if args.scp:
-			subprocess.call(["scp","-r",folder,watchedfolders[folder]])
+			subprocess.call(["scp","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
+                        print "scp","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]
                 elif args.rsync:
-			subprocess.call(["rsync","-r",folder,watchedfolders[folder]])
+			subprocess.call(["rsync","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
+                        print "rsync","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]
                 else:
-			subprocess.call(["unison","-batch","-confirmbigdel=false",folder,watchedfolders[folder]])
-                #print "scp","-r",folder,watchedfolders[folder]
+			subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + watchedfolders[folder][0] + "/" + watchedfolders[folder][1]])
+                        print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + watchedfolders[folder][0] + "/" + watchedfolders[folder][1]
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
 
 #class watchfolders():
@@ -43,7 +45,7 @@ def main():
             info = folder.split()
             wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
             print "Watching: ", info[0].rstrip()
-            watchedfolders[info[0].rstrip()] = info[1]
+            watchedfolders[info[0].rstrip()] = [info[1],info[2]]
 
 
     eh = MyEventHandler()
