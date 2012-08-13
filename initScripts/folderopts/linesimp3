@@ -1,3 +1,2 @@
-#Local folder name to watch, host to copy to, remote dir name
-/home/cal/Documents/test 192.168.4.2:/home/cal/Documents/
-#/home/cal/Documents/test ssh://192.168.4.2 //home/cal/Documents/
+#Local folder path to watch, host to copy to, remote dir to copy to
+/home/cal/Documents/test 192.168.4.2 /home/cal/Documents/
