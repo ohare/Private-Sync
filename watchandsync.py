@@ -23,14 +23,17 @@ class MyEventHandler(pyinotify.ProcessEvent):
             if folder in event.pathname:
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
                 if args.scp:
-			subprocess.call(["scp","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
-                        print "scp","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]
+			subprocess.call(["scp","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
+                        print "scp","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]
                 elif args.rsync:
-			subprocess.call(["rsync","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
-                        print "rsync","-r",folder + "/",watchedfolders[folder][0] + ":" + watchedfolders[folder][1]
+			subprocess.call(["rsync","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]])
+                        print "rsync","-r",folder,watchedfolders[folder][0] + ":" + watchedfolders[folder][1]
                 else:
-			subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + watchedfolders[folder][0] + "/" + watchedfolders[folder][1]])
-                        print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + watchedfolders[folder][0] + "/" + watchedfolders[folder][1]
+                        fparts = folder.split("/")
+                        fname = fparts[len(fparts)-1]
+                        print fname
+			subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + watchedfolders[folder][0] + "/" + watchedfolders[folder][1] + fname])
+                        print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + watchedfolders[folder][0] + "/" + watchedfolders[folder][1] + fname
                 subprocess.call(["python","/home/cal/Documents/Private-Sync/readnet.py"])
 
 #class watchfolders():
