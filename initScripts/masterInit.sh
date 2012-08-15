@@ -1,4 +1,4 @@
-vm1_name="Ubuntu-Hoon"
+vm1_name="Ubuntu-Cyan"
 vm2_name="Ubuntu-Test2"
 vm3_name="Ubuntu-Test4"
 vm4_name="Ubuntu-Spheros"
