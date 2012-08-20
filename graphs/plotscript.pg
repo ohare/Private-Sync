@@ -10,6 +10,6 @@ set key bottom right
 
 set style data linespoints
 
-plot "scp-point-to-point" using 1:2 title 'scp', \
+plot "data" using 1:2 title 'scp', \
 "rsync-point-to-point" using 1:2 title 'rsync', \
 "unison-point-to-point" using 1:2 title 'unison'

@@ -4,22 +4,38 @@ def main():
     first = True
     start_time = 0
     start_mb = 0
+    max_mb = 0
+    max_name = ""
 
     os.chdir("./logs")
     for files in glob.glob("*"):
-        print files
         f = open(files,"r");
         for line in f:
-            print line
             l = line.split()
-            if first:
-                first = False
-                start_time = date_to_i(l[1])
-                start_mb = int(l[6])
-            print str(date_to_i(l[1]) - start_time) + " " + str(int(l[6]) - start_mb)
-        first = True
+            if float(l[6]) > max_mb:
+                max_mb = float(l[6])
+                max_name = files
+        f.close()
 
-        f.close();
+    for files in glob.glob("*"):
+        #print files
+        if files == max_name:
+            f = open(files,"r");
+            x = open("../graphs/data","a");
+            for line in f:
+                #print line
+                l = line.split()
+                if first:
+                    first = False
+                    start_time = date_to_i(l[1])
+                    start_mb = float(l[6])
+                x.write(str(date_to_i(l[1]) - start_time) + \
+                " " + str(((float(l[6]) - start_mb)/1024)/1024) + "\n")
+            x.close()
+            first = True
+            f.close();
+
+    print "Success"
 
 def date_to_i(date):
     date = date.split(".")[0]
