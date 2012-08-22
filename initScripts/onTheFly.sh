@@ -25,7 +25,7 @@ function clear_ifaces() {
 function clear_watched_folders() {
     i=0
     while [ "$i" -lt "${#vm_addr_arr[@]}" ]; do
-        ssh cal@${vm_addr_arr[$i]} "echo \"#Local folder path to watch, host to copy to, remote dir to copy to\" > /home/cal/Documents/Private-Sync/folderstowatch"
+        ssh cal@${vm_addr_arr[$i]} "echo \"#Local folder path to watch, host to copy to, remote dir to copy to\" > /home/cal/Documents/Private-Sync/folderstowatch; echo ${letterarr[$i]} > /home/cal/Documents/Private-Sync/whoami"
         let "i++"
     done
 }

@@ -21,24 +21,46 @@ def main():
 
     os.chdir("./logs")
     count = 1
+    bytes_field = 4
+    date_field = 1
+    fin = {'nodeA':[0,0],'nodeB':[0,0],'nodeC':[0,0],'nodeD':[0,0]}
     for files in glob.glob("*"):
         #print files
         #if files == max_name:
+        names = files.split("-")
+        #print names
         f = open(files,"r");
-        x = open("../graphs/node-" + str(count),"w");
+        x = open("../graphs/" + names[0] + "-data","a");
         for line in f:
             #print line
             l = line.split()
             if first:
                 first = False
-                start_time = date_to_i(l[1])
-                start_mb = float(l[6])
-            x.write(str(date_to_i(l[1]) - start_time) + \
-            " " + str(((float(l[6]) - start_mb)/1024)/1024) + "\n")
+                start_time = date_to_i(l[date_field])
+                start_mb = float(l[bytes_field])
+            x.write(str(date_to_i(l[date_field]) - start_time) + \
+            " " + str(((float(l[bytes_field]) - start_mb)/1024)/1024) + "\n")
+            if(fin[names[0]][0] < date_to_i(l[date_field]) and fin[names[0]][1] < float(l[bytes_field])):
+                fin[names[0]][0] = date_to_i(l[date_field])
+                fin[names[0]][1] = float(l[bytes_field])
+
         x.close()
         first = True
         f.close();
         count += 1
+
+    timesort = []
+    for node in fin:
+        #print node
+        timesort.append(fin[node][0])
+
+    timesort.sort()
+    count = 1
+    x = open("../graphs/comp-time","a")
+    for time in timesort:
+        x.write(str(time) + " " + str(count) + "\n")
+        count += 1
+    x.close()
 
     print "Success"
 
