@@ -1,7 +1,16 @@
-import subprocess, datetime, socket
+import subprocess, datetime, socket, argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i',action="store",dest='ip',help='IP address to record for')
 
 interfacenames = []
 
+w = open("/home/cal/Documents/Private-Sync/whoami","r")
+nodename = w.read()
+nodename = nodename[0]
+w.close()
+
+#Log interface coresponding to ipaddr
 def logIPtraffic(ipaddr):
     route = subprocess.check_output("ip route get " + ipaddr,shell=True)
     words = route.split()
@@ -44,7 +53,7 @@ def writeIface(iface):
                     interface = False
                     if interfacename == iface:
                         f = open("/home/cal/Documents/Private-Sync/log/" \
-                        + str(socket.gethostname()) + "-" \
+                        + "node" + nodename.upper() + "-" \
                         + iface + ".log",'a')
                         f.write(str(datetime.datetime.now()) + " " + interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")
                         f.close()
@@ -53,6 +62,7 @@ def writeIface(iface):
             if(split == "RX" or split == "TX"):
                 nex = split
 
+#Log all interfaces
 def main():
     ifs = subprocess.check_output("ifconfig -s",shell=True)
     ilines = ifs.split("\n")
@@ -93,5 +103,9 @@ def main():
                 nex = split
 
 if __name__ == "__main__":
-    main()
-    #logIPtraffic("192.168.2.2")
+    args = parser.parse_args()
+    if args.ip != None:
+        logIPtraffic(args.ip)
+    else:
+        pass
+        main()
