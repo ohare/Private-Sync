@@ -1,4 +1,4 @@
-import pyinotify, os, subprocess, argparse
+import pyinotify, os, subprocess, argparse, socket
 import readnet
 
 wm = pyinotify.WatchManager()
@@ -10,6 +10,16 @@ parser.add_argument("-r","--rsync",action="store_true",help="Copy using rsync")
 args = parser.parse_args()
 
 class MyEventHandler(pyinotify.ProcessEvent):
+    def flipIP(self,ip):
+        octets = ip.split(".")
+        if(octets[3] == "1"):
+            octets[3] = "2"
+        elif(octets[3] == "2"):
+            octets[3] = "1"
+        else:
+            octets[3] = "1"
+        return ".".join(octets)
+
     def process_IN_CREATE(self, event):
         print "Create:",event.pathname
     def process_IN_DELETE(self, event):
@@ -23,6 +33,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 ip = watchedfolders[folder][0]
                 path = watchedfolders[folder][1]
                 readnet.logIPtraffic(ip)
+                subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
+                print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip) + "'"
                 if args.scp:
 			subprocess.call(["scp","-r",folder,ip + ":" + path])
                         print "scp","-r",folder,ip + ":" + path
@@ -35,9 +47,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         print fname
 			subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                         print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
+                subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
                 readnet.logIPtraffic(ip)
 
-#class watchfolders():
+
 def main():
 
     f = open('./folderstowatch','r')
