@@ -5,7 +5,7 @@ parser.add_argument('-i',action="store",dest='ip',help='IP address to record for
 
 interfacenames = []
 
-w = open("home/cal/Documents/Private-Sync/whoami","r")
+w = open("/home/cal/Documents/Private-Sync/whoami","r")
 nodename = w.read()
 nodename = nodename[0]
 w.close()
