@@ -7,6 +7,7 @@ def main():
     max_mb = 0
     max_name = ""
 
+    """
     os.chdir("./logs")
     for files in glob.glob("*"):
         f = open(files,"r");
@@ -16,24 +17,28 @@ def main():
                 max_mb = float(l[6])
                 max_name = files
         f.close()
+    """
 
+    os.chdir("./logs")
+    count = 1
     for files in glob.glob("*"):
         #print files
-        if files == max_name:
-            f = open(files,"r");
-            x = open("../graphs/data","a");
-            for line in f:
-                #print line
-                l = line.split()
-                if first:
-                    first = False
-                    start_time = date_to_i(l[1])
-                    start_mb = float(l[6])
-                x.write(str(date_to_i(l[1]) - start_time) + \
-                " " + str(((float(l[6]) - start_mb)/1024)/1024) + "\n")
-            x.close()
-            first = True
-            f.close();
+        #if files == max_name:
+        f = open(files,"r");
+        x = open("../graphs/node-" + str(count),"w");
+        for line in f:
+            #print line
+            l = line.split()
+            if first:
+                first = False
+                start_time = date_to_i(l[1])
+                start_mb = float(l[6])
+            x.write(str(date_to_i(l[1]) - start_time) + \
+            " " + str(((float(l[6]) - start_mb)/1024)/1024) + "\n")
+        x.close()
+        first = True
+        f.close();
+        count += 1
 
     print "Success"
 
