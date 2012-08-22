@@ -7,6 +7,7 @@ ethcountarr=(1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
+foldername="tire"
 
 function clear_ifaces() {
     i=0
@@ -49,8 +50,8 @@ function vbmMOD {
 }
 
 function ifconf {
-    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/test 192.168.$3.$5 /home/cal/Documents/\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
-    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo "/home/cal/Documents/test 192.168.$3.$5 /home/cal/Documents/" >> /home/cal/Documents/Private-Sync/folderstowatch'"
+    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
+    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo "/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/" >> /home/cal/Documents/Private-Sync/folderstowatch'"
 }
 
 if [ $2 == "vm" ]; then
