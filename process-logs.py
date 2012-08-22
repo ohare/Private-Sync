@@ -57,6 +57,7 @@ def main():
     timesort.sort()
     count = 1
     x = open("../graphs/comp-time","a")
+    x.write("0 0\n")
     for time in timesort:
         x.write(str(time) + " " + str(count) + "\n")
         count += 1
