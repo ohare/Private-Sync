@@ -7,7 +7,7 @@ ethcountarr=(1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-foldername="tire"
+foldername="ready"
 
 function clear_ifaces() {
     i=0
