@@ -10,6 +10,27 @@ nodename = w.read()
 nodename = nodename[0]
 w.close()
 
+#Get my ip corresponding to the interface with ipaddr
+def getMyIP(ipaddr):
+    route = subprocess.check_output("ip route get " + ipaddr,shell=True)
+    words = route.split()
+    interface = ""
+    for word in words:
+        if word.startswith("eth"):
+            interface = word
+            print interface
+            break
+    ifconf = subprocess.check_output("ifconfig " + interface,shell=True)
+    words = ifconf.split()
+    now = False
+    for word in words:
+        if word == "inet":
+            now = True
+        elif now:
+            word = word.split(":")
+            print word[1]
+            return word[1]
+
 #Log interface coresponding to ipaddr
 def logIPtraffic(ipaddr):
     route = subprocess.check_output("ip route get " + ipaddr,shell=True)
@@ -105,7 +126,8 @@ def main():
 if __name__ == "__main__":
     args = parser.parse_args()
     if args.ip != None:
-        logIPtraffic(args.ip)
+        #logIPtraffic(args.ip)
+        getMyIP(args.ip)
     else:
         pass
         main()
