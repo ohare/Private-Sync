@@ -75,7 +75,7 @@ def main():
             watchedfolders[info[0].rstrip()].append(info[1])
             watchedfolders[info[0].rstrip()].append(info[2])
 
-    print watchedfolders
+    #print watchedfolders
     eh = MyEventHandler()
 
     notifier = pyinotify.Notifier(wm,eh)
