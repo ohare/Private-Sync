@@ -30,31 +30,33 @@ class MyEventHandler(pyinotify.ProcessEvent):
             print "Watching: ",event.pathname
         for folder in watchedfolders.keys():
             if folder in event.pathname:
-                ip = watchedfolders[folder][0]
-                path = watchedfolders[folder][1]
-                readnet.logIPtraffic(ip)
-                subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
-                print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip) + "'"
-                myIP = readnet.getMyIP(ip)
-                if args.scp:
-                    if not os.path.exists("./stop"):
-                        subprocess.call(["ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"])
-                        print "ssh",ip,"touch /home/cal/Documents/Private-Sync/stop"
-			subprocess.call(["scp","-r",folder,ip + ":" + path])
-                        print "scp","-r",folder,ip + ":" + path
+                for i in range(0, len(watchedfolders[folder]),2):
+                    ip = watchedfolders[folder][i]
+                    path = watchedfolders[folder][i+1]
+                    #print ip + " " + path
+                    readnet.logIPtraffic(ip)
+                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
+                    print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip) + "'"
+                    myIP = readnet.getMyIP(ip)
+                    if args.scp:
+                        if not os.path.exists("./stop"):
+                            subprocess.call(["ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"])
+                            print "ssh",ip,"touch /home/cal/Documents/Private-Sync/stop"
+                            subprocess.call(["scp","-r",folder,ip + ":" + path])
+                            print "scp","-r",folder,ip + ":" + path
+                        else:
+                            os.remove("./stop");
+                    elif args.rsync:
+                            subprocess.call(["rsync","-r",folder,ip + ":" + path])
+                            print "rsync","-r",folder,ip + ":" + path
                     else:
-                        os.remove("./stop");
-                elif args.rsync:
-			subprocess.call(["rsync","-r",folder,ip + ":" + path])
-                        print "rsync","-r",folder,ip + ":" + path
-                else:
-                        fparts = folder.split("/")
-                        fname = fparts[len(fparts)-1]
-                        print fname
-			subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
-                        print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
-                subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
-                readnet.logIPtraffic(ip)
+                            fparts = folder.split("/")
+                            fname = fparts[len(fparts)-1]
+                            print fname
+                            subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
+                            print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
+                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
+                    readnet.logIPtraffic(ip)
 
 
 def main():
@@ -68,9 +70,12 @@ def main():
             info = folder.split()
             wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
             print "Watching: ", info[0].rstrip()
-            watchedfolders[info[0].rstrip()] = [info[1],info[2]]
+            if info[0] not in watchedfolders.keys():
+                watchedfolders[info[0].rstrip()] = []
+            watchedfolders[info[0].rstrip()].append(info[1])
+            watchedfolders[info[0].rstrip()].append(info[2])
 
-
+    print watchedfolders
     eh = MyEventHandler()
 
     notifier = pyinotify.Notifier(wm,eh)
