@@ -1,3 +1,2 @@
 #Local folder path to watch, host to copy to, remote dir to copy to
 /home/cal/Documents/steady 192.168.2.2 /home/cal/Documents/
-/home/cal/Documents/steady 192.168.3.2 /home/cal/Documents/
