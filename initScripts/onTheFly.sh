@@ -1,5 +1,5 @@
-vm_name_arr=("Ubuntu-Cyan" "Ubuntu-Test2" "Ubuntu-Hoon" "Ubuntu-Spheros" "Ubuntu-Wild")
-vm_addr_arr=("192.168.0.17" "192.168.0.12" "192.168.0.15" "192.168.0.14")
+vm_name_arr=("Ubuntu-Cyan" "Ubuntu-Nooh" "Ubuntu-Wild" "Ubuntu-Spheros")
+vm_addr_arr=("192.168.0.17" "192.168.0.21" "192.168.0.19" "192.168.0.14")
 intnetarr=("lion" "tiger" "cat" "dog" "fish" "kiwi")
 letterarr=("a" "b" "c" "d" "e" "f" "g")
 ifcountarr=(2 2 2 2 2 2 2 2 2)
@@ -7,7 +7,7 @@ ethcountarr=(1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-foldername="ready"
+foldername="steady"
 
 function clear_ifaces() {
     i=0
@@ -103,6 +103,8 @@ elif [ $2 == "if" ]; then
             (( littlencount-- ))
         fi
     done <graphs/$1
+else
+    echo "Oops try again"
 fi
 
 neato -Tpng graphs/$1 > graphs/$1-graph.png
