@@ -126,8 +126,8 @@ def main():
 if __name__ == "__main__":
     args = parser.parse_args()
     if args.ip != None:
-        #logIPtraffic(args.ip)
-        getMyIP(args.ip)
+        logIPtraffic(args.ip)
+        #getMyIP(args.ip)
     else:
         pass
         main()

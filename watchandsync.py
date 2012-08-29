@@ -20,6 +20,22 @@ class MyEventHandler(pyinotify.ProcessEvent):
             octets[3] = "1"
         return ".".join(octets)
 
+    #Check for IP not to copy too
+    def getStopIP(self):
+        stopIP = ""
+        try:
+            o = open("./stop",'r')
+            stopIP = o.read().split()[0]
+            o.close()
+        except IOError, e:
+            pass
+        return stopIP
+
+    #Set flag on other server telling it not to immediately try and copy data here
+    def setStopFile(self,ip,myIP):
+        subprocess.call(["ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"])
+        print "ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"
+
     def process_IN_CREATE(self, event):
         print "Create:",event.pathname
     def process_IN_DELETE(self, event):
@@ -35,34 +51,27 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     path = watchedfolders[folder][i+1]
                     #print ip + " " + path
                     readnet.logIPtraffic(ip)
-                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
-                    print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip) + "'"
                     myIP = readnet.getMyIP(ip)
-                    if args.scp:
-                        stopIP = ""
-                        try:
-                            o = open("./stop",'r')
-                            stopIP = o.read().split()[0]
-                            o.close()
-                        except IOError, e:
-                            pass
-                        if stopIP == ip:
-                            os.remove("./stop");
-                        else:
-                            subprocess.call(["ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"])
-                            print "ssh",ip,"touch /home/cal/Documents/Private-Sync/stop"
+                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
+                    print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP + "'"
+                    stopIP = self.getStopIP()
+                    if stopIP == ip:
+                        os.remove("./stop");
+                    else:
+                        if args.scp:
                             subprocess.call(["scp","-r",folder,ip + ":" + path])
                             print "scp","-r",folder,ip + ":" + path
-                    elif args.rsync:
-                            subprocess.call(["rsync","-r",folder,ip + ":" + path])
-                            print "rsync","-r",folder,ip + ":" + path
-                    else:
-                            fparts = folder.split("/")
-                            fname = fparts[len(fparts)-1]
-                            print fname
-                            subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
-                            print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
-                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip)])
+                        elif args.rsync:
+                                subprocess.call(["rsync","-r",folder,ip + ":" + path])
+                                print "rsync","-r",folder,ip + ":" + path
+                        else:
+                                fparts = folder.split("/")
+                                fname = fparts[len(fparts)-1]
+                                print fname
+                                subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
+                                print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
+                        self.setStopFile(ip,myIP)
+                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
                     readnet.logIPtraffic(ip)
 
 
