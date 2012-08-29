@@ -22,7 +22,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
     #Check for IP not to copy too
     def getStopInfo(self):
-        stopIP = []
+        stopIP = ["",""]
         try:
             o = open("./stop",'r')
             stopIP = o.read().split()
