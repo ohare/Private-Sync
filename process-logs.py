@@ -1,4 +1,4 @@
-import glob, os, datetime, time
+import glob, os, datetime, time, sys
 
 def main():
     first = True
@@ -24,13 +24,25 @@ def main():
     bytes_field = 4
     date_field = 1
     fin = {'nodeA':[0,0],'nodeB':[0,0],'nodeC':[0,0],'nodeD':[0,0]}
+    lastNode = ""
+    num_mb_dict = {}
     for files in glob.glob("*"):
         #print files
         #if files == max_name:
         names = files.split("-")
         #print names
         f = open(files,"r");
-        x = open("../graphs/" + names[0] + "-data","a");
+        x = open("../graphs/" + lastNode + "-data","a");
+        if names[0] == lastNode:
+            pass
+        else:
+            total = 0.0
+            for key in sorted(num_mb_dict.iterkeys()):
+                total += num_mb_dict[key]
+                x.write(str(key) + " " + str(total) + "\n")
+            num_mb_dict = {}
+        x.close()
+        prev = 0
         for line in f:
             #print line
             l = line.split()
@@ -38,16 +50,26 @@ def main():
                 first = False
                 start_time = date_to_i(l[date_field])
                 start_mb = float(l[bytes_field])
-            x.write(str(date_to_i(l[date_field]) - start_time) + \
-            " " + str(((float(l[bytes_field]) - start_mb)/1024)/1024) + "\n")
+            num_mb_dict[date_to_i(l[date_field]) - start_time] = ((((float(l[bytes_field]) - start_mb)/1024)/1024) - prev)
+            prev = (((float(l[bytes_field]) - start_mb)/1024)/1024)
+            #x.write(str(date_to_i(l[date_field]) - start_time) + \
+            #" " + str(((float(l[bytes_field]) - start_mb)/1024)/1024) + "\n")
             if(fin[names[0]][0] < date_to_i(l[date_field]) and fin[names[0]][1] < float(l[bytes_field])):
                 fin[names[0]][0] = date_to_i(l[date_field])
                 fin[names[0]][1] = float(l[bytes_field])
+        lastNode = names[0]
 
-        x.close()
         first = True
         f.close();
         count += 1
+
+    x = open("../graphs/" + lastNode + "-data","a");
+    total = 0.0
+    for key in sorted(num_mb_dict.iterkeys()):
+        total += num_mb_dict[key]
+        x.write(str(key) + " " + str(total) + "\n")
+    x.close()
+
 
     timesort = []
     for node in fin:
@@ -57,9 +79,12 @@ def main():
     timesort.sort()
     count = 1
     x = open("../graphs/comp-time","a")
-    x.write("0 0\n")
+    #x.write("0 0\n")
+    start_time = 0.0
     for time in timesort:
-        x.write(str(time) + " " + str(count) + "\n")
+        if count == 1:
+            start_time = time
+        x.write(str(time - start_time) + " " + str(count) + "\n")
         count += 1
     x.close()
 

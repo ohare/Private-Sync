@@ -49,6 +49,24 @@ function vbmMOD {
     echo "VBoxManage modifyvm $1 --intnet$3 $2"
 }
 
+function sendKeys {
+    index=0
+    while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
+        #ssh cal@${vm_addr_arr[$index]} "rm /home/cal/.ssh/authorized_keys"
+        for file in /Users/calum/.ssh/*.pub; do
+            #echo "$file"
+            cat $file | ssh cal@${vm_addr_arr[$index]} "cat >> /home/cal/.ssh/authorized_keys"
+            echo "cat $file | ssh cal@${vm_addr_arr[$index]} \"cat >> /home/cal/.ssh/authorized_keys\""
+        done
+        let "index++"
+    done
+    #for file in /Users/calum/.ssh/*.pub; do
+    #    echo "$file"
+    #    cat $file | ssh cal@192.168.0.17 "cat >> /home/cal/.ssh/testfile"
+    #    echo "cat $file | ssh cal@192.168.0.17 \"cat >> /home/cal/.ssh/testfile\""
+    #done
+}
+
 function ifconf {
     ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
     echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo "/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/" >> /home/cal/Documents/Private-Sync/folderstowatch'"
@@ -103,6 +121,8 @@ elif [ $2 == "if" ]; then
             (( littlencount-- ))
         fi
     done <graphs/$1
+elif [ $2 == "key" ]; then
+    sendKeys
 else
     echo "Oops try again"
 fi
