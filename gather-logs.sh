@@ -1,5 +1,5 @@
 vm1_address=192.168.0.17
-vm2_address=192.168.0.21
+vm2_address=192.168.0.22
 vm3_address=192.168.0.19
 vm4_address=192.168.0.14
 scp cal@${vm1_address}:/home/cal/Documents/Private-Sync/log/* ./logs/

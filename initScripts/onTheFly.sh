@@ -1,5 +1,5 @@
-vm_name_arr=("Ubuntu-Cyan" "Ubuntu-Nooh" "Ubuntu-Wild" "Ubuntu-Spheros")
-vm_addr_arr=("192.168.0.17" "192.168.0.21" "192.168.0.19" "192.168.0.14")
+vm_name_arr=("Ubuntu-Cyan" "Ubuntu-Cyclone" "Ubuntu-Wild" "Ubuntu-Spheros")
+vm_addr_arr=("192.168.0.17" "192.168.0.22" "192.168.0.19" "192.168.0.14")
 intnetarr=("lion" "tiger" "cat" "dog" "fish" "kiwi")
 letterarr=("a" "b" "c" "d" "e" "f" "g")
 ifcountarr=(2 2 2 2 2 2 2 2 2)
