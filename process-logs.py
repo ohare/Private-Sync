@@ -1,4 +1,5 @@
-import glob, os, datetime, time, sys
+import glob, os, time, sys
+from datetime import datetime
 
 def main():
     first = True
@@ -26,61 +27,88 @@ def main():
     fin = {'nodeA':[0,0],'nodeB':[0,0],'nodeC':[0,0],'nodeD':[0,0]}
     lastNode = ""
     num_mb_dict = {}
+    beginning_time = -1
     for files in glob.glob("*"):
         #print files
         #if files == max_name:
         names = files.split("-")
-        #print names
         f = open(files,"r");
-        x = open("../graphs/" + lastNode + "-data","a");
         if names[0] == lastNode:
             pass
         else:
-            total = 0.0
+            #print lastNode
+            total = 0
+            x = open("../graphs/" + lastNode + "-data","a");
+            #print num_mb_dict
             for key in sorted(num_mb_dict.iterkeys()):
                 total += num_mb_dict[key]
-                x.write(str(key) + " " + str(total) + "\n")
+                #print num_mb_dict[key]
+                #print str(key) + " " + str(total/1024/1024)
+                x.write(str(key) + " " + str(total/1024/1024) + "\n")
             num_mb_dict = {}
-        x.close()
+            x.close()
         prev = 0
         for line in f:
             #print line
             l = line.split()
             if first:
                 first = False
-                start_time = date_to_i(l[date_field])
-                start_mb = float(l[bytes_field])
-            num_mb_dict[date_to_i(l[date_field]) - start_time] = ((((float(l[bytes_field]) - start_mb)/1024)/1024) - prev)
-            prev = (((float(l[bytes_field]) - start_mb)/1024)/1024)
+                start_time = l[date_field]
+                start_mb = long(l[bytes_field])
+                prev = start_mb
+                if beginning_time == -1:
+                    beginning_time = l[date_field]
+                elif int(secondsDiff(beginning_time,l[date_field])) > 0:
+                    beginning_time = l[date_field]
+            elapsed = int(secondsDiff(l[date_field],start_time))
+            #print elapsed
+            if elapsed in num_mb_dict:
+                num_mb_dict[elapsed] += (long(l[bytes_field]) - prev)
+            else:
+                num_mb_dict[elapsed] = (long(l[bytes_field]) - prev)
+            #print str(elapsed) + " " + str(num_mb_dict[elapsed])
+            prev = long(l[bytes_field])
             #x.write(str(date_to_i(l[date_field]) - start_time) + \
             #" " + str(((float(l[bytes_field]) - start_mb)/1024)/1024) + "\n")
-            if(fin[names[0]][0] < date_to_i(l[date_field]) and fin[names[0]][1] < float(l[bytes_field])):
-                fin[names[0]][0] = date_to_i(l[date_field])
+            #if(fin[names[0]][0] < date_to_i(l[date_field]) and fin[names[0]][1] < float(l[bytes_field])):
+            if(fin[names[0]][0] == 0):
+                fin[names[0]][0] = l[date_field]
+                fin[names[0]][1] = float(l[bytes_field])
+            elif((int(secondsDiff(fin[names[0]][0],l[date_field])) < 0) and fin[names[0]][1] < float(l[bytes_field])):
+            #if(fin[names[0]][0] < elapsed and fin[names[0]][1] < float(l[bytes_field])):
+                fin[names[0]][0] = l[date_field]
                 fin[names[0]][1] = float(l[bytes_field])
         lastNode = names[0]
+        start_mb = 0.0
+        start_time = 0
 
         first = True
         f.close();
         count += 1
 
     x = open("../graphs/" + lastNode + "-data","a");
-    total = 0.0
+    total = 0
+    #print num_mb_dict
+    #print lastNode
     for key in sorted(num_mb_dict.iterkeys()):
         total += num_mb_dict[key]
-        x.write(str(key) + " " + str(total) + "\n")
+        #print str(key) + " " + str(total/1024/1024)
+        x.write(str(key) + " " + str(total/1024/1024) + "\n")
     x.close()
 
+    #sys.exit()
 
     timesort = []
+    print beginning_time
     for node in fin:
-        #print node
-        timesort.append(fin[node][0])
+        print fin[node][0]
+        timesort.append(int(secondsDiff(fin[node][0],beginning_time)))
 
     timesort.sort()
     count = 1
     x = open("../graphs/comp-time","a")
-    #x.write("0 0\n")
-    start_time = 0.0
+    x.write("0 0\n")
+    start_time = 0
     for time in timesort:
         if count == 1:
             start_time = time
@@ -89,6 +117,11 @@ def main():
     x.close()
 
     print "Success"
+
+def secondsDiff(date1, date2):
+    FMT = '%H:%M:%S.%f'
+    tdelta = datetime.strptime(date1, FMT) - datetime.strptime(date2, FMT)
+    return tdelta.total_seconds()
 
 def date_to_i(date):
     date = date.split(".")[0]
