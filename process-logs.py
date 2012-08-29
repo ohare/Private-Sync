@@ -99,7 +99,7 @@ def main():
     #sys.exit()
 
     timesort = []
-    print beginning_time
+    #print beginning_time
     for node in fin:
         #print fin[node][0]
         timesort.append(int(secondsDiff(fin[node][0],beginning_time)))
@@ -112,7 +112,8 @@ def main():
     for time in timesort:
         if count == 1:
             start_time = time
-        x.write(str(time - start_time) + " " + str(count) + "\n")
+        #x.write(str(time - start_time) + " " + str(count) + "\n")
+        x.write(str(time) + " " + str(count) + "\n")
         count += 1
     x.close()
 
