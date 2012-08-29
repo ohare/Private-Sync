@@ -21,19 +21,19 @@ class MyEventHandler(pyinotify.ProcessEvent):
         return ".".join(octets)
 
     #Check for IP not to copy too
-    def getStopIP(self):
+    def getStopInfo(self):
         stopIP = ""
         try:
             o = open("./stop",'r')
-            stopIP = o.read().split()[0]
+            stopIP = o.read().split()
             o.close()
         except IOError, e:
             pass
         return stopIP
 
     #Set flag on other server telling it not to immediately try and copy data here
-    def setStopFile(self,ip,myIP):
-        subprocess.call(["ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"])
+    def setStopFile(self,ip,myIP,path):
+        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> /home/cal/Documents/Private-Sync/stop"])
         print "ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"
 
     def process_IN_CREATE(self, event):
@@ -54,9 +54,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     myIP = readnet.getMyIP(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
                     print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP + "'"
-                    stopIP = self.getStopIP()
-                    print "STOP: " + stopIP
-                    if stopIP == ip:
+                    stopIP = self.getStopInfo()
+                    print "STOP: " + stopIP[0] + " " + stopIP[1]
+                    if stopIP[0] == ip and stopIP[1] == event.pathname:
                         print "STOPPED"
                         os.remove("./stop");
                     else:
@@ -73,7 +73,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                                 print fname
                                 subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                                 print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
-                        self.setStopFile(ip,myIP)
+                        self.setStopFile(ip,myIP,event.pathname)
                     subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
                     readnet.logIPtraffic(ip)
 
