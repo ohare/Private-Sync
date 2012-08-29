@@ -39,10 +39,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + self.flipIP(ip) + "'"
                     myIP = readnet.getMyIP(ip)
                     if args.scp:
-                        o = open("./stop",'r')
                         stopIP = ""
                         try:
+                            o = open("./stop",'r')
                             stopIP = o.read().split()[0]
+                            o.close()
                         except IOError, e:
                             pass
                         if stopIP == ip:
@@ -52,7 +53,6 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             print "ssh",ip,"touch /home/cal/Documents/Private-Sync/stop"
                             subprocess.call(["scp","-r",folder,ip + ":" + path])
                             print "scp","-r",folder,ip + ":" + path
-                        o.close()
                     elif args.rsync:
                             subprocess.call(["rsync","-r",folder,ip + ":" + path])
                             print "rsync","-r",folder,ip + ":" + path
