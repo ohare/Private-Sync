@@ -1,4 +1,4 @@
-import pyinotify, os, subprocess, argparse, socket
+import pyinotify, os, subprocess, argparse, socket, time
 import readnet
 
 wm = pyinotify.WatchManager()
@@ -68,6 +68,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                                 subprocess.call(["rsync","-r",folder,ip + ":" + path])
                                 print "rsync","-r",folder,ip + ":" + path
                         else:
+                                time.sleep(2)
                                 fparts = folder.split("/")
                                 fname = fparts[len(fparts)-1]
                                 print fname
