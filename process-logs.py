@@ -8,6 +8,9 @@ def main():
     max_mb = 0
     max_name = ""
 
+    #divide_by = 1024/1024
+    divide_by = 1
+
     """
     os.chdir("./logs")
     for files in glob.glob("*"):
@@ -43,8 +46,8 @@ def main():
             for key in sorted(num_mb_dict.iterkeys()):
                 total += num_mb_dict[key]
                 #print num_mb_dict[key]
-                #print str(key) + " " + str(total/1024/1024)
-                x.write(str(key) + " " + str(total/1024/1024) + "\n")
+                #print str(key) + " " + str(total/divide_by)
+                x.write(str(key) + " " + str(total/divide_by) + "\n")
             num_mb_dict = {}
             x.close()
         prev = 0
@@ -92,8 +95,8 @@ def main():
     #print lastNode
     for key in sorted(num_mb_dict.iterkeys()):
         total += num_mb_dict[key]
-        #print str(key) + " " + str(total/1024/1024)
-        x.write(str(key) + " " + str(total/1024/1024) + "\n")
+        #print str(key) + " " + str(total/divide_by)
+        x.write(str(key) + " " + str(total/divide_by) + "\n")
     x.close()
 
     #sys.exit()
