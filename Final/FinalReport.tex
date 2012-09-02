@@ -362,6 +362,16 @@ clobbering the files on the other side.
 
 %More detail here
 
+\section{When to stop copying}
+After testing my program on some simple topologies one problem became
+clear. Each node would notice changes had occured to a folder
+it was watching and would then try to copy these changes to other
+nodes that it was connected to. The problem was that if the changes
+came from one of its neighbour nodes this would cause an infinite loop
+of two nodes trying to copy changes to each other. This was particularly 
+a problem when using scp to copy. Unison was ok because it could detect
+that no changes had occur between the nodes.
+
 \section{Future work}
 \subsection{Full node graph replication}
 I am going to be looking into the most efficient way to
