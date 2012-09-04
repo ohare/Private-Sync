@@ -49,6 +49,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 for k in stopIPs.keys():
                     f.write(k + " " + stopIPs[k])
                 f.close()
+                stopIPs.clear()
                 return True
 
             f.close()
