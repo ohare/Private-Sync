@@ -1,4 +1,4 @@
-import pyinotify, os, subprocess, argparse, socket, time
+import pyinotify, os, subprocess, argparse, socket, time, glob
 import readnet
 
 wm = pyinotify.WatchManager()
@@ -31,7 +31,42 @@ class MyEventHandler(pyinotify.ProcessEvent):
             pass
         return stopIP
 
+    def inStopFile(self,ip,path):
+        stopIPs = {}
+        stop = False
+        for files in glob.glob("Stop-*"):
+            f = open(files,"r");
+            for line in f:
+                l = line.split()
+                if l[0] == ip and l[1] == path:
+                    stop = True
+                else:
+                    stopIPs[l[0]] = l[1]
+
+            if stop:
+                f.close()
+                f = open(files,"w")
+                for k in stopIPs.keys():
+                    f.write(k + " " + stopIPs[k])
+                f.close()
+                return True
+
+            f.close()
+            stopIPs.clear()
+
+
+        return False
+
     #Set flag on other server telling it not to immediately try and copy data here
+    
+    def setStopFileUniq(self,ip,myIP,path):
+        w = open("/home/cal/Documents/Private-Sync/whoami","r")
+        nodename = w.read()
+        nodename = nodename[0].upper()
+        w.close()
+        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + ">> /home/cal/Documents/Private-Sync/Stop-" + nodename])
+        print "ssh",ip,"echo " + myIP + " " + path + ">> /home/cal/Documents/Private-Sync/stop-" + nodename
+
     def setStopFile(self,ip,myIP,path):
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> /home/cal/Documents/Private-Sync/stop"])
         print "ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"
@@ -54,11 +89,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     myIP = readnet.getMyIP(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
                     print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP + "'"
-                    stopIP = self.getStopInfo()
-                    print "STOP: " + stopIP[0] + " " + stopIP[1]
-                    if stopIP[0] == ip and stopIP[1] == event.pathname:
+                    #stopIP = self.getStopInfo()
+                    #print "STOP: " + stopIP[0] + " " + stopIP[1]
+                    #if stopIP[0] == ip and stopIP[1] == event.pathname:
+                    if self.inStopFile(ip,event.pathname):
                         print "STOPPED"
-                        os.remove("./stop");
+                        #os.remove("./stop");
                     else:
                         print "CONTINUE"
                         if args.scp:
@@ -74,7 +110,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                                 print fname
                                 subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                                 print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
-                        self.setStopFile(ip,myIP,event.pathname)
+                        self.setStopFileUniq(ip,myIP,event.pathname)
                     subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
                     readnet.logIPtraffic(ip)
 
