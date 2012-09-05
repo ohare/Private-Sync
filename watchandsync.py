@@ -55,13 +55,13 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 if l[0] == ip and l[1] == path and ts1 <= ts2:
                     stop = True
                 else:
-                    stopIPs[l[0]] = l[1]
+                    stopIPs[l[0]] = [l[1]," ".join(l[2:])]
 
             if stop:
                 f.close()
                 f = open(files,"w")
                 for k in stopIPs.keys():
-                    f.write(k + " " + stopIPs[k])
+                    f.write(k + " " + stopIPs[k][0] + " " + stopIPs[k][1] + "\n")
                 f.close()
                 stopIPs.clear()
                 return True
