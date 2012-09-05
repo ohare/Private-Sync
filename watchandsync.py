@@ -46,9 +46,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
             f = open(files,"r");
             for line in f:
                 l = line.split()
+                print "Path: " + str(path)
                 print "local modtime: " + modTime
                 print "Stop modtime: " + str(l[2:])
-                print "local <= stop: " + str(modTime <= l[2:])
+                print "local <= stop: " + str(modTime <= " ".join(l[2:]))
                 if l[0] == ip and l[1] == path and modTime <= l[2:]:
                     stop = True
                 else:
