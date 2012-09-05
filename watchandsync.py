@@ -3,6 +3,7 @@ import readnet
 
 wm = pyinotify.WatchManager()
 watchedfolders = {}
+homepath = "/home/cal/Documents/Private-Sync/"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c","--scp",action="store_true",help="Copy using scp")
@@ -80,12 +81,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
     #Set flag on other server telling it not to immediately try and copy data here
     
     def setStopFileUniq(self,ip,myIP,path):
-        w = open("/home/cal/Documents/Private-Sync/whoami","r")
+        w = open(homepath + "whoami","r")
         nodename = w.read()
         nodename = nodename[0].upper()
         w.close()
-        subprocess.call(["ssh",ip,"mv /home/cal/Documents/Private-Sync/Stop-" + nodename + " /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; mv /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp /home/cal/Documents/Private-Sync/Stop-" + nodename])
-        print "ssh",ip,"mv /home/cal/Documents/Private-Sync/Stop-" + nodename + " /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; mv /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp /home/cal/Documents/Private-Sync/Stop-" + nodename])
+        subprocess.call(["ssh",ip,"mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
+        print "ssh",ip,"mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
 
     def setStopFile(self,ip,myIP,path):
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> /home/cal/Documents/Private-Sync/stop"])
