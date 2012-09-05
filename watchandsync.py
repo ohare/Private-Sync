@@ -42,33 +42,38 @@ class MyEventHandler(pyinotify.ProcessEvent):
         stopIPs = {}
         stop = False
         modTime = self.getModTime(path)
-        for files in glob.glob("Stop-*"):
-            f = open(files,"r");
-            for line in f:
-                l = line.split()
-                print "Path: " + str(path)
-                print "local modtime: " + modTime
-                print "Stop " + l[1] + " modtime: " + str(l[2:])
-                ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
-                ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
-                print "local <= stop: " + str(ts1 <= ts2)
-                if l[0] == ip and l[1] == path and ts1 <= ts2:
-                    stop = True
-                else:
-                    stopIPs[l[0]] = [l[1]," ".join(l[2:])]
+        while True:
+            tmpcount = 0
+            for files in glob.glob("Stop-*"):
+                if ".tmp" in files:
+                    tmpcount += 1
+                    break
+                f = open(files,"r");
+                for line in f:
+                    l = line.split()
+                    print "local " + str(path) + " modtime: " + modTime
+                    print "Stop " + l[1] + " modtime: " + str(l[2:])
+                    ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
+                    ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
+                    print "local <= stop: " + str(ts1 <= ts2)
+                    if l[0] == ip and l[1] == path and ts1 <= ts2:
+                        stop = True
+                    else:
+                        stopIPs[l[0]] = [l[1]," ".join(l[2:])]
 
-            if stop:
-                f.close()
-                f = open(files,"w")
-                for k in stopIPs.keys():
-                    f.write(k + " " + stopIPs[k][0] + " " + stopIPs[k][1] + "\n")
+                if stop:
+                    f.close()
+                    f = open(files,"w")
+                    for k in stopIPs.keys():
+                        f.write(k + " " + stopIPs[k][0] + " " + stopIPs[k][1] + "\n")
+                    f.close()
+                    stopIPs.clear()
+                    return True
+
                 f.close()
                 stopIPs.clear()
-                return True
-
-            f.close()
-            stopIPs.clear()
-
+                if tmpcount == 0:
+                    break
 
         return False
 
@@ -79,8 +84,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
         nodename = w.read()
         nodename = nodename[0].upper()
         w.close()
-        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename])
-        print "ssh",ip,"echo " + myIP + " " + path  + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename
+        subprocess.call(["ssh",ip,"mv /home/cal/Documents/Private-Sync/Stop-" + nodename + " /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; mv /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp /home/cal/Documents/Private-Sync/Stop-" + nodename])
+        print "ssh",ip,"mv /home/cal/Documents/Private-Sync/Stop-" + nodename + " /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp; mv /home/cal/Documents/Private-Sync/Stop-" + nodename + ".tmp /home/cal/Documents/Private-Sync/Stop-" + nodename])
 
     def setStopFile(self,ip,myIP,path):
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> /home/cal/Documents/Private-Sync/stop"])
