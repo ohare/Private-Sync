@@ -48,7 +48,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 l = line.split()
                 print "Path: " + str(path)
                 print "local modtime: " + modTime
-                print "Stop modtime: " + str(l[2:])
+                print "Stop " + l[1] + " modtime: " + str(l[2:])
                 ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
                 ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
                 print "local <= stop: " + str(ts1 <= ts2)
