@@ -73,8 +73,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
                 f.close()
                 stopIPs.clear()
-                if tmpcount == 0:
-                    break
+            if tmpcount == 0:
+                break
 
         return False
 
