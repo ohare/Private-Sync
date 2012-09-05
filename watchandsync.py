@@ -49,8 +49,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 print "Path: " + str(path)
                 print "local modtime: " + modTime
                 print "Stop modtime: " + str(l[2:])
-                print "local <= stop: " + str(modTime <= time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y"))
-                if l[0] == ip and l[1] == path and modTime <= l[2:]:
+                ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
+                ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
+                print "local <= stop: " + str(ts1 <= ts2)
+                if l[0] == ip and l[1] == path and ts1 <= ts2:
                     stop = True
                 else:
                     stopIPs[l[0]] = l[1]
