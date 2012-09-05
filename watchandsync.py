@@ -20,6 +20,13 @@ class MyEventHandler(pyinotify.ProcessEvent):
             octets[3] = "1"
         return ".".join(octets)
 
+    #Get the last modified time of a file
+    def getModTime(self,path):
+        try:
+            return time.ctime(os.path.getmtime(path))
+        except Exception, e:
+            return ""
+
     #Check for IP not to copy too
     def getStopInfo(self):
         stopIP = ["",""]
@@ -34,11 +41,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
     def inStopFile(self,ip,path):
         stopIPs = {}
         stop = False
+        modTime = self.getModTime(path)
         for files in glob.glob("Stop-*"):
             f = open(files,"r");
             for line in f:
                 l = line.split()
-                if l[0] == ip and l[1] == path:
+                if l[0] == ip and l[1] == path and modTime <= l[2:]:
                     stop = True
                 else:
                     stopIPs[l[0]] = l[1]
@@ -65,19 +73,18 @@ class MyEventHandler(pyinotify.ProcessEvent):
         nodename = w.read()
         nodename = nodename[0].upper()
         w.close()
-        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + ">> /home/cal/Documents/Private-Sync/Stop-" + nodename])
-        print "ssh",ip,"echo " + myIP + " " + path + ">> /home/cal/Documents/Private-Sync/stop-" + nodename
+        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename])
+        print "ssh",ip,"echo " + myIP + " " + path  + " " + self.getModTime(path) + " >> /home/cal/Documents/Private-Sync/Stop-" + nodename
 
     def setStopFile(self,ip,myIP,path):
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> /home/cal/Documents/Private-Sync/stop"])
         print "ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"
 
-    def process_IN_CREATE(self, event):
-        print "Create:",event.pathname
-    def process_IN_DELETE(self, event):
-        print "Delete:",event.pathname
-    def process_IN_CREATE(self, event):
-        print "Modify:",event.pathname
+    def rmTree(self,path):
+        subprocess.call(["ssh",ip,"rm -r '" + path + "'"])
+        print "ssh",ip,"rm -r '" + path + "'"
+
+    def fileSync(self,event):
         if os.path.isdir(event.pathname):
             print "Watching: ",event.pathname
         for folder in watchedfolders.keys():
@@ -99,11 +106,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     else:
                         print "CONTINUE"
                         if args.scp:
-                            subprocess.call(["scp","-r",folder,ip + ":" + path])
-                            print "scp","-r",folder,ip + ":" + path
+                            subprocess.call(["scp","-rp",folder,ip + ":" + path])
+                            print "scp","-rp",folder,ip + ":" + path
                         elif args.rsync:
-                                subprocess.call(["rsync","-r",folder,ip + ":" + path])
-                                print "rsync","-r",folder,ip + ":" + path
+                                subprocess.call(["rsync","-rt",folder,ip + ":" + path])
+                                print "rsync","-rt",folder,ip + ":" + path
                         else:
                                 time.sleep(5)
                                 fparts = folder.split("/")
@@ -114,6 +121,15 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         self.setStopFileUniq(ip,myIP,event.pathname)
                     subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
                     readnet.logIPtraffic(ip)
+
+    #def process_IN_CREATE(self, event):
+    #    print "Create:",event.pathname
+    def process_IN_DELETE(self, event):
+        print "Delete:",event.pathname
+        self.fileSync(event)
+    def process_IN_CREATE(self, event):
+        print "Modify:",event.pathname
+        self.fileSync(event)
 
 
 def main():
