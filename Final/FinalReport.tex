@@ -372,6 +372,12 @@ of two nodes trying to copy changes to each other. This was particularly
 a problem when using scp to copy. Unison was ok because it could detect
 that no changes had occur between the nodes.
 
+\section{How often to sync}
+I noticed vim would create temporary files  (4913), move files, etc.
+So how often should I sync once I noticed a change.
+
+Modification time on files to help determine whether to sync
+
 \section{Future work}
 \subsection{Full node graph replication}
 I am going to be looking into the most efficient way to
@@ -544,42 +550,42 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
     \centering
     \includegraphics[scale=0.5]{images/line-graph.png}
     \caption{Line topology}
-    \label{fig:point_comp_graph}
+    \label{fig:line_graph}
 \end{figure}
 
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/line-uni.png}
     \caption{10mb random files, 10 seconds, unison}
-    \label{fig:point_comp_graph}
+    \label{fig:line_uni_graph}
 \end{figure}
 
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/fintime.png}
     \caption{Unison, line, finishing times}
-    \label{fig:point_comp_graph}
+    \label{fig:fintime_graph}
 \end{figure}
 
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/line-scp-back.png}
     \caption{Line, scp, back and forth}
-    \label{fig:point_comp_graph}
+    \label{fig:line_scp_back_forth_graph}
 \end{figure}
 
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/rand-txt-2sleep.png}
     \caption{2 seconds sleep text file}
-    \label{fig:point_comp_graph}
+    \label{fig:2sleep_graph}
 \end{figure}
 
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/5sleep-bad.png}
     \caption{5 seconds sleep text file}
-    \label{fig:point_comp_graph}
+    \label{fig:5sleep_graph}
 \end{figure}
 
 \end{document}
