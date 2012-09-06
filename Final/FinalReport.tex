@@ -370,13 +370,31 @@ nodes that it was connected to. The problem was that if the changes
 came from one of its neighbour nodes this would cause an infinite loop
 of two nodes trying to copy changes to each other. This was particularly 
 a problem when using scp to copy. Unison was ok because it could detect
-that no changes had occur between the nodes.
+that no changes had occur between the nodes and would stop syncing after
+one check (which had minimal overhead).
+
+I used a config file to get around this problem. Each time a node
+synchronised with another node it would write out a config file telling
+the other node what files had been copied, who sent them and what the
+modification time of the files were. In this way a node could check
+if it was about to synchronise a file back to the node it recieved
+the file from or if it had local changes that were newer than a recieved
+file it could continue with its sync.
+
+\section{Sub-nodes}
+I chose to classify directories as 'sub nodes' of a graph. The reason i choose
+directories is because they are easy to manage a config file of directories to
+keep in sync (from the users point of view). If we wanted to only synchronize
+certain files in a directory we could write a unison config file with exclusions/inclusions
+in it. The other reason directories are a good choice is because I can have
+different directories in different places on different file systems by using
+symlinks. I wanted to see how the freshness of different sub-nodes varied between
+nodes when the program was running.
 
 \section{How often to sync}
 I noticed vim would create temporary files  (4913), move files, etc.
 So how often should I sync once I noticed a change.
 
-Modification time on files to help determine whether to sync
 
 \section{Future work}
 \subsection{Full node graph replication}
