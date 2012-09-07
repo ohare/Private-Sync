@@ -8,8 +8,9 @@ def main():
     max_mb = 0
     max_name = ""
 
-    #divide_by = 1024/1024
-    divide_by = 1
+    divide_by = 1024 * 1024
+    print divide_by
+    #divide_by = 1
 
     """
     os.chdir("./logs")

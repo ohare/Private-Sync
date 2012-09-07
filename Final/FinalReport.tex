@@ -25,7 +25,7 @@
 \maketitle
 
 \section{Abstract}
-Private decentralised dropbox. Node to node replication, unison.
+Private decentralised Dropbox. Node to node replication, unison.
 
 \newpage
 
@@ -44,7 +44,9 @@ no centralised server, just many cooperating client nodes. However it should be
 possible to configure the system to be centralised if the user wants to. The
 system should be flexible in this regard.
 
-\item Allow file synchronisation between multiple clients---not just point-to-point between two clients. Clients may be
+\item Allow file synchronisation between multiple clients not just point-to-point
+between two clients. Although still synchronise between two Clients as this is the
+basis for multiple client synchronisation. Clients may be
 running different operating systems. Clients may run on different networks, with different costs of access, including being disconnected from the Internet at times.
 
 \item Allow for fine-grained user control for the majority of the program's
@@ -81,7 +83,7 @@ Justice for alleged copyright infringement. According to
 the founder, 100 million users lost access to 12 billion
 unique files\cite{dotcom-trial}.
 
-The are other possible approaches to replicating files
+There are other possible approaches to replicating files
 across multiple computers. For example you could use
 version control systems like Subversion, Mercurial, and
 CVS. One problem with these is that they are
@@ -93,6 +95,9 @@ Cloud based solutions are also often centralised.
 Another problem is that even if they are decentralised
 like git, they won't automatically push updates to other
 working sets.
+
+%How about git? It is a distributed tool.
+%Auto push updates to other working sets can be done with a few crond scripts
 
 %Add more here?
 
@@ -137,6 +142,8 @@ I want to feel confident that I will always be able to access
 my data even if Dropbox closes down or my internet connection
 dies.
 
+%Look at this it is repetitive of above section
+
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
@@ -151,7 +158,8 @@ dies.
     \end{subfigure}
 \end{figure}
 
-The personal graph has been described above, the corporate graph
+The graph of a personal network has been described above, 
+the graph of a  corporate network
 is another example use case. It will have many of the same
 basic needs as the personal graph. The coloured rings represent
 the need for different policies for different machines in a network.
@@ -290,7 +298,7 @@ change in the file system below the watched directory.
     \item FSEvents
         \begin{itemize}
         \item FSEvents is an API in MacOS X\cite{fsevents-intro}. It is similar
-        to inotify in that it provides a notifaction to other
+        to inotify in that it provides a notification to other
         applications when a directory is changed however
         it does not inform you which file in the directory
         was changed. This does not matter for my
@@ -364,35 +372,35 @@ clobbering the files on the other side.
 
 \section{When to stop copying}
 After testing my program on some simple topologies one problem became
-clear. Each node would notice changes had occured to a folder
+clear. Each node would notice changes had occurred to a folder
 it was watching and would then try to copy these changes to other
 nodes that it was connected to. The problem was that if the changes
 came from one of its neighbour nodes this would cause an infinite loop
 of two nodes trying to copy changes to each other. This was particularly 
-a problem when using scp to copy. Unison was ok because it could detect
-that no changes had occur between the nodes and would stop syncing after
-one check (which had minimal overhead).
+a problem when using scp to copy. When using Unison this was not as much of
+a problem because it could detect that no changes had occur between the nodes
+and would stop syncing after one check (which had minimal overhead).
 
-I used a config file to get around this problem. Each time a node
-synchronised with another node it would write out a config file telling
+I used a configuration file to get around this problem. Each time a node
+synchronised with another node it would write out a configuration file telling
 the other node what files had been copied, who sent them and what the
 modification time of the files were. In this way a node could check
-if it was about to synchronise a file back to the node it recieved
-the file from or if it had local changes that were newer than a recieved
+if it was about to synchronise a file back to the node it received
+the file from or if it had local changes that were newer than a received
 file it could continue with its sync.
 
 \section{Sub-nodes}
 I chose to classify directories as 'sub nodes' of a graph. The reason i choose
-directories is because they are easy to manage a config file of directories to
+directories is because they are easy to manage a configuration file of directories to
 keep in sync (from the users point of view). If we wanted to only synchronize
-certain files in a directory we could write a unison config file with exclusions/inclusions
-in it. The other reason directories are a good choice is because I can have
-different directories in different places on different file systems by using
-symlinks. I wanted to see how the freshness of different sub-nodes varied between
-nodes when the program was running.
+certain files in a directory we could write a unison configuration file with 
+exclusions/inclusions in it. The other reason directories are a good choice
+is because I can have different directories in different places on different
+file systems by using symbolic links. I wanted to see how the freshness of different
+sub-nodes varied between nodes when the program was running.
 
 \section{How often to sync}
-I noticed vim would create temporary files  (4913), move files, etc.
+I noticed Vim would create temporary files  (4913), move files, etc.
 So how often should I sync once I noticed a change.
 
 

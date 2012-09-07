@@ -1,11 +1,14 @@
 import subprocess, datetime, socket, argparse
 
+#homepath = "/home/cal/Documents/Private-Sync/"
+homepath = "/Users/calum/Documents/Private-Sync/"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-i',action="store",dest='ip',help='IP address to record for')
 
 interfacenames = []
 
-w = open("/home/cal/Documents/Private-Sync/whoami","r")
+w = open(homepath + "whoami","r")
 nodename = w.read()
 nodename = nodename[0]
 w.close()
@@ -73,7 +76,7 @@ def writeIface(iface):
                 if(count == 2):
                     interface = False
                     if interfacename == iface:
-                        f = open("/home/cal/Documents/Private-Sync/log/" \
+                        f = open(homepath + "log/" \
                         + "node" + nodename.upper() + "-" \
                         + iface + ".log",'a')
                         f.write(str(datetime.datetime.now()) + " " + interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")
@@ -113,7 +116,7 @@ def main():
                 count += 1
                 if(count == 2):
                     interface = False
-                    f = open("/home/cal/Documents/Private-Sync/log/" \
+                    f = open(homepath + "log/" \
                     + str(socket.gethostname()) + "-" \
                     + interfacename + ".log",'a')
                     f.write(str(datetime.datetime.now()) + " " + interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")

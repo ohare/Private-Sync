@@ -4,11 +4,22 @@ import readnet
 wm = pyinotify.WatchManager()
 watchedfolders = {}
 homepath = "/home/cal/Documents/Private-Sync/"
+#homepath = "/Users/calum/Documents/Private-Sync/"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c","--scp",action="store_true",help="Copy using scp")
 parser.add_argument("-r","--rsync",action="store_true",help="Copy using rsync")
 args = parser.parse_args()
+
+class Tools():
+    def updateFolderInfo(self, wfolds):
+        f = open('./folders.dat','w')
+        for fold in wfolds:
+            f.write(fold + " ")
+            for i in range(0,len(wfolds[fold])-1):
+                f.write(wfolds[fold][i] + " ")
+            f.write(wfolds[fold][len(wfolds[fold])-1] + "\n")
+        f.close()
 
 class MyEventHandler(pyinotify.ProcessEvent):
     def flipIP(self,ip):
@@ -89,8 +100,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "ssh",ip,"mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
 
     def setStopFile(self,ip,myIP,path):
-        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> /home/cal/Documents/Private-Sync/stop"])
-        print "ssh",ip,"echo " + myIP + "> /home/cal/Documents/Private-Sync/stop"
+        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> " + homepath + "stop"])
+        print "ssh",ip,"echo " + myIP + "> " + homepath + "stop"
 
     def rmTree(self,path):
         subprocess.call(["ssh",ip,"rm -r '" + path + "'"])
@@ -107,8 +118,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     #print ip + " " + path
                     readnet.logIPtraffic(ip)
                     myIP = readnet.getMyIP(ip)
-                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
-                    print "ssh",ip,"'/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP + "'"
+                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
+                    print "ssh",ip,"'/usr/bin/python " + homepath + "readnet.py -i " + myIP + "'"
                     #stopIP = self.getStopInfo()
                     #print "STOP: " + stopIP[0] + " " + stopIP[1]
                     #if stopIP[0] == ip and stopIP[1] == event.pathname:
@@ -131,7 +142,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                                 subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                                 print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
                         self.setStopFileUniq(ip,myIP,event.pathname)
-                    subprocess.call(["ssh",ip,"/usr/bin/python /home/cal/Documents/Private-Sync/readnet.py -i " + myIP])
+                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
                     readnet.logIPtraffic(ip)
 
     #def process_IN_CREATE(self, event):
@@ -145,7 +156,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
 
 def main():
-
+    t = Tools()
     f = open('./folderstowatch','r')
 
     for folder in f:
@@ -159,6 +170,29 @@ def main():
                 watchedfolders[info[0].rstrip()] = []
             watchedfolders[info[0].rstrip()].append(info[1])
             watchedfolders[info[0].rstrip()].append(info[2])
+            watchedfolders[info[0].rstrip()].append(info[3])
+    f.close()
+
+    f.open('./folders.dat','r')
+    for folder in f:
+        if(folder[0] == '#'):
+            pass
+        else:
+            info = folder.split()
+            if info[0] in watchedfolders.keys():
+                watchedfolders[info[0]].clear()
+                wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
+                print "Watching: ", info[0].rstrip()
+                if info[0] not in watchedfolders.keys():
+                    watchedfolders[info[0].rstrip()] = []
+                watchedfolders[info[0].rstrip()].append(info[1])
+                watchedfolders[info[0].rstrip()].append(info[2])
+                watchedfolders[info[0].rstrip()].append(info[3])
+            else:
+                print "Removing: " + info[0]
+    f.close()
+
+    t.updateFolderInfo(watchedfolders)
 
     #print watchedfolders
     eh = MyEventHandler()

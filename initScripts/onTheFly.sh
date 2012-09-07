@@ -7,7 +7,7 @@ ethcountarr=(1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-foldername="steady"
+foldername="round"
 
 function clear_ifaces() {
     i=0
@@ -47,6 +47,24 @@ function vbmMOD {
     echo "VBoxManage modifyvm $1 --nic$3 intnet"
     VBoxManage modifyvm $1 --intnet$3 $2
     echo "VBoxManage modifyvm $1 --intnet$3 $2"
+}
+
+function gatherLogs {
+    index=0
+    while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
+        scp cal@${vm_addr_arr[$index]}:/home/cal/Documents/Private-Sync/log/* ../logs/
+        echo "scp cal@${vm_addr_arr[$index]}:/home/cal/Documents/Private-Sync/log/* ../logs/"
+        let "index++"
+    done
+}
+
+function clean {
+    index=0
+    while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
+        ssh cal@${vm_addr_arr[$index]} "rm /home/cal/Documents/Private-Sync/log/*; rm /home/cal/Documents/Private-Sync/Stop-*"
+        echo "cal@${vm_addr_arr[$index]} \"rm /home/cal/Documents/Private-Sync/log/*; rm /home/cal/Documents/Private-Sync/Stop-*\""
+        let "index++"
+    done
 }
 
 function sendKeys {
@@ -123,6 +141,10 @@ elif [ $2 == "if" ]; then
     done <graphs/$1
 elif [ $2 == "key" ]; then
     sendKeys
+elif [ $2 == "gather" ]; then
+    gatherLogs
+elif [ $2 == "clean" ]; then
+    clean
 else
     echo "Oops try again"
 fi
