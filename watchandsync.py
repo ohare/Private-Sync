@@ -181,7 +181,7 @@ def main():
             else:
                 info = folder.split()
                 if info[0] in watchedfolders.keys():
-                    watchedfolders[info[0]].clear()
+                    watchedfolders[info[0]] = []
                     wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
                     print "Watching: ", info[0].rstrip()
                     if info[0] not in watchedfolders.keys():
