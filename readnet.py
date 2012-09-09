@@ -1,7 +1,7 @@
 import subprocess, datetime, socket, argparse
 
-#homepath = "/home/cal/Documents/Private-Sync/"
-homepath = "/Users/calum/Documents/Private-Sync/"
+homepath = "/home/cal/Documents/Private-Sync/"
+#homepath = "/Users/calum/Documents/Private-Sync/"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i',action="store",dest='ip',help='IP address to record for')
