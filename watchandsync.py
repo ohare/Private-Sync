@@ -173,24 +173,27 @@ def main():
             watchedfolders[info[0].rstrip()].append(info[3])
     f.close()
 
-    f = open('./folders.dat','r')
-    for folder in f:
-        if(folder[0] == '#'):
-            pass
-        else:
-            info = folder.split()
-            if info[0] in watchedfolders.keys():
-                watchedfolders[info[0]].clear()
-                wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
-                print "Watching: ", info[0].rstrip()
-                if info[0] not in watchedfolders.keys():
-                    watchedfolders[info[0].rstrip()] = []
-                watchedfolders[info[0].rstrip()].append(info[1])
-                watchedfolders[info[0].rstrip()].append(info[2])
-                watchedfolders[info[0].rstrip()].append(info[3])
+    try:
+        f = open('./folders.dat','r')
+        for folder in f:
+            if(folder[0] == '#'):
+                pass
             else:
-                print "Removing: " + info[0]
-    f.close()
+                info = folder.split()
+                if info[0] in watchedfolders.keys():
+                    watchedfolders[info[0]].clear()
+                    wm.add_watch(info[0].rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
+                    print "Watching: ", info[0].rstrip()
+                    if info[0] not in watchedfolders.keys():
+                        watchedfolders[info[0].rstrip()] = []
+                    watchedfolders[info[0].rstrip()].append(info[1])
+                    watchedfolders[info[0].rstrip()].append(info[2])
+                    watchedfolders[info[0].rstrip()].append(info[3])
+                else:
+                    print "Removing: " + info[0]
+        f.close()
+    except IOError, e:
+        print "Folders.dat does not exist, skipping"
 
     t.updateFolderInfo(watchedfolders)
 
