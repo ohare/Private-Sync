@@ -173,7 +173,7 @@ def main():
             watchedfolders[info[0].rstrip()].append(info[3])
     f.close()
 
-    f.open('./folders.dat','r')
+    f = open('./folders.dat','r')
     for folder in f:
         if(folder[0] == '#'):
             pass

@@ -1,6 +1,7 @@
 vm_name_arr=("Ubuntu-Cyan" "Ubuntu-Cyclone" "Ubuntu-Wild" "Ubuntu-Spheros")
 vm_addr_arr=("192.168.0.17" "192.168.0.22" "192.168.0.19" "192.168.0.14")
 intnetarr=("lion" "tiger" "cat" "dog" "fish" "kiwi")
+#These should all be in one big dictionary apart from inet names
 letterarr=("a" "b" "c" "d" "e" "f" "g")
 ifcountarr=(2 2 2 2 2 2 2 2 2)
 ethcountarr=(1 1 1 1 1 1 1 1 1)
@@ -25,7 +26,16 @@ function clear_ifaces() {
 function clear_watched_folders() {
     i=0
     while [ "$i" -lt "${#vm_addr_arr[@]}" ]; do
-        ssh cal@${vm_addr_arr[$i]} "echo \"#Local folder path to watch, host to copy to, remote dir to copy to\" > /home/cal/Documents/Private-Sync/folderstowatch; echo ${letterarr[$i]} > /home/cal/Documents/Private-Sync/whoami"
+        ssh cal@${vm_addr_arr[$i]} "echo \"#Local folder path to watch, host to copy to, remote dir to copy to, min time between syncs\" > /home/cal/Documents/Private-Sync/folderstowatch; echo ${letterarr[$i]} > /home/cal/Documents/Private-Sync/whoami"
+        let "i++"
+    done
+}
+
+function git_pull() {
+    i=0
+    while [ "$i" -lt "${#vm_addr_arr[@]}" ]; do
+        echo "ssh cal@${vm_addr_arr[$i]} \"cd /home/cal/Documents/Private-Sync; git pull origin master\""
+        ssh cal@${vm_addr_arr[$i]} "cd /home/cal/Documents/Private-Sync; git pull origin master"
         let "i++"
     done
 }
@@ -43,17 +53,17 @@ function search_letters() {
 }
 
 function vbmMOD {
-    VBoxManage modifyvm $1 --nic$3 intnet
     echo "VBoxManage modifyvm $1 --nic$3 intnet"
-    VBoxManage modifyvm $1 --intnet$3 $2
+    VBoxManage modifyvm $1 --nic$3 intnet
     echo "VBoxManage modifyvm $1 --intnet$3 $2"
+    VBoxManage modifyvm $1 --intnet$3 $2
 }
 
 function gatherLogs {
     index=0
     while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
-        scp cal@${vm_addr_arr[$index]}:/home/cal/Documents/Private-Sync/log/* ../logs/
         echo "scp cal@${vm_addr_arr[$index]}:/home/cal/Documents/Private-Sync/log/* ../logs/"
+        scp cal@${vm_addr_arr[$index]}:/home/cal/Documents/Private-Sync/log/* ../logs/
         let "index++"
     done
 }
@@ -61,8 +71,8 @@ function gatherLogs {
 function clean {
     index=0
     while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
-        ssh cal@${vm_addr_arr[$index]} "rm /home/cal/Documents/Private-Sync/log/*; rm /home/cal/Documents/Private-Sync/Stop-*"
         echo "cal@${vm_addr_arr[$index]} \"rm /home/cal/Documents/Private-Sync/log/*; rm /home/cal/Documents/Private-Sync/Stop-*\""
+        ssh cal@${vm_addr_arr[$index]} "rm /home/cal/Documents/Private-Sync/log/*; rm /home/cal/Documents/Private-Sync/Stop-*"
         let "index++"
     done
 }
@@ -73,8 +83,8 @@ function sendKeys {
         #ssh cal@${vm_addr_arr[$index]} "rm /home/cal/.ssh/authorized_keys"
         for file in /Users/calum/.ssh/*.pub; do
             #echo "$file"
-            cat $file | ssh cal@${vm_addr_arr[$index]} "cat >> /home/cal/.ssh/authorized_keys"
             echo "cat $file | ssh cal@${vm_addr_arr[$index]} \"cat >> /home/cal/.ssh/authorized_keys\""
+            cat $file | ssh cal@${vm_addr_arr[$index]} "cat >> /home/cal/.ssh/authorized_keys"
         done
         let "index++"
     done
@@ -86,8 +96,8 @@ function sendKeys {
 }
 
 function ifconf {
-    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
-    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo "/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/" >> /home/cal/Documents/Private-Sync/folderstowatch'"
+    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch'"
+    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
 }
 
 if [ $2 == "vm" ]; then
@@ -145,6 +155,8 @@ elif [ $2 == "gather" ]; then
     gatherLogs
 elif [ $2 == "clean" ]; then
     clean
+elif [ $2 == "pull" ]; then
+    git_pull
 else
     echo "Oops try again"
 fi
