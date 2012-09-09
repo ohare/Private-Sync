@@ -112,7 +112,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
             print "Watching: ",event.pathname
         for folder in watchedfolders.keys():
             if folder in event.pathname:
-                for i in range(0, len(watchedfolders[folder]),2):
+                for i in range(0, len(watchedfolders[folder]),3):
                     ip = watchedfolders[folder][i]
                     path = watchedfolders[folder][i+1]
                     #print ip + " " + path
