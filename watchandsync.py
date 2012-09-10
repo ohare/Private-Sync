@@ -90,7 +90,6 @@ class MyEventHandler(pyinotify.ProcessEvent):
         return False
 
     #Set flag on other server telling it not to immediately try and copy data here
-    
     def setStopFileUniq(self,ip,myIP,path):
         w = open(homepath + "whoami","r")
         nodename = w.read()
@@ -115,7 +114,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 for i in range(0, len(watchedfolders[folder]),3):
                     ip = watchedfolders[folder][i]
                     path = watchedfolders[folder][i+1]
-                    #print ip + " " + path
+                    print ip + " " + path
                     readnet.logIPtraffic(ip)
                     myIP = readnet.getMyIP(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
@@ -124,7 +123,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     #print "STOP: " + stopIP[0] + " " + stopIP[1]
                     #if stopIP[0] == ip and stopIP[1] == event.pathname:
                     if self.inStopFile(ip,event.pathname):
-                        print "STOPPED"
+                        print "STOPPED to " + ip + " " + path
                         #os.remove("./stop");
                     else:
                         print "CONTINUE"
