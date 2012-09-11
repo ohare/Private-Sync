@@ -97,6 +97,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         w.close()
         if os.path.exists(homepath + "Stop-" + nodename):
             subprocess.call(["ssh",ip,"touch " +  homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
+            print "ssh",ip,"touch " +  homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
         else:
             subprocess.call(["ssh",ip,"mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
             print "ssh",ip,"mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
