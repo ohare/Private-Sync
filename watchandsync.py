@@ -118,7 +118,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 for i in range(0, len(watchedfolders[folder]),3):
                     ip = watchedfolders[folder][i]
                     path = watchedfolders[folder][i+1]
-                    print ip + " " + path
+                    print "Current ip and path: " + ip + " " + path
                     readnet.logIPtraffic(ip)
                     myIP = readnet.getMyIP(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
@@ -141,7 +141,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                                 time.sleep(5)
                                 fparts = folder.split("/")
                                 fname = fparts[len(fparts)-1]
-                                print fname
+                                #print fname
                                 subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                                 print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
                         self.setStopFileUniq(ip,myIP,event.pathname)
@@ -152,7 +152,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
     #    print "Create:",event.pathname
     def process_IN_DELETE(self, event):
         print "Delete:",event.pathname
-        self.fileSync(event)
+        #self.fileSync(event)
     def process_IN_CREATE(self, event):
         print "Modify:",event.pathname
         self.fileSync(event)

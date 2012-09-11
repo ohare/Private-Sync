@@ -21,7 +21,7 @@ def getMyIP(ipaddr):
     for word in words:
         if word.startswith("eth"):
             interface = word
-            print interface
+            #print interface
             break
     ifconf = subprocess.check_output("ifconfig " + interface,shell=True)
     words = ifconf.split()
@@ -31,7 +31,7 @@ def getMyIP(ipaddr):
             now = True
         elif now:
             word = word.split(":")
-            print word[1]
+            #print word[1]
             return word[1]
 
 #Log interface coresponding to ipaddr
