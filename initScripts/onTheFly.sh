@@ -72,8 +72,8 @@ function gatherLogs {
 function clean {
     index=0
     while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
-        echo "cal@${vm_addr_arr[$index]} \"rm ${homepath}log/*; rm ${homepath}Stop-*; echo \"\" > ${homepath}folders.dat\""
-        ssh cal@${vm_addr_arr[$index]} "rm ${homepath}log/*; rm ${homepath}Stop-*; echo \"\" > ${homepath}folders.dat"
+        echo "ssh cal@${vm_addr_arr[$index]} \"rm ${homepath}log/*; rm ${homepath}Stop-*; rm ${homepath}folders.dat\""
+        ssh cal@${vm_addr_arr[$index]} "rm ${homepath}log/*; rm ${homepath}Stop-*; rm ${homepath}folders.dat"
         let "index++"
     done
 }
