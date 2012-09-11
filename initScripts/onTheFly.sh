@@ -158,6 +158,13 @@ elif [ $2 == "clean" ]; then
     clean
 elif [ $2 == "pull" ]; then
     git_pull
+elif [ $2 == "help" ]; then
+    echo "vm     - setup vm networking"
+    echo "if     - setup network addresses etc for each vm"
+    echo "gather - gather the logs in"
+    echo "clean  - clean out the logs/config files"
+    echo "pull   - pull the latest code from the repository to each vm"
+    echo "help   - display this help message"
 else
     echo "Oops try again"
 fi
