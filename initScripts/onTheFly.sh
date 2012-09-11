@@ -9,6 +9,7 @@ incount=1
 bigncount=2
 littlencount=1
 foldername="round"
+homepath="/home/cal/Documents/Private-Sync/"
 
 function clear_ifaces() {
     i=0
@@ -71,8 +72,8 @@ function gatherLogs {
 function clean {
     index=0
     while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
-        echo "cal@${vm_addr_arr[$index]} \"rm /home/cal/Documents/Private-Sync/log/*; rm /home/cal/Documents/Private-Sync/Stop-*\""
-        ssh cal@${vm_addr_arr[$index]} "rm /home/cal/Documents/Private-Sync/log/*; rm /home/cal/Documents/Private-Sync/Stop-*"
+        echo "cal@${vm_addr_arr[$index]} \"rm ${homepath}log/*; rm ${homepath}Stop-*; echo \"\" > ${homepath}folders.dat\""
+        ssh cal@${vm_addr_arr[$index]} "rm ${homepath}log/*; rm ${homepath}Stop-*; echo \"\" > ${homepath}folders.dat"
         let "index++"
     done
 }
