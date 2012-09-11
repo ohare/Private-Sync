@@ -1,0 +1,2 @@
+git commit -a -m "Minor"
+git push origin master
