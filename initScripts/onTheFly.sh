@@ -8,7 +8,7 @@ ethcountarr=(1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-foldername="round"
+folderpath="/home/cal/Documents/round"
 homepath="/home/cal/Documents/Private-Sync/"
 
 function clear_ifaces() {
@@ -78,6 +78,15 @@ function clean {
     done
 }
 
+function cleanFold {
+    index=0
+    while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
+        echo "ssh cal@${vm_addr_arr[$index]} \"rm ${folderpath}/*;\""
+        ssh cal@${vm_addr_arr[$index]} "rm ${folderpath}/*;"
+        let "index++"
+    done
+}
+
 function sendKeys {
     index=0
     while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
@@ -97,8 +106,8 @@ function sendKeys {
 }
 
 function ifconf {
-    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch'"
-    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"/home/cal/Documents/$foldername 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
+    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch'"
+    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
 }
 
 if [ $2 == "vm" ]; then
@@ -158,6 +167,8 @@ elif [ $2 == "clean" ]; then
     clean
 elif [ $2 == "pull" ]; then
     git_pull
+elif [ $2 == "clean-fold" ]; then
+    cleanFold
 elif [ $2 == "help" ]; then
     echo "vm     - setup vm networking"
     echo "if     - setup network addresses etc for each vm"
