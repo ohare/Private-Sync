@@ -9,7 +9,7 @@ def main():
     max_name = ""
 
     divide_by = 1024 * 1024
-    print divide_by
+    #print divide_by
     #divide_by = 1
 
     """
@@ -105,7 +105,7 @@ def main():
     timesort = []
     #print beginning_time
     for node in fin:
-        print fin[node][0]
+        #print fin[node][0]
         timesort.append(int(secondsDiff(fin[node][0],beginning_time)))
 
     timesort.sort()
