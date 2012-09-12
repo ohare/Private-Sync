@@ -400,9 +400,26 @@ file systems by using symbolic links. I wanted to see how the freshness of diffe
 sub-nodes varied between nodes when the program was running.
 
 \section{How often to sync}
-I noticed Vim would create temporary files  (4913), move files, etc.
 So how often should I sync once I noticed a change.
+If lots of small changes are occuring frequently it might be more efficient
+to perform a synchronisation after several changes have occured. Given that
+there is overhead with each synchronisation, fewer copies means less data
+sent over the network.
 
+\section{Unison and temporary files}
+I noticed that when Unison ran it created temporary files in the
+directory and once these files had been fully copied it renamed
+them to their intended name. The problem with this was that my program
+was picking up these temporary files as they were created and trying to
+copy them to the next node, only to find that these files no longer existed.
+To get around this problem I decided to implement a filter on the files to
+be copied. The program filters out files that contain ".tmp" in the filename.
+Unison is not the only program that uses temporary files. I decided that this
+should be a user set preference given that users may want to filter out different
+files.
+
+\section{inotify}
+move to, move from, delete, create, modify
 
 \section{Future work}
 \subsection{Full node graph replication}
