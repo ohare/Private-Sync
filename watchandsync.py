@@ -126,7 +126,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
     def exclusions(self, path):
         try:
-            f = open("./ignore"i,'r')
+            f = open("./ignore",'r')
             for line in f:
                 print "IG TEST: " + line
                 if line.rstrip() in path:
