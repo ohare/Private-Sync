@@ -1,0 +1,16 @@
+
+set terminal png
+
+set title "Using rsync to sync between nodes line topography"
+
+set xlabel "Time (Seconds)"
+set ylabel "Data transferred (MB)"
+
+set key bottom right
+
+set style data linespoints
+
+plot "nodeA-data" using 1:2 title 'nodeA', \
+"nodeB-data" using 1:2 title 'nodeB', \
+"nodeC-data" using 1:2 title 'nodeC', \
+"nodeD-data" using 1:2 title 'nodeD'

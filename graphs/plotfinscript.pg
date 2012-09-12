@@ -1,0 +1,13 @@
+
+set terminal png
+
+set title "Time taken for nodes to become up to date"
+
+set xlabel "Time(Seconds)"
+set ylabel "Number of nodes"
+
+set key bottom right
+
+set style data linespoints
+
+plot "node-comp-time" using 1:2 title 'nodes'
