@@ -128,7 +128,6 @@ class MyEventHandler(pyinotify.ProcessEvent):
         try:
             f = open("./ignore",'r')
             for line in f:
-                print "IG TEST: " + line
                 if line.rstrip() in path:
                     print "Ignoring: " + path
                     return True
