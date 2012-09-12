@@ -100,12 +100,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
 
     def beginCopy(self, ip):
-        nodename - self.getNodeName()
+        nodename = self.getNodeName()
         print "ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp;"
         subprocess.call(["ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp;"])
 
     def endCopy(self, ip):
-        nodename - self.getNodeName()
+        nodename = self.getNodeName()
         print "ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
         subprocess.call(["ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
 
