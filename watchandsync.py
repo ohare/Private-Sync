@@ -125,9 +125,15 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "ssh",ip,"rm -r '" + path + "'"
 
     def exclusions(self, path):
-        if ".tmp" in path:
-            print "Ignoring: " + path
-            return True
+        try:
+            f = open("./ignore")
+            for i in f:
+                if i in path:
+                    print "Ignoring: " + path
+                    return True
+            f.close()
+        except error, e:
+            print e
         return False
 
     def fileSync(self,event):
