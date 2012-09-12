@@ -68,7 +68,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
                     ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
                     print "local <= stop: " + str(ts1 <= ts2)
-                    if l[0] == ip and l[1] == path and ts1 <= ts2:
+                    #if l[0] == ip and l[1] == path and ts1 <= ts2:
+                    #If IP sending to has sent data more recently don't send back
+                    if l[0] == ip and ts1 <= ts2:
                         stop = True
                     else:
                         stopIPs[l[0]] = [l[1]," ".join(l[2:])]

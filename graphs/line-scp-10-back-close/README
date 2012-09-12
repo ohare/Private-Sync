@@ -1,0 +1,3 @@
+Script to send urandom files 10 seconds apart to host 1 in line arrangement
+Changes to program include stop file and timestamps this appears
+to have almost worked. although node 1 shouldnt recieve any data?

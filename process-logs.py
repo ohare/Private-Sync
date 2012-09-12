@@ -110,7 +110,7 @@ def main():
 
     timesort.sort()
     count = 1
-    x = open("../graphs/comp-time","a")
+    x = open("../graphs/node-comp-time","a")
     x.write("0 0\n")
     start_time = 0
     for time in timesort:
