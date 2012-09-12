@@ -148,18 +148,18 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         print "CONTINUE"
                         self.beginCopy(ip)
                         if args.scp:
-                            subprocess.call(["scp","-rp",folder,ip + ":" + path])
                             print "scp","-rp",folder,ip + ":" + path
+                            subprocess.call(["scp","-rp",folder,ip + ":" + path])
                         elif args.rsync:
-                                subprocess.call(["rsync","-rt",folder,ip + ":" + path])
-                                print "rsync","-rt",folder,ip + ":" + path
+                            print "rsync","-rt",folder,ip + ":" + path
+                            subprocess.call(["rsync","-rt",folder,ip + ":" + path])
                         else:
-                                time.sleep(5)
-                                fparts = folder.split("/")
-                                fname = fparts[len(fparts)-1]
-                                #print fname
-                                subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
-                                print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
+                            time.sleep(5)
+                            fparts = folder.split("/")
+                            fname = fparts[len(fparts)-1]
+                            #print fname
+                            print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
+                            subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                         self.setStopFileUniq(ip,myIP,event.pathname)
                         self.endCopy(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
