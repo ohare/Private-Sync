@@ -56,7 +56,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
         modTime = self.getModTime(path)
         while True:
             tmpcount = 0
+            print "Files found: " + str(glob.glob("Stop-*"))
             for files in glob.glob("Stop-*"):
+                print "File: " + str(files)
                 if ".tmp" in files:
                     tmpcount += 1
                     break
