@@ -126,7 +126,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
     def exclusions(self, path):
         if ".tmp" in path:
-            print "IgnoringL " + path
+            print "Ignoring: " + path
             return True
         return False
 
@@ -176,10 +176,19 @@ class MyEventHandler(pyinotify.ProcessEvent):
     #def process_IN_CREATE(self, event):
     #    print "Create:",event.pathname
     def process_IN_DELETE(self, event):
-        print "Delete:",event.pathname
+        print "Delete: ",event.pathname
         #self.fileSync(event)
     def process_IN_CREATE(self, event):
-        print "Modify:",event.pathname
+        print "Modify: ",event.pathname
+        self.fileSync(event)
+    def process_IN_MOVED_FROM(self, event):
+        print "Move from: ",event.pathname
+    #    self.fileSync(event)
+    def process_IN_MODIFY(self, event):
+        print "Modify: ",event.pathname
+        self.fileSync(event)
+    def process_IN_MOVED_TO(self, event):
+        print "Move to: ",event.pathname
         self.fileSync(event)
 
 
