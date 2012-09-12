@@ -103,7 +103,7 @@ def main():
     #sys.exit()
 
     timesort = []
-    print beginning_time
+    #print beginning_time
     for node in fin:
         print fin[node][0]
         timesort.append(int(secondsDiff(fin[node][0],beginning_time)))

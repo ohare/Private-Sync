@@ -95,12 +95,26 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
     #Set flag on other server telling it not to immediately try and copy data here
     def setStopFileUniq(self,ip,myIP,path):
+        nodename = self.getNodeName()
+        print "ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"
+        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
+
+    def beginCopy(self, ip):
+        nodename - self.getNodeName()
+        print "ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp;"
+        subprocess.call(["ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp;"])
+
+    def endCopy(self, ip):
+        nodename - self.getNodeName()
+        print "ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
+        subprocess.call(["ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
+
+    def getNodeName(self):
         w = open(homepath + "whoami","r")
         nodename = w.read()
         nodename = nodename[0].upper()
         w.close()
-        print "ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
-        subprocess.call(["ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp; echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
+        return nodename
 
     def setStopFile(self,ip,myIP,path):
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> " + homepath + "stop"])
@@ -132,7 +146,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         #os.remove("./stop");
                     else:
                         print "CONTINUE"
-                        self.setStopFileUniq(ip,myIP,event.pathname)
+                        self.beginCopy(ip)
                         if args.scp:
                             subprocess.call(["scp","-rp",folder,ip + ":" + path])
                             print "scp","-rp",folder,ip + ":" + path
@@ -146,6 +160,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                                 #print fname
                                 subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                                 print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
+                        self.setStopFileUniq(ip,myIP,event.pathname)
+                        self.endCopy(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
                     readnet.logIPtraffic(ip)
 
