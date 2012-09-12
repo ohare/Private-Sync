@@ -124,7 +124,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         subprocess.call(["ssh",ip,"rm -r '" + path + "'"])
         print "ssh",ip,"rm -r '" + path + "'"
 
-    def exclusions(path):
+    def exclusions(self, path):
         if ".tmp" in path:
             print "IgnoringL " + path
             return True
