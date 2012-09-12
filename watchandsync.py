@@ -132,6 +132,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         #os.remove("./stop");
                     else:
                         print "CONTINUE"
+                        self.setStopFileUniq(ip,myIP,event.pathname)
                         if args.scp:
                             subprocess.call(["scp","-rp",folder,ip + ":" + path])
                             print "scp","-rp",folder,ip + ":" + path
@@ -145,7 +146,6 @@ class MyEventHandler(pyinotify.ProcessEvent):
                                 #print fname
                                 subprocess.call(["unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname])
                                 print "unison","-batch","-confirmbigdel=false",folder,"ssh://" + ip + "/" + path + fname
-                        self.setStopFileUniq(ip,myIP,event.pathname)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
                     readnet.logIPtraffic(ip)
 
