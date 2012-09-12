@@ -124,9 +124,17 @@ class MyEventHandler(pyinotify.ProcessEvent):
         subprocess.call(["ssh",ip,"rm -r '" + path + "'"])
         print "ssh",ip,"rm -r '" + path + "'"
 
+    def exclusions(path):
+        if ".tmp" in path:
+            print "IgnoringL " + path
+            return True
+        return False
+
     def fileSync(self,event):
         if os.path.isdir(event.pathname):
             print "Watching: ",event.pathname
+        if self.exclusions(event.pathname):
+            return
         for folder in watchedfolders.keys():
             print "For each folder: " + str(folder) + " in watchedfolder keys"
             if folder in event.pathname:
