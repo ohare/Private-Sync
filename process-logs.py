@@ -24,6 +24,15 @@ class dataPoint:
     def getPath(self):
         return self.path
 
+def outputData(dataPoints_list, lastNode, namedirs):
+    total = 0
+    dataList = sorted(dataPoints_list, key=lambda dataPoint: dataPoint.time)
+    for data in dataList:
+        x = open("../graphs/" + lastNode + "-data-" + str(namedirs[data.getPath()]),"a");
+        total += data.getData()
+        x.write(str(data.getTime()) + " " + str(total/divide_by) + "\n")
+        x.close()
+
 def dataPerDirNode():
     first = True
     start_time = 0
@@ -55,15 +64,9 @@ def dataPerDirNode():
         else:
             if not firstRun:
                 #print lastNode
-                total = 0
+                #total = 0
                 #print num_mb_dict
-                dataList = sorted(dataPoints_list, key=lambda dataPoint: dataPoint.time)
-                for data in dataList:
-                    x = open("../graphs/" + lastNode + "-data-" + str(namedirs[data.getPath()]),"a");
-                    total += data.getData()
-                    x.write(str(data.getTime()) + " " + str(total/divide_by) + "\n")
-                    x.close()
-
+                outputData(dataPoints_list,lastNode,namedirs)
                 #x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
                 #for key in sorted(num_mb_dict.iterkeys()):
                 #    total += num_mb_dict[key]
@@ -76,7 +79,6 @@ def dataPerDirNode():
             else:
                 firstRun = False
         prev = 0
-        total = 0
         num_mb_dict = {}
         for line in f:
             l = line.split()
@@ -132,15 +134,16 @@ def dataPerDirNode():
         f.close();
         count += 1
 
-    x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
-    total = 0
+    outputData(dataPoints_list,lastNode,namedirs)
+    #x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
+    #total = 0
     #print num_mb_dict
     #print lastNode
-    for key in sorted(num_mb_dict.iterkeys()):
-        total += num_mb_dict[key]
+    #for key in sorted(num_mb_dict.iterkeys()):
+    #    total += num_mb_dict[key]
         #print str(key) + " " + str(total/divide_by)
-        x.write(str(key) + " " + str(total/divide_by) + "\n")
-    x.close()
+    #    x.write(str(key) + " " + str(total/divide_by) + "\n")
+    #x.close()
 
     #sys.exit()
 
