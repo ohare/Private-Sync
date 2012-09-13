@@ -5,6 +5,7 @@ homepath = "/home/cal/Documents/Private-Sync/"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i',action="store",dest='ip',help='IP address to record for')
+parser.add_argument('-f',action="store",dest='fold',help='Folder to record for')
 
 interfacenames = []
 
@@ -130,7 +131,7 @@ def main():
 if __name__ == "__main__":
     args = parser.parse_args()
     if args.ip != None:
-        logIPtraffic(args.ip)
+        logIPtraffic(args.ip, args.fold)
         #getMyIP(args.ip)
     else:
         pass

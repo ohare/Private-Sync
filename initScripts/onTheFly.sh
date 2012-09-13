@@ -8,7 +8,8 @@ ethcountarr=(1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-folderpath="/home/cal/Documents/round"
+folderpath="/home/cal/Documents/first"
+folderpath2="/home/cal/Documents/second"
 homepath="/home/cal/Documents/Private-Sync/"
 
 function clear_ifaces() {
@@ -110,6 +111,11 @@ function ifconf {
     ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
 }
 
+function ifconf2 {
+    echo "ssh cal@$1 \"sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch; echo \"$folderpath2 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch\" < /dev/null"
+    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch; echo \"$folderpath2 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
+}
+
 if [ $2 == "vm" ]; then
     clear_ifaces
 
@@ -159,6 +165,32 @@ elif [ $2 == "if" ]; then
             (( littlencount-- ))
         fi
     done <graphs/$1
+elif [ $2 == "if2" ]; then
+    clear_watched_folders
+
+    while read line         
+    do         
+        first=$(echo "$line" | awk '{print $1}')
+        last=$(echo "$line" | awk '{print $(NF)}' | sed 's/[;]//g')
+        echo "$first and $last"
+        index=$(search_letters $first)
+        if [ "$index" = "None" ]; then
+            #echo "None"
+            :
+        else
+            ifconf2 ${vm_addr_arr[$index]} ${ethcountarr[$index]} $bigncount $littlencount $(( $littlencount+1 ))
+            #echo "in: $index"
+            (( ethcountarr[$index]++ ))
+            (( littlencount++ ))
+            index=$(search_letters $last)
+            ifconf2 ${vm_addr_arr[$index]} ${ethcountarr[$index]} $bigncount $littlencount $(( $littlencount-1 ))
+            #echo "in: $index"
+            (( ethcountarr[$index]++ ))
+            incount=$incount+1
+            (( bigncount++ ))
+            (( littlencount-- ))
+        fi
+    done <graphs/$1
 elif [ $2 == "key" ]; then
     sendKeys
 elif [ $2 == "gather" ]; then
@@ -170,12 +202,14 @@ elif [ $2 == "pull" ]; then
 elif [ $2 == "clean-fold" ]; then
     cleanFold
 elif [ $2 == "help" ]; then
-    echo "vm     - setup vm networking"
-    echo "if     - setup network addresses etc for each vm"
-    echo "gather - gather the logs in"
-    echo "clean  - clean out the logs/config files"
-    echo "pull   - pull the latest code from the repository to each vm"
-    echo "help   - display this help message"
+    echo "vm          - setup vm networking"
+    echo "if          - setup network addresses etc for each vm"
+    echo "if2         - setup network addresses etc for each vm for two folders"
+    echo "gather      - gather the logs in"
+    echo "clean       - clean out the logs/config files"
+    echo "clean-fold  - clean out the files folder"
+    echo "pull        - pull the latest code from the repository to each vm"
+    echo "help        - display this help message"
 else
     echo "Oops try again"
 fi
