@@ -23,6 +23,7 @@ def dataPerDirNode():
     lastNode = ""
     num_mb_dict = {}
     beginning_time = -1
+    firstRun = True
     for files in glob.glob("*"):
         #print files
         #if files == max_name:
@@ -31,23 +32,27 @@ def dataPerDirNode():
         if names[0] == lastNode:
             pass
         else:
-            #print lastNode
-            total = 0
-            x = open("../graphs/" + lastNode + "-data-" + namedirs[curDir],"a");
-            #print num_mb_dict
-            for key in sorted(num_mb_dict.iterkeys()):
-                total += num_mb_dict[key]
-                #print num_mb_dict[key]
-                #print str(key) + " " + str(total/divide_by)
-                x.write(str(key) + " " + str(total/divide_by) + "\n")
-            num_mb_dict = {}
-            x.close()
+            if not firstRun:
+                #print lastNode
+                total = 0
+                x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
+                #print num_mb_dict
+                for key in sorted(num_mb_dict.iterkeys()):
+                    total += num_mb_dict[key]
+                    #print num_mb_dict[key]
+                    #print str(key) + " " + str(total/divide_by)
+                    x.write(str(key) + " " + str(total/divide_by) + "\n")
+                num_mb_dict = {}
+                x.close()
+            else:
+                firstRun = False
         prev = 0
         for line in f:
             l = line.split()
             if l[0] == '#D':
-                namedirs[l[1]] = dircount
-                dircount++
+                if l[1] not in namedirs.keys():
+                    namedirs[l[1]] = dircount
+                    dircount += 1
                 curDir = l[1]
             elif l[0] != '#':
                 #print line
@@ -86,7 +91,7 @@ def dataPerDirNode():
         f.close();
         count += 1
 
-    x = open("../graphs/" + lastNode + "-data-" + namedirs[curDir],"a");
+    x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
     total = 0
     #print num_mb_dict
     #print lastNode
@@ -241,6 +246,9 @@ def dataPerNode():
     x.close()
 
     print "Success"
+
+def main():
+   dataPerDirNode() 
 
 def secondsDiff(date1, date2):
     FMT = '%H:%M:%S.%f'

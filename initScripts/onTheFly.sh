@@ -8,8 +8,8 @@ ethcountarr=(1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-folderpath="/home/cal/Documents/first"
-folderpath2="/home/cal/Documents/second"
+folderpath="/home/cal/Documents/first2"
+folderpath2="/home/cal/Documents/second2"
 homepath="/home/cal/Documents/Private-Sync/"
 
 function clear_ifaces() {
