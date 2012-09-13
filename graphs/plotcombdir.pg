@@ -10,5 +10,5 @@ set key bottom right
 
 set style data linespoints
 
-plot "< cat nodeA-data-1 nodeB-data-1 nodeC-data-1 nodeD-data-1 | sort -n" using 1:2 title 'Directory 1', \
-"< cat nodeA-data-2 nodeB-data-2 nodeC-data-2 nodeD-data-2 | sort -n" using 1:2 title 'Directory 2'
+plot "nodeCombDir-Data-1" using 1:2 title 'Directory 1', \
+"nodeCombDir-Data-2" using 1:2 title 'Directory 2'

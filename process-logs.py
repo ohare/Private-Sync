@@ -24,11 +24,14 @@ class dataPoint:
     def getPath(self):
         return self.path
 
-def outputData(dataPoints_list, lastNode, namedirs):
+def outputData(dataPoints_list, lastNode, namedirs, outputType):
     total = 0
     dataList = sorted(dataPoints_list, key=lambda dataPoint: dataPoint.time)
     for data in dataList:
-        x = open("../graphs/" + lastNode + "-data-" + str(namedirs[data.getPath()]),"a");
+        if outputType == "individual":
+            x = open("../graphs/" + lastNode + "-data-" + str(namedirs[data.getPath()]),"a");
+        elif outputType == "combined":
+            x = open("../graphs/nodeCombDir-data-" + str(namedirs[data.getPath()]),"a");
         total += data.getData()
         x.write(str(data.getTime()) + " " + str(total/divide_by) + "\n")
         x.close()
@@ -44,7 +47,6 @@ def dataPerDirNode():
     namedirs = {}
     curDir = ""
 
-    os.chdir("./logs")
     count = 1
     bytes_field = 4
     date_field = 1
@@ -54,6 +56,7 @@ def dataPerDirNode():
     beginning_time = -1
     firstRun = True
     dataPoints_list = []
+    allDataPoints_list = []
     for files in glob.glob("*"):
         #print files
         #if files == max_name:
@@ -65,15 +68,8 @@ def dataPerDirNode():
             if not firstRun:
                 #print lastNode
                 #total = 0
-                #print num_mb_dict
-                outputData(dataPoints_list,lastNode,namedirs)
-                #x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
-                #for key in sorted(num_mb_dict.iterkeys()):
-                #    total += num_mb_dict[key]
-                    #print num_mb_dict[key]
-                    #print str(key) + " " + str(total/divide_by) + " " + curDir
-                #    x.write(str(key) + " " + str(total/divide_by) + "\n")
-                #x.close()
+                outputData(dataPoints_list,lastNode,namedirs,"individual")
+
                 num_mb_dict = {}
                 dataPoints_list = []
             else:
@@ -108,22 +104,13 @@ def dataPerDirNode():
                     num_mb_dict[elapsed] = long(l[bytes_field]) - prev
                 
                 dataPoints_list.append(dataPoint(elapsed,long(l[bytes_field]) - prev, curDir))
-                #x = open("../graphs/" + names[0] + "-data-" + str(namedirs[curDir]),"a");
-                #total += num_mb_dict[elapsed]
-                #print str(elapsed) + " " + str(total/divide_by)
-                #x.write(str(elapsed) + " " + str(total/divide_by) + "\n")
-                #x.close()
-
-                #print str(elapsed) + " " + str(num_mb_dict[elapsed])
+                allDataPoints_list.append(dataPoint(elapsed,long(l[bytes_field]) - prev, curDir))
                 prev = long(l[bytes_field])
-                #x.write(str(date_to_i(l[date_field]) - start_time) + \
-                #" " + str(((float(l[bytes_field]) - start_mb)/1024)/1024) + "\n")
-                #if(fin[names[0]][0] < date_to_i(l[date_field]) and fin[names[0]][1] < float(l[bytes_field])):
+
                 if(fin[names[0]][0] == 0):
                     fin[names[0]][0] = l[date_field]
                     fin[names[0]][1] = float(l[bytes_field])
                 elif((int(secondsDiff(fin[names[0]][0],l[date_field])) < 0) and fin[names[0]][1] < float(l[bytes_field])):
-                #if(fin[names[0]][0] < elapsed and fin[names[0]][1] < float(l[bytes_field])):
                     fin[names[0]][0] = l[date_field]
                     fin[names[0]][1] = float(l[bytes_field])
         lastNode = names[0]
@@ -134,18 +121,9 @@ def dataPerDirNode():
         f.close();
         count += 1
 
-    outputData(dataPoints_list,lastNode,namedirs)
-    #x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
-    #total = 0
-    #print num_mb_dict
-    #print lastNode
-    #for key in sorted(num_mb_dict.iterkeys()):
-    #    total += num_mb_dict[key]
-        #print str(key) + " " + str(total/divide_by)
-    #    x.write(str(key) + " " + str(total/divide_by) + "\n")
-    #x.close()
+    outputData(dataPoints_list,lastNode,namedirs,"individual")
 
-    #sys.exit()
+    outputData(allDataPoints_list,lastNode,namedirs,"combined")
 
     timesort = []
     #print beginning_time
@@ -166,7 +144,7 @@ def dataPerDirNode():
         count += 1
     x.close()
 
-    print "Success"
+    print "Dir data success"
 
 def dataPerNode():
     first = True
@@ -191,7 +169,7 @@ def dataPerNode():
         f.close()
     """
 
-    os.chdir("./logs")
+    #os.chdir("./logs")
     count = 1
     bytes_field = 4
     date_field = 1
@@ -289,7 +267,7 @@ def dataPerNode():
         count += 1
     x.close()
 
-    print "Success"
+    print "Node data success"
 
 def main():
     pass
@@ -306,8 +284,10 @@ def date_to_i(date):
     return t
 
 if __name__ == "__main__":
+    os.chdir("./logs")
     if args.dir:
         dataPerDirNode() 
+        dataPerNode()
     elif args.all:
         dataPerNode()
     else:
