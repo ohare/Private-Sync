@@ -1,5 +1,6 @@
 import glob, os, time, sys, argparse
 from datetime import datetime
+from operator import attrgetter
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-d","--dir",action="store_true",help="Generate data based on directories")
@@ -8,6 +9,20 @@ args = parser.parse_args()
 
 divide_by = 1024 * 1024
 #divide_by = 1
+
+class dataPoint:
+    def __init__(self, time, data, path):
+        self.time = time
+        self.data = data
+        self.path = path
+    def __repr__(self):
+        return repr((self.time, self.data, self.path))
+    def getTime(self):
+        return self.time
+    def getData(self):
+        return self.data
+    def getPath(self):
+        return self.path
 
 def dataPerDirNode():
     first = True
@@ -29,6 +44,7 @@ def dataPerDirNode():
     num_mb_dict = {}
     beginning_time = -1
     firstRun = True
+    dataPoints_list = []
     for files in glob.glob("*"):
         #print files
         #if files == max_name:
@@ -41,14 +57,22 @@ def dataPerDirNode():
                 #print lastNode
                 total = 0
                 #print num_mb_dict
-                x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
+                dataList = sorted(dataPoints_list, key=lambda dataPoint: dataPoint.time)
+                for data in dataList:
+                    x = open("../graphs/" + lastNode + "-data-" + str(namedirs[data.getPath()]),"a");
+                    total += data.getData()
+                    x.write(str(data.getTime()) + " " + str(total/divide_by) + "\n")
+                    x.close()
+
+                #x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
                 #for key in sorted(num_mb_dict.iterkeys()):
-                    #total += num_mb_dict[key]
+                #    total += num_mb_dict[key]
                     #print num_mb_dict[key]
                     #print str(key) + " " + str(total/divide_by) + " " + curDir
-                    #x.write(str(key) + " " + str(total/divide_by) + "\n")
-                #num_mb_dict = {}
-                x.close()
+                #    x.write(str(key) + " " + str(total/divide_by) + "\n")
+                #x.close()
+                num_mb_dict = {}
+                dataPoints_list = []
             else:
                 firstRun = False
         prev = 0
@@ -75,16 +99,18 @@ def dataPerDirNode():
                         beginning_time = l[date_field]
                 elapsed = int(secondsDiff(l[date_field],start_time))
                 #print elapsed
+
                 if elapsed in num_mb_dict:
                     num_mb_dict[elapsed] += (long(l[bytes_field]) - prev)
                 else:
-                    num_mb_dict[elapsed] = (long(l[bytes_field]) - prev)
+                    num_mb_dict[elapsed] = long(l[bytes_field]) - prev
                 
-                x = open("../graphs/" + names[0] + "-data-" + str(namedirs[curDir]),"a");
-                total += num_mb_dict[elapsed]
-                print str(elapsed) + " " + str(total/divide_by)
-                x.write(str(elapsed) + " " + str(total/divide_by) + "\n")
-                x.close()
+                dataPoints_list.append(dataPoint(elapsed,long(l[bytes_field]) - prev, curDir))
+                #x = open("../graphs/" + names[0] + "-data-" + str(namedirs[curDir]),"a");
+                #total += num_mb_dict[elapsed]
+                #print str(elapsed) + " " + str(total/divide_by)
+                #x.write(str(elapsed) + " " + str(total/divide_by) + "\n")
+                #x.close()
 
                 #print str(elapsed) + " " + str(num_mb_dict[elapsed])
                 prev = long(l[bytes_field])
@@ -281,3 +307,5 @@ if __name__ == "__main__":
         dataPerDirNode() 
     elif args.all:
         dataPerNode()
+    else:
+        print "You forgot the flag"
