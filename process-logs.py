@@ -40,7 +40,7 @@ def dataPerDirNode():
                 for key in sorted(num_mb_dict.iterkeys()):
                     total += num_mb_dict[key]
                     #print num_mb_dict[key]
-                    #print str(key) + " " + str(total/divide_by)
+                    print str(key) + " " + str(total/divide_by) + " " + curDir
                     x.write(str(key) + " " + str(total/divide_by) + "\n")
                 num_mb_dict = {}
                 x.close()
@@ -51,6 +51,7 @@ def dataPerDirNode():
             l = line.split()
             if l[0] == '#D':
                 if l[1] not in namedirs.keys():
+                    print str(l[1]) + " not in namedir keys dircount = " + str(dircount)
                     namedirs[l[1]] = dircount
                     dircount += 1
                 curDir = l[1]
