@@ -80,7 +80,7 @@ def writeIface(iface, folder):
                         f = open(homepath + "log/" \
                         + "node" + nodename.upper() + "-" \
                         + iface + ".log",'a')
-                        f.write("#D " + folder)
+                        f.write("#D " + folder + "\n")
                         f.write(str(datetime.datetime.now()) + " " + interfacename + " download: " + str(download) + " upload: " + str(upload) + "\n")
                         f.close()
                     count = 0

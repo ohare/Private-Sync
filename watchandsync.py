@@ -148,10 +148,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     ip = watchedfolders[folder][i]
                     path = watchedfolders[folder][i+1]
                     print "Current ip and path: " + ip + " " + path
-                    readnet.logIPtraffic(ip, path)
+                    readnet.logIPtraffic(ip, event.pathname)
                     myIP = readnet.getMyIP(ip)
-                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + path])
-                    print "ssh",ip,"'/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + path + "'"
+                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname])
+                    print "ssh",ip,"'/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname + "'"
                     #stopIP = self.getStopInfo()
                     #print "STOP: " + stopIP[0] + " " + stopIP[1]
                     #if stopIP[0] == ip and stopIP[1] == event.pathname:
@@ -176,8 +176,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
                         self.setStopFileUniq(ip,myIP,event.pathname)
                         self.endCopy(ip)
-                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + path])
-                    readnet.logIPtraffic(ip, path)
+                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname])
+                    readnet.logIPtraffic(ip, event.pathname)
 
     #def process_IN_CREATE(self, event):
     #    print "Create:",event.pathname
