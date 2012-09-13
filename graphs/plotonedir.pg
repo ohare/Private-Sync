@@ -1,0 +1,16 @@
+
+set terminal png
+
+set title "Directory 1, unison sync between nodes line topography"
+
+set xlabel "Time (Seconds)"
+set ylabel "Data transferred (MB)"
+
+set key bottom right
+
+set style data linespoints
+
+plot "nodeA-data-1" using 1:2 title 'nodeA', \
+"nodeB-data-1" using 1:2 title 'nodeB', \
+"nodeC-data-1" using 1:2 title 'nodeC', \
+"nodeD-data-1" using 1:2 title 'nodeD'
