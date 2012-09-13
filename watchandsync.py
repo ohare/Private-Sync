@@ -148,7 +148,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     ip = watchedfolders[folder][i]
                     path = watchedfolders[folder][i+1]
                     print "Current ip and path: " + ip + " " + path
-                    readnet.logIPtraffic(ip)
+                    readnet.logIPtraffic(ip, path)
                     myIP = readnet.getMyIP(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
                     print "ssh",ip,"'/usr/bin/python " + homepath + "readnet.py -i " + myIP + "'"
@@ -177,7 +177,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         self.setStopFileUniq(ip,myIP,event.pathname)
                         self.endCopy(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP])
-                    readnet.logIPtraffic(ip)
+                    readnet.logIPtraffic(ip, path)
 
     #def process_IN_CREATE(self, event):
     #    print "Create:",event.pathname
