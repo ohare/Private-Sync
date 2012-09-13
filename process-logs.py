@@ -1,5 +1,10 @@
-import glob, os, time, sys
+import glob, os, time, sys, argparse
 from datetime import datetime
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-d","--dir",action="store_true",help="Generate data based on directories")
+parser.add_argument("-a","--all",action="store_true",help="Generate data for all traffic on nodes")
+args = parser.parse_args()
 
 divide_by = 1024 * 1024
 #divide_by = 1
@@ -35,18 +40,20 @@ def dataPerDirNode():
             if not firstRun:
                 #print lastNode
                 total = 0
-                x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
                 #print num_mb_dict
-                for key in sorted(num_mb_dict.iterkeys()):
-                    total += num_mb_dict[key]
+                x = open("../graphs/" + lastNode + "-data-" + str(namedirs[curDir]),"a");
+                #for key in sorted(num_mb_dict.iterkeys()):
+                    #total += num_mb_dict[key]
                     #print num_mb_dict[key]
-                    print str(key) + " " + str(total/divide_by) + " " + curDir
-                    x.write(str(key) + " " + str(total/divide_by) + "\n")
-                num_mb_dict = {}
+                    #print str(key) + " " + str(total/divide_by) + " " + curDir
+                    #x.write(str(key) + " " + str(total/divide_by) + "\n")
+                #num_mb_dict = {}
                 x.close()
             else:
                 firstRun = False
         prev = 0
+        total = 0
+        num_mb_dict = {}
         for line in f:
             l = line.split()
             if l[0] == '#D':
@@ -72,6 +79,13 @@ def dataPerDirNode():
                     num_mb_dict[elapsed] += (long(l[bytes_field]) - prev)
                 else:
                     num_mb_dict[elapsed] = (long(l[bytes_field]) - prev)
+                
+                x = open("../graphs/" + names[0] + "-data-" + str(namedirs[curDir]),"a");
+                total += num_mb_dict[elapsed]
+                print str(elapsed) + " " + str(total/divide_by)
+                x.write(str(elapsed) + " " + str(total/divide_by) + "\n")
+                x.close()
+
                 #print str(elapsed) + " " + str(num_mb_dict[elapsed])
                 prev = long(l[bytes_field])
                 #x.write(str(date_to_i(l[date_field]) - start_time) + \
@@ -177,9 +191,9 @@ def dataPerNode():
             x.close()
         prev = 0
         for line in f:
+            l = line.split()
+            #print line
             if l[0][0] != '#':
-                #print line
-                l = line.split()
                 if first:
                     first = False
                     start_time = l[date_field]
@@ -249,7 +263,7 @@ def dataPerNode():
     print "Success"
 
 def main():
-   dataPerDirNode() 
+    pass
 
 def secondsDiff(date1, date2):
     FMT = '%H:%M:%S.%f'
@@ -263,4 +277,7 @@ def date_to_i(date):
     return t
 
 if __name__ == "__main__":
-    main()
+    if args.dir:
+        dataPerDirNode() 
+    elif args.all:
+        dataPerNode()
