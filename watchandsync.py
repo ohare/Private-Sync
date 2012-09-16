@@ -165,9 +165,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         self.beginCopy(ip)
                         if args.scp:
                             print "scp","-rp",folder,ip + ":/tmp/" + fname
-                            print "ssh ", ip + " 'mv /tmp/" + fname + "/ " + path + "'"
+                            print "ssh ", ip + " 'mv /tmp/" + fname + "/* " + path + fname + "'"
                             subprocess.call(["scp","-rp",folder,ip + ":/tmp/" + fname])
-                            subprocess.call(["ssh ", ip + " 'mv /tmp/" + fname + "/ " + path + "'"])
+                            subprocess.call(["ssh ", ip + " 'mv /tmp/" + fname + "/* " + path + fname + "'"])
                         elif args.rsync:
                             print "rsync","-rt",folder,ip + ":" + path
                             subprocess.call(["rsync","-rt",folder,ip + ":" + path])
