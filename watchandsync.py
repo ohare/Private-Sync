@@ -152,6 +152,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     myIP = readnet.getMyIP(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname])
                     print "ssh",ip,"'/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname + "'"
+                    fparts = folder.split("/")
+                    fname = fparts[len(fparts)-1]
                     #stopIP = self.getStopInfo()
                     #print "STOP: " + stopIP[0] + " " + stopIP[1]
                     #if stopIP[0] == ip and stopIP[1] == event.pathname:
@@ -162,16 +164,15 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         print "CONTINUE"
                         self.beginCopy(ip)
                         if args.scp:
-                            print "scp","-rp",folder,ip + ":" + path
-                            subprocess.call(["scp","-rp",folder,ip + ":" + path])
+                            print "scp","-rp",folder,ip + ":/tmp/" + fname
+                            print "ssh ", ip + " 'mv /tmp/" + fname + "/* " + path + "'"
+                            subprocess.call(["scp","-rp",folder,ip + ":/tmp/" + fname])
+                            subprocess.call(["ssh ", ip + " 'mv /tmp/" + fname + "/* " + path + "'"])
                         elif args.rsync:
                             print "rsync","-rt",folder,ip + ":" + path
                             subprocess.call(["rsync","-rt",folder,ip + ":" + path])
                         else:
                             time.sleep(5)
-                            fparts = folder.split("/")
-                            fname = fparts[len(fparts)-1]
-                            #print fname
                             print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
                         self.setStopFileUniq(ip,myIP,event.pathname)
