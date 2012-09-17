@@ -164,8 +164,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         print "CONTINUE"
                         self.beginCopy(ip)
                         if args.scp:
-                            print "scp","-rp",folder,ip + ":/tmp/" + fname
-                            subprocess.call(["scp","-rp",folder,ip + ":/tmp/" + fname])
+                            print "scp","-rp",folder,ip + ":/tmp/"
+                            subprocess.call(["scp","-rp",folder,ip + ":/tmp/"])
                             #subprocess.call(["ssh",ip,"yes y | find /tmp/" + fname + " -type f -exec cp -p {} " + path + fname + "/ \; rm /tmp/" + fname])
                             print "ssh",ip,"cp -rp /tmp/" + fname + "/* " + path + fname + "/; rm /tmp/" + fname
                             subprocess.call(["ssh",ip,"cp -rp /tmp/" + fname + "/* " + path + fname + "/; rm /tmp/" + fname])
