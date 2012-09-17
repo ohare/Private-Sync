@@ -82,8 +82,8 @@ function clean {
 function cleanFold {
     index=0
     while [ "$index" -lt "${#vm_addr_arr[@]}" ]; do
-        echo "ssh cal@${vm_addr_arr[$index]} \"rm ${folderpath}/*;\""
-        ssh cal@${vm_addr_arr[$index]} "rm ${folderpath}/*;"
+        echo "ssh cal@${vm_addr_arr[$index]} \"rm -rf ${folderpath}/*;\""
+        ssh cal@${vm_addr_arr[$index]} "rm -rf ${folderpath}/*;"
         let "index++"
     done
 }
