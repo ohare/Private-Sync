@@ -234,7 +234,7 @@ def main():
                     watchedfolders[info[0].rstrip()].append(info[1])
                     watchedfolders[info[0].rstrip()].append(info[2])
                     watchedfolders[info[0].rstrip()].append(info[3])
-                    watchedfolders[info[0].append(datetime.datetime.now())
+                    watchedfolders[info[0]].append(datetime.datetime.now())
                 else:
                     print "Removing: " + info[0]
         f.close()
