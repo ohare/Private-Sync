@@ -23,7 +23,7 @@ class Tools():
 
     def timeElapsed(self, dtstamp, diff):
         FMT = '%H:%M:%S.%f'
-        tdelta = datetime.strptime(dtstamp, FMT) - datetime.strptime(datetime.datetime.now(), FMT)
+        tdelta = datetime.datetime.now() - datetime.strptime(dtstamp, FMT)
         print  tdelta.total_seconds()
         if tdelta.total_seconds() >= diff:
             print "Time perioed reached"
