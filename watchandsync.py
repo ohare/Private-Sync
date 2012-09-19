@@ -268,10 +268,6 @@ def main():
 
     t.updateFolderInfo(watchedfolders)
 
-    tempdate = datetime.datetime.now()
-    time.sleep(4)
-    t.timeElapsed(str(tempdate),5)
-
     #print watchedfolders
     eh = MyEventHandler()
 
