@@ -258,7 +258,7 @@ def main():
                         watchedfolders[info[0].rstrip()] = []
                     watchedfolders[info[0].rstrip()].append(info[1])
                     watchedfolders[info[0].rstrip()].append(info[2])
-                    if watchedfolders[info[0.rstrip()][3]:
+                    if watchedfolders[info[0].rstrip()][3]:
                         watchedfolders[info[0].rstrip()].append(info[3])
                         watchedfolders[info[0].rstrip()].append(str(datetime.datetime.min))
                 else:
