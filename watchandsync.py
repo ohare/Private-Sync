@@ -268,7 +268,7 @@ def main():
 
     t.updateFolderInfo(watchedfolders)
 
-    #print watchedfolders
+    print watchedfolders
     eh = MyEventHandler()
 
     notifier = pyinotify.Notifier(wm,eh)
