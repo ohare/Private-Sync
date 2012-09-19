@@ -50,6 +50,15 @@ class MyEventHandler(pyinotify.ProcessEvent):
             pass
         return stopIP
 
+    def timeElapsed(self, dtstamp, diff):
+        FMT = '%H:%M:%S.%f'
+        tdelta = datetime.strptime(dtstamp, FMT) - datetime.strptime(datetime.datetime.now(), FMT)
+        print  tdelta.total_seconds()
+        if tdelta.total_seconds() >= diff:
+            print "Time perioed reached"
+            return True
+       return False
+
     def inStopFile(self,ip,path):
         stopIPs = {}
         stop = False
@@ -243,6 +252,8 @@ def main():
         print "Folders.dat does not exist, skipping"
 
     t.updateFolderInfo(watchedfolders)
+
+    self.timeElapsed(datetime.datetime.min,30)
 
     #print watchedfolders
     eh = MyEventHandler()
