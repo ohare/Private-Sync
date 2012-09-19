@@ -25,11 +25,12 @@ class Tools():
         FMT = '%Y-%m-%d %H:%M:%S.%f'
         tdelta = datetime.datetime.now() - datetime.datetime.strptime(dtstamp, FMT)
         print  tdelta.total_seconds()
-        if tdelta.total_seconds() >= diff:
+        timeDiff = tdelta.total_seconds()
+        if timeDiff >= diff:
             print "Time perioed reached"
-            return True
-        print "Time not elapsed"
-        return False
+        else:
+            print "Time not elapsed, sleeping for " + str(timeDiff - diff)
+            time.sleep(timeDiff - diff)
 
 class MyEventHandler(pyinotify.ProcessEvent):
     def flipIP(self,ip):
@@ -109,16 +110,19 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
 
+    #Sets the config files on the remote node
     def beginCopy(self, ip):
         nodename = self.getNodeName()
         print "ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp;"
         subprocess.call(["ssh",ip,"touch " + homepath + "Stop-" + nodename + ".tmp; mv " + homepath + "Stop-" + nodename + " " + homepath + "Stop-" + nodename + ".tmp;"])
 
+    #Moves the Stop files back into place
     def endCopy(self, ip):
         nodename = self.getNodeName()
         print "ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
         subprocess.call(["ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
 
+    #Get node name from whoami file
     def getNodeName(self):
         w = open(homepath + "whoami","r")
         nodename = w.read()
@@ -126,6 +130,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         w.close()
         return nodename
 
+    #Deprecated stop file
     def setStopFile(self,ip,myIP,path):
         subprocess.call(["ssh",ip,"echo " + myIP + " " + path + "> " + homepath + "stop"])
         print "ssh",ip,"echo " + myIP + "> " + homepath + "stop"
@@ -134,6 +139,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         subprocess.call(["ssh",ip,"rm -r '" + path + "'"])
         print "ssh",ip,"rm -r '" + path + "'"
 
+    #Exclude files matching patterns in the ignore file
     def exclusions(self, path):
         try:
             f = open("./ignore",'r')
@@ -146,7 +152,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
             print e
         return False
 
+    #Sync files
     def fileSync(self,event):
+        t = Tools()
         if os.path.isdir(event.pathname):
             print "Watching: ",event.pathname
         if self.exclusions(event.pathname):
@@ -154,9 +162,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
         for folder in watchedfolders.keys():
             print "For each folder: " + str(folder) + " in watchedfolder keys"
             if folder in event.pathname:
-                for i in range(0, len(watchedfolders[folder]),3):
+                for i in range(0, len(watchedfolders[folder]),4):
                     ip = watchedfolders[folder][i]
                     path = watchedfolders[folder][i+1]
+                    waitTime = watchedfolders[folder][i+2]
+                    lastTime = watchedfolders[folder][i+3]
+                    print "Wait: " + str(waitTime) + " Last: " + str(lastTime) 
                     print "Current ip and path: " + ip + " " + path
                     readnet.logIPtraffic(ip, event.pathname)
                     myIP = readnet.getMyIP(ip)
@@ -172,6 +183,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         #os.remove("./stop");
                     else:
                         print "CONTINUE"
+                        t.timeElapsed(lastTime, int(waitTime))
                         self.beginCopy(ip)
                         if args.scp:
                             print "scp","-rp",folder,ip + ":/tmp/"
