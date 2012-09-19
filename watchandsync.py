@@ -57,7 +57,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         if tdelta.total_seconds() >= diff:
             print "Time perioed reached"
             return True
-       return False
+        return False
 
     def inStopFile(self,ip,path):
         stopIPs = {}
