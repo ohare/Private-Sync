@@ -253,7 +253,7 @@ def main():
 
     t.updateFolderInfo(watchedfolders)
 
-    self.timeElapsed(datetime.datetime.min,30)
+    timeElapsed(datetime.datetime.min,30)
 
     #print watchedfolders
     eh = MyEventHandler()
