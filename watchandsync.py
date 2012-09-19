@@ -258,8 +258,9 @@ def main():
                         watchedfolders[info[0].rstrip()] = []
                     watchedfolders[info[0].rstrip()].append(info[1])
                     watchedfolders[info[0].rstrip()].append(info[2])
-                    watchedfolders[info[0].rstrip()].append(info[3])
-                    watchedfolders[info[0].rstrip()].append(str(datetime.datetime.min))
+                    if watchedfolders[info[0.rstrip()][3]:
+                        watchedfolders[info[0].rstrip()].append(info[3])
+                        watchedfolders[info[0].rstrip()].append(str(datetime.datetime.min))
                 else:
                     print "Removing: " + info[0]
         f.close()
