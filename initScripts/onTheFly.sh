@@ -1,5 +1,5 @@
-vm_name_arr=("Ubuntu-Mine" "Ubuntu-Cyclone" "Ubuntu-Wild" "Ubuntu-Spheros")
-vm_addr_arr=("192.168.0.26" "192.168.0.22" "192.168.0.19" "192.168.0.14")
+vm_name_arr=("Ubuntu-Mine" "Ubuntu-Silence" "Ubuntu-Wild" "Ubuntu-Spheros")
+vm_addr_arr=("192.168.0.26" "192.168.0.27" "192.168.0.19" "192.168.0.14")
 intnetarr=("lion" "tiger" "cat" "dog" "fish" "kiwi")
 #These should all be in one big dictionary apart from inet names
 letterarr=("a" "b" "c" "d" "e" "f" "g")
