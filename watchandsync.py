@@ -22,12 +22,13 @@ class Tools():
         f.close()
 
     def timeElapsed(self, dtstamp, diff):
-        FMT = '%H:%M:%S.%f'
+        FMT = '%Y-%m-%d %H:%M:%S.%f'
         tdelta = datetime.datetime.now() - datetime.datetime.strptime(dtstamp, FMT)
         print  tdelta.total_seconds()
         if tdelta.total_seconds() >= diff:
             print "Time perioed reached"
             return True
+        print "Time not elapsed"
         return False
 
 class MyEventHandler(pyinotify.ProcessEvent):
@@ -253,7 +254,9 @@ def main():
 
     t.updateFolderInfo(watchedfolders)
 
-    t.timeElapsed(str(datetime.datetime.min),30)
+    tempdate = datetime.datetime.now()
+    time.sleep(4)
+    t.timeElapsed(str(tempdate),5)
 
     #print watchedfolders
     eh = MyEventHandler()
