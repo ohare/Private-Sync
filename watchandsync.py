@@ -21,6 +21,15 @@ class Tools():
             f.write(wfolds[fold][len(wfolds[fold])-1] + "\n")
         f.close()
 
+    def timeElapsed(self, dtstamp, diff):
+        FMT = '%H:%M:%S.%f'
+        tdelta = datetime.strptime(dtstamp, FMT) - datetime.strptime(datetime.datetime.now(), FMT)
+        print  tdelta.total_seconds()
+        if tdelta.total_seconds() >= diff:
+            print "Time perioed reached"
+            return True
+        return False
+
 class MyEventHandler(pyinotify.ProcessEvent):
     def flipIP(self,ip):
         octets = ip.split(".")
@@ -49,15 +58,6 @@ class MyEventHandler(pyinotify.ProcessEvent):
         except IOError, e:
             pass
         return stopIP
-
-    def timeElapsed(self, dtstamp, diff):
-        FMT = '%H:%M:%S.%f'
-        tdelta = datetime.strptime(dtstamp, FMT) - datetime.strptime(datetime.datetime.now(), FMT)
-        print  tdelta.total_seconds()
-        if tdelta.total_seconds() >= diff:
-            print "Time perioed reached"
-            return True
-        return False
 
     def inStopFile(self,ip,path):
         stopIPs = {}
@@ -253,7 +253,7 @@ def main():
 
     t.updateFolderInfo(watchedfolders)
 
-    timeElapsed(datetime.datetime.min,30)
+    t.timeElapsed(datetime.datetime.min,30)
 
     #print watchedfolders
     eh = MyEventHandler()
