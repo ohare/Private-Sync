@@ -245,7 +245,7 @@ def main():
             watchedfolders[info[0].rstrip()].append(info[1])
             watchedfolders[info[0].rstrip()].append(info[2])
             watchedfolders[info[0].rstrip()].append(info[3])
-            watchedfolders[info[0].rstrip()].append(str(datetime.datetime.min))
+            watchedfolders[info[0].rstrip()].append(str(datetime.datetime.now()))
     f.close()
 
     try:
@@ -273,7 +273,7 @@ def main():
 
     t.updateFolderInfo(watchedfolders)
 
-    print watchedfolders
+    #print watchedfolders
     eh = MyEventHandler()
 
     notifier = pyinotify.Notifier(wm,eh)
