@@ -11,6 +11,7 @@ littlencount=1
 folderpath="/home/cal/Documents/t01"
 folderpath2="/home/cal/Documents/t02"
 homepath="/home/cal/Documents/Private-Sync/"
+waitTime=20
 
 function clear_ifaces() {
     i=0
@@ -107,9 +108,8 @@ function sendKeys {
 }
 
 function ifconf {
-    wait=5
-    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ *\" >> /home/cal/Documents/Private-Sync/folderstowatch'"
-    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ $wait\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
+    echo "ssh cal@$1 'sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ $waitTime\" >> /home/cal/Documents/Private-Sync/folderstowatch'"
+    ssh cal@$1 "sudo /sbin/ifconfig eth$2 192.168.$3.$4 netmask 255.255.255.0 up; echo \"$folderpath 192.168.$3.$5 /home/cal/Documents/ $waitTime\" >> /home/cal/Documents/Private-Sync/folderstowatch" < /dev/null
 }
 
 function ifconf2 {
