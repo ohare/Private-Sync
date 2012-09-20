@@ -193,7 +193,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         t.updateFolderInfo(watchedfolders)
                         self.beginCopy(ip)
                         if args.scp:
-                            for cpFile in glob.glob(folder + fname): 
+                            print "SCP: For cpFile in " + folder
+                            for cpFile in glob.glob(folder + "/*"): 
                                 print "SCP GLOB:" + cpFile
                                 print "scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"
                                 subprocess.call(["scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"])
