@@ -22,12 +22,14 @@ class Tools():
         f.close()
 
     def timeElapsed(self, dtstamp, diff):
+        if diff == "*":
+            print "Sync ASAP"
+            return
+        diff = int(diff)
         FMT = '%Y-%m-%d %H:%M:%S.%f'
         tdelta = datetime.datetime.now() - datetime.datetime.strptime(dtstamp, FMT)
         print  tdelta.total_seconds()
         timeDiff = tdelta.total_seconds()
-        if diff == "*":
-            print "Sync ASAP"
         elif timeDiff >= diff:
             print "Time perioed reached"
         else:
@@ -185,7 +187,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         #os.remove("./stop");
                     else:
                         print "CONTINUE"
-                        t.timeElapsed(lastTime, int(waitTime))
+                        t.timeElapsed(lastTime, waitTime)
                         self.beginCopy(ip)
                         if args.scp:
                             print "scp","-rp",folder,ip + ":/tmp/"
