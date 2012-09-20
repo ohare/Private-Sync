@@ -193,12 +193,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         t.updateFolderInfo(watchedfolders)
                         self.beginCopy(ip)
                         if args.scp:
-                            for cpFile in glob.glob(folder): 
-                                print "scp","-rp",folder + cpFile,ip + ":" + path + fname + "/" +  cpFile + ".tmp"
-                                subprocess.call(["scp","-rp",folder + cpFile,ip + ":" + path + fname + "/" +  cpFile + ".tmp"])
+                            for cpFile in glob.glob(folder + fname): 
+                                print "scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"
+                                subprocess.call(["scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"])
                                 #subprocess.call(["ssh",ip,"yes y | find /tmp/" + fname + " -type f -exec cp -p {} " + path + fname + "/ \; rm /tmp/" + fname])
-                                print "ssh",ip,"mv " + path + fname + "/" + cpFile + ".tmp " + path + fname + "/" + cpFile
-                                subprocess.call(["ssh",ip,"mv " + path + fname + "/" + cpFile + ".tmp " + path + fname + "/" + cpFile])
+                                print "ssh",ip,"mv " + cpFile + ".tmp " + cpFile
+                                subprocess.call(["ssh",ip,"mv " + cpFile + ".tmp " + cpFile])
                         elif args.rsync:
                             print "rsync","-rt",folder,ip + ":" + path
                             subprocess.call(["rsync","-rt",folder,ip + ":" + path])
