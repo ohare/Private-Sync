@@ -34,8 +34,8 @@ class Tools():
         if (timeDiff >= diff):
             print "Time perioed reached"
         else:
-            print "Time not elapsed, sleeping for " + str(diff - timeDiff)
-            time.sleep(int(diff - timeDiff))
+            print "Time not elapsed, sleeping for " + str(diff - timeDiff + 1)
+            time.sleep(int(diff - timeDiff + 1))
 
 class MyEventHandler(pyinotify.ProcessEvent):
     def flipIP(self,ip):
