@@ -30,7 +30,7 @@ class Tools():
         tdelta = datetime.datetime.now() - datetime.datetime.strptime(dtstamp, FMT)
         print  tdelta.total_seconds()
         timeDiff = tdelta.total_seconds()
-        elif timeDiff >= diff:
+        elif (timeDiff >= diff):
             print "Time perioed reached"
         else:
             print "Time not elapsed, sleeping for " + str(timeDiff - diff)
