@@ -26,7 +26,8 @@ class Tools():
             print "Sync ASAP"
             return
         diff = int(diff)
-        FMT = '%Y-%m-%d %H:%M:%S.%f'
+        #FMT = '%Y-%m-%d %H:%M:%S.%f'
+        FMT = '%Y-%m-%d %H:%M:%S'
         tdelta = datetime.datetime.now() - datetime.datetime.strptime(dtstamp, FMT)
         print  tdelta.total_seconds()
         timeDiff = tdelta.total_seconds()
@@ -188,6 +189,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     else:
                         print "CONTINUE"
                         t.timeElapsed(lastTime, waitTime)
+                        watchedfolders[folder][i+3] = str(datetime.datetime.now())
+                        t.updateFolderInfo(watchedfolders)
                         self.beginCopy(ip)
                         if args.scp:
                             print "scp","-rp",folder,ip + ":/tmp/"
