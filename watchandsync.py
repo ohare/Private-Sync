@@ -55,7 +55,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         except Exception, e:
             return ""
 
-    #Check for IP not to copy too
+    #Deprecated - Check for IP not to copy too
     def getStopInfo(self):
         stopIP = ["",""]
         try:
@@ -193,11 +193,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         t.updateFolderInfo(watchedfolders)
                         self.beginCopy(ip)
                         if args.scp:
-                            print "scp","-rp",folder,ip + ":/tmp/"
-                            subprocess.call(["scp","-rp",folder,ip + ":/tmp/"])
-                            #subprocess.call(["ssh",ip,"yes y | find /tmp/" + fname + " -type f -exec cp -p {} " + path + fname + "/ \; rm /tmp/" + fname])
-                            print "ssh",ip,"cp -rp /tmp/" + fname + "/* " + path + fname + "/; rm /tmp/" + fname
-                            subprocess.call(["ssh",ip,"cp -rp /tmp/" + fname + "/* " + path + fname + "/; rm /tmp/" + fname + "/*"])
+                            for cpFile in glob.glob(folder): 
+                                print "scp","-rp",folder + cpFile,ip + ":" + path + fname + "/" +  cpFile + ".tmp"
+                                subprocess.call(["scp","-rp",folder + cpFile,ip + ":" + path + fname + "/" +  cpFile + ".tmp"])
+                                #subprocess.call(["ssh",ip,"yes y | find /tmp/" + fname + " -type f -exec cp -p {} " + path + fname + "/ \; rm /tmp/" + fname])
+                                print "ssh",ip,"mv " + path + fname + "/" + cpFile + ".tmp " + path + fname + "/" + cpFile
+                                subprocess.call(["ssh",ip,"mv " + path + fname + "/" + cpFile + ".tmp " + path + fname + "/" + cpFile])
                         elif args.rsync:
                             print "rsync","-rt",folder,ip + ":" + path
                             subprocess.call(["rsync","-rt",folder,ip + ":" + path])
