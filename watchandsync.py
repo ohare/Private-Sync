@@ -26,8 +26,8 @@ class Tools():
             print "Sync ASAP"
             return
         diff = int(diff)
-        #FMT = '%Y-%m-%d %H:%M:%S.%f'
-        FMT = '%Y-%m-%d %H:%M:%S'
+        FMT = '%Y-%m-%d %H:%M:%S.%f'
+        #FMT = '%Y-%m-%d %H:%M:%S'
         tdelta = datetime.datetime.now() - datetime.datetime.strptime(dtstamp, FMT)
         print  tdelta.total_seconds()
         timeDiff = tdelta.total_seconds()
@@ -264,7 +264,7 @@ def main():
                     watchedfolders[info[0].rstrip()].append(info[1])
                     watchedfolders[info[0].rstrip()].append(info[2])
                     watchedfolders[info[0].rstrip()].append(info[3])
-                    watchedfolders[info[0].rstrip()].append(str(datetime.datetime.min))
+                    watchedfolders[info[0].rstrip()].append(str(datetime.datetime.now()))
                 else:
                     print "Removing: " + info[0]
         f.close()
