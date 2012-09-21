@@ -89,6 +89,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     #if l[0] == ip and l[1] == path and ts1 <= ts2:
                     #If IP sending to has sent data more recently don't send back
                     if l[0] == ip and ts1 <= ts2:
+                        print "Stop = True, file: " + l[0]
                         stop = True
                     else:
                         stopIPs[l[0]] = [l[1]," ".join(l[2:])]
@@ -99,11 +100,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     #for k in stopIPs.keys():
                     #    f.write(k + " " + stopIPs[k][0] + " " + stopIPs[k][1] + "\n")
                     #f.close()
-                    stopIPs.clear()
+                    #stopIPs.clear()
                     return True
 
                 f.close()
-                stopIPs.clear()
+                #stopIPs.clear()
             if tmpcount == 0:
                 break
 
