@@ -154,7 +154,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
             f = open("./ignore",'r')
             for line in f:
                 if line.rstrip() in path:
-                    print "Ignoring: " + path
+                    #print "Ignoring: " + path
                     return True
             f.close()
         except error, e:
@@ -224,13 +224,13 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "Delete: ",event.pathname
         #self.fileSync(event)
     def process_IN_CREATE(self, event):
-        print "Modify: ",event.pathname
+        print "CREATE: ",event.pathname
         self.fileSync(event)
     def process_IN_MOVED_FROM(self, event):
         print "Move from: ",event.pathname
     #    self.fileSync(event)
     def process_IN_MODIFY(self, event):
-        print "Modify: ",event.pathname
+        #print "Modify: ",event.pathname
         self.fileSync(event)
     def process_IN_MOVED_TO(self, event):
         print "Move to: ",event.pathname
