@@ -115,6 +115,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         nodename = self.getNodeName()
         #print "ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"
         #subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
+        subprocess.call(["ssh",ip,"rm " + homepath + "Stop-" + nodename + ".tmp;"])
         for cpFile in glob.glob(folder + "/*"): 
             subprocess.call(["ssh",ip,"echo " + myIP + " " + cpFile + " " + self.getModTime(cpFile) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
 
