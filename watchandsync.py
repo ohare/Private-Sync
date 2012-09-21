@@ -95,10 +95,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
                 if stop:
                     f.close()
-                    f = open(files,"w")
+                    #f = open(files,"w")
                     #for k in stopIPs.keys():
                     #    f.write(k + " " + stopIPs[k][0] + " " + stopIPs[k][1] + "\n")
-                    f.close()
+                    #f.close()
                     stopIPs.clear()
                     return True
 
