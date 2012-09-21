@@ -96,8 +96,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 if stop:
                     f.close()
                     f = open(files,"w")
-                    for k in stopIPs.keys():
-                        f.write(k + " " + stopIPs[k][0] + " " + stopIPs[k][1] + "\n")
+                    #for k in stopIPs.keys():
+                    #    f.write(k + " " + stopIPs[k][0] + " " + stopIPs[k][1] + "\n")
                     f.close()
                     stopIPs.clear()
                     return True
@@ -110,10 +110,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
         return False
 
     #Set flag on other server telling it not to immediately try and copy data here
-    def setStopFileUniq(self,ip,myIP,path):
+    def setStopFileUniq(self,ip,myIP,path,folder):
         nodename = self.getNodeName()
-        print "ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"
-        subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
+        #print "ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"
+        #subprocess.call(["ssh",ip,"echo " + myIP + " " + path + " " + self.getModTime(path) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
+        for cpFile in glob.glob(folder + "/*"): 
+            subprocess.call(["ssh",ip,"echo " + myIP + " " + cpFile + " " + self.getModTime(cpFile) + " >> " + homepath + "Stop-" + nodename + ".tmp;"])
 
     #Sets the config files on the remote node
     def beginCopy(self, ip):
@@ -193,9 +195,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         t.updateFolderInfo(watchedfolders)
                         self.beginCopy(ip)
                         if args.scp:
-                            print "SCP: For cpFile in " + folder
+                            #print "SCP: For cpFile in " + folder
                             for cpFile in glob.glob(folder + "/*"): 
-                                print "SCP GLOB:" + cpFile
+                                #print "SCP GLOB:" + cpFile
                                 print "scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"
                                 subprocess.call(["scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"])
                                 #subprocess.call(["ssh",ip,"yes y | find /tmp/" + fname + " -type f -exec cp -p {} " + path + fname + "/ \; rm /tmp/" + fname])
@@ -209,7 +211,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             time.sleep(5)
                             print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
-                        self.setStopFileUniq(ip,myIP,event.pathname)
+                        self.setStopFileUniq(ip,myIP,event.pathname,folder)
                         self.endCopy(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname])
                     readnet.logIPtraffic(ip, event.pathname)
