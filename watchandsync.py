@@ -77,6 +77,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 #print "File: " + str(files)
                 if ".tmp" in files:
                     tmpcount += 1
+                    sleep(5)
                     break
                 f = open(files,"r");
                 for line in f:
