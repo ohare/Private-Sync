@@ -168,6 +168,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         if os.path.isdir(event.pathname):
             print "Watching: ",event.pathname
         if self.exclusions(event.pathname):
+            print "Excluded returning"
             return
         for folder in watchedfolders.keys():
             print "For each folder: " + str(folder) + " in watchedfolder keys"
