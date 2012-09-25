@@ -176,6 +176,7 @@ Using an efficient two way file synchronising tool called
 unison. I will discuss what I have done and how I have tested
 it in this section.
 
+%Update this section
 \subsection{Virtual Machines, Node networks}
 For testing my program I needed to have a network
 of computers that can be linked together in different
@@ -396,6 +397,34 @@ in the directories. This is why the graph shows the three lines
 slightly above where you might expect them to be for the amount
 of data that was copied.
 
+\section{Full graph replication}
+\begin{figure}[htp]
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[scale=0.4]{images/line-graph.png}
+        \caption{Line - Generated Graph of Topology}
+        \label{fig:line_graph}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \includegraphics[scale=0.4]{images/line-scp-wrong.png}
+        \caption{SCP}
+        \label{fig:line_scp}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[scale=0.4]{images/line-rsync.png}
+        \caption{Rsync}
+        \label{fig:line_rsync}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \includegraphics[scale=0.4]{images/line-uni.png}
+        \caption{Unison}
+        \label{fig:line_uni}
+    \end{subfigure}
+    \caption{Comparison of methods over line topology}
+\end{figure}
+
 \section{When to stop copying}
 After testing my program on some simple topologies one problem became
 clear. Each node would notice changes had occurred to a folder
@@ -430,6 +459,7 @@ The data points in figure \ref{fig:line_uni_tail_graph} show that when using
 unison although no extra data was sent unison had to make checks to see
 whether there were any changes or not.
 
+%Change this
 I used a configuration file to get around this problem. Each time a node
 synchronised with another node it would write out a configuration file telling
 the other node what files had been copied, who sent them and what the
@@ -447,6 +477,13 @@ exclusions/inclusions in it. The other reason directories are a good choice
 is because I can have different directories in different places on different
 file systems by using symbolic links. I wanted to see how the freshness of different
 sub-nodes varied between nodes when the program was running.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/line-uni-2dir-comb.png}
+    \caption{Line topology, using unison, two different directories being synced}
+    \label{fig:line_uni_2dir_comb_graph}
+\end{figure}
 
 \section{How often to sync}
 So how often should I sync once I noticed a change.
@@ -467,8 +504,13 @@ Unison is not the only program that uses temporary files. I decided that this
 should be a user set preference given that users may want to filter out different
 files.
 
-\section{inotify}
-move to, move from, delete, create, modify
+My program simply reads from a file with each file pattern to exclude
+listed on a new line. It is easy to add to/remove from. As I said above
+I added .tmp to the file as a default. This could easily be extended
+to allow a user to omit certain files from the replication by adding
+all files in my programs ignore file to unisons ignore list. Or conversely
+by maintaining a white list of files to sync. This would allow for
+greater granularity when syncing nodes.
 
 \section{Future work}
 \subsection{Full node graph replication}
@@ -638,19 +680,6 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
 \section{Appendices}
 %OPTIONAL
 
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/line-graph.png}
-    \caption{Line topology}
-    \label{fig:line_graph}
-\end{figure}
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/line-uni.png}
-    \caption{10mb random files, 10 seconds, unison}
-    \label{fig:line_uni_graph}
-\end{figure}
 
 \begin{figure}[htp]
     \centering
