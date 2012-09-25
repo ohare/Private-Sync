@@ -169,7 +169,7 @@ Something which dropbox will not provide but private dropbox will.
 % do you need a section to discuss the design of your solution?
 
 \section{Work Done}
-So far I have written a program in python which reads user
+I have written a program in python which reads user
 settings from a file. Synchronises the appropriate files
 to the appropriate machines when they have been modified.
 Using an efficient two way file synchronising tool called
@@ -294,6 +294,10 @@ change in the file system below the watched directory.
         what I need it to do. There is a Python module
         called pyinotify that provides a Python interface
         to inotify, which I have used and tested in my program.
+        Another reason I chose inotify was because different kinds
+        of changes triggered different inotify events. So I
+        can differentiate between a file being deleted, created
+        or modified \emph{etc}.
         \end{itemize}
 
     \item FSEvents
@@ -314,7 +318,7 @@ change in the file system below the watched directory.
         suits the application's needs.
         \end{itemize}
 
-    \begin{comment}
+    %\begin{comment}
     \item ReadDirectoryChangesW
         \begin{itemize}
         \item Windows, like the other operating systems
@@ -323,11 +327,13 @@ change in the file system below the watched directory.
 % you're not implementing ReaddirectoryChangesW - rephrase?
         There is a FileSystemWatcher Class in .NET version 4 and
         above. IronPython might prove to be a good choice for a
-        Windows implementation although I will need to look
-        into it further.
+        Windows implementation. I have chosen only to implement
+        my program on linux because portability wasn't in the main
+        scope of the project. It would have been nice to look
+        at it further but became too time consuming.
 % perhaps clarify why you think it wold be appropriate if you still have more to learn about it.
         \end{itemize}
-    \end{comment}
+    %\end{comment}
 \end{itemize}
 
 \subsection{Point-to-Point synchronisation}
@@ -345,7 +351,7 @@ my program or not.
 
 I looked at three methods of file synchronisation across
 different networks. Naive copying; using rsync, an application
-for efficiently copying files in one direction by looking at
+designed for efficiently copying files in one direction by looking at
 the differences in the files; and unison described above.
 
 \begin{figure}[htp]
@@ -361,6 +367,19 @@ transfer subsequent edits to the file meant much less data had to
 be transmitted over the network, which meant the node graph
 became up to date much more quickly.
 
+The reason naive copy sent over 300Mb of data to copy three 50Mb
+files was because my implementation is deliberately naive, it will
+copy the entire directory each time it is changed. For rsync and
+unison this is not a problem because they work based on the
+differences between the files. However copy doesn't look at
+the files it just copies everything in the directory tree.
+Hence it will copy 50Mb after file one is created, 100Mb after
+the second file is added and finally 150Mb when all three
+files are present.
+
+50Mb + 100Mb + 150Mb = 300Mb
+
+Rsync copies the expected 150Mb for three 50Mb files. While
 Figure \ref{fig:point_comp_graph} illustrates another advantage
 of unison over rysnc. The graph shows three zero filled
 binary files being copied from one node to another one after
@@ -369,7 +388,13 @@ differently they were the same file. Another advantage of unison
 is that it handles replication in two directions without
 clobbering the files on the other side.
 
-%More detail here
+Each of the three methods I trialled had some overhead associated
+with them. This overhead was due to the ssh tunnel between the
+machines which all three methods used. Unison and rsync also
+require some overhead when checking the differences between the files
+in the directories. This is why the graph shows the three lines
+slightly above where you might expect them to be for the amount
+of data that was copied.
 
 \section{When to stop copying}
 After testing my program on some simple topologies one problem became
@@ -382,6 +407,29 @@ a problem when using scp to copy. When using Unison this was not as much of
 a problem because it could detect that no changes had occur between the nodes
 and would stop syncing after one check (which had minimal overhead).
 
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/line-scp-back.png}
+    \caption{Line topology, using scp, nodes copying data back and forth}
+    \label{fig:line_scp_back_forth_graph}
+\end{figure}
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/line-uni-10-tail.png}
+    \caption{Line topology, using unison, unnecessary checking}
+    \label{fig:line_uni_tail_graph}
+\end{figure}
+
+Figure \ref{fig:line_scp_back_forth_graph} shows three 10Mb files being copied to a node
+in a line topology. The problem is that nodeB and nodeC continue to send
+data to each other even after every node has all of the files. NodeA receives
+a lot of data even though it was the source of the file changes. 
+
+The data points in figure \ref{fig:line_uni_tail_graph} show that when using
+unison although no extra data was sent unison had to make checks to see
+whether there were any changes or not.
+
 I used a configuration file to get around this problem. Each time a node
 synchronised with another node it would write out a configuration file telling
 the other node what files had been copied, who sent them and what the
@@ -391,7 +439,7 @@ the file from or if it had local changes that were newer than a received
 file it could continue with its sync.
 
 \section{Sub-nodes}
-I chose to classify directories as 'sub nodes' of a graph. The reason i choose
+I chose to classify directories as 'sub nodes' of a graph. The reason I choose
 directories is because they are easy to manage a configuration file of directories to
 keep in sync (from the users point of view). If we wanted to only synchronize
 certain files in a directory we could write a unison configuration file with 
@@ -402,8 +450,8 @@ sub-nodes varied between nodes when the program was running.
 
 \section{How often to sync}
 So how often should I sync once I noticed a change.
-If lots of small changes are occuring frequently it might be more efficient
-to perform a synchronisation after several changes have occured. Given that
+If lots of small changes are occurring frequently it might be more efficient
+to perform a synchronisation after several changes have occurred. Given that
 there is overhead with each synchronisation, fewer copies means less data
 sent over the network.
 
@@ -611,12 +659,6 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
     \label{fig:fintime_graph}
 \end{figure}
 
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/line-scp-back.png}
-    \caption{Line, scp, back and forth}
-    \label{fig:line_scp_back_forth_graph}
-\end{figure}
 
 \begin{figure}[htp]
     \centering
