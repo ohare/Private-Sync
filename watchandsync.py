@@ -82,7 +82,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 f = open(files,"r");
                 for line in f:
                     l = line.split()
-                    if exclusions(l[1]):
+                    if self.exclusions(l[1]):
                         print str(l[1]) + " was in ignore file skipping"
                     else:
                         print "local " + str(path) + " modtime: " + modTime
