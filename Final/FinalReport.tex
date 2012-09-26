@@ -406,12 +406,12 @@ of data that was copied.
         \label{fig:line_graph}
     \end{subfigure}
     \begin{subfigure}[b]{0.4\textwidth}
-        \includegraphics[scale=0.4]{images/line-scp-wrong.png}
+        \includegraphics[scale=0.4]{images/line-scp-10-fixes.png}
         \caption{SCP}
         \label{fig:line_scp}
     \end{subfigure}
 
-    \begin{subfigure}[b]{0.75\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \centering
         \includegraphics[scale=0.4]{images/line-rsync.png}
         \caption{Rsync}
@@ -512,6 +512,7 @@ all files in my programs ignore file to unisons ignore list. Or conversely
 by maintaining a white list of files to sync. This would allow for
 greater granularity when syncing nodes.
 
+\begin{comment}
 \section{Future work}
 \subsection{Full node graph replication}
 I am going to be looking into the most efficient way to
@@ -646,6 +647,7 @@ settings. Private dropbox could then estimate whether that
 change will speed up or slow down overall synchronisation
 of the graph and pass that (potentially) useful information
 to the user.
+\end{comment}
 
 \section{Results}
 
