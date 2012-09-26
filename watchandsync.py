@@ -169,7 +169,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         pathparts = event.pathname.split("/")
         foldName = "/".join(pathparts[0:len(pathparts)-1])
         print "Removing watch on: " + foldName
-        wm.rm_watch(foldName)
+        wm.rm_watch(wm.get_wm(foldName), rec=True)
         self.fileSync(event)
         print "Putting watch back on: " + foldName
         wm.add_watch(foldName,pyinotify.ALL_EVENTS, rec=True, auto_add=True)
