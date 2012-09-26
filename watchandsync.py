@@ -165,6 +165,15 @@ class MyEventHandler(pyinotify.ProcessEvent):
             print e
         return False
 
+    def initFileSync(self,event):
+        pathparts = event.pathname.split("/")
+        foldName = foldName[0:len(pathparts)-1]
+        print "Removing watch on: " + foldName
+        wm.rm_watch(foldName)
+        self.fileSync(event)
+        print "Putting watch back on: " + foldName
+        wm.add_watch(foldName,pyinotify.ALL_EVENTS, rec=True, auto_add=True)
+
     #Sync files
     def fileSync(self,event):
         t = Tools()
@@ -228,19 +237,19 @@ class MyEventHandler(pyinotify.ProcessEvent):
     #    print "Create:",event.pathname
     def process_IN_DELETE(self, event):
         print "Delete: ",event.pathname
-        #self.fileSync(event)
+        #self.initFileSync(event)
     def process_IN_CREATE(self, event):
         print "CREATE: ",event.pathname
-        self.fileSync(event)
+        self.initFileSync(event)
     def process_IN_MOVED_FROM(self, event):
         print "Move from: ",event.pathname
-    #    self.fileSync(event)
+    #    self.initFileSync(event)
     def process_IN_MODIFY(self, event):
         #print "Modify: ",event.pathname
-        self.fileSync(event)
+        self.initFileSync(event)
     def process_IN_MOVED_TO(self, event):
         print "Move to: ",event.pathname
-        self.fileSync(event)
+        self.initFileSync(event)
 
 
 def main():
