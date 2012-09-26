@@ -1,7 +1,7 @@
 
 set terminal png
 
-set title "Using scp to sync between nodes, line topography"
+set title "Using rsync to sync between nodes, line topography"
 
 set xlabel "Time (Seconds)"
 set ylabel "Data transferred (MB)"
