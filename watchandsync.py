@@ -166,6 +166,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
         return False
 
     def initFileSync(self,event):
+        if self.exclusions(event.pathname):
+            #print "Excluded returning"
+            return
         pathparts = event.pathname.split("/")
         foldName = "/".join(pathparts[0:len(pathparts)-1])
         print "Removing watch on: " + foldName
@@ -179,9 +182,6 @@ class MyEventHandler(pyinotify.ProcessEvent):
         t = Tools()
         if os.path.isdir(event.pathname):
             print "Watching: ",event.pathname
-        if self.exclusions(event.pathname):
-            print "Excluded returning"
-            return
         for folder in watchedfolders.keys():
             print "For each folder: " + str(folder) + " in watchedfolder keys"
             if folder in event.pathname:
