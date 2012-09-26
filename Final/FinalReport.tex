@@ -5,6 +5,7 @@
 \usepackage{verbatim}
 \usepackage{url}
 \usepackage{listings}
+\usepackage{epsfig}
 \usepackage[margin=3cm]{geometry}
 %\usepackage{titling}
 %\setlength{\droptitle}{-12em}
@@ -25,16 +26,22 @@
 \begin{document}
 \maketitle
 
+\null
+\vfill
 \section{Abstract}
-Private decentralised Dropbox. Node to node replication, unison.
-
+I have written a program in python which reads user
+settings from a file. Synchronises the appropriate files
+to the appropriate machines when they have been modified.
+Using an efficient two way file synchronising tool called
+unison. I will discuss in this paper what I have done and
+how I have tested it.
 \newpage
 
 \tableofcontents
 \newpage
 
 \section{Introduction}
-\section{Project goal}
+\subsection{Project goal}
 The aim of this project is to develop a file synchronisation tool.
 Similar to  Dropbox (and others) its main function should be to
 keep data synchronised between multiple devices.
@@ -62,7 +69,7 @@ to a heuristic for when to synchronise a given file.
 synchronisation themselves. The user should be able to set when and
 where they would like synchronisation to occur.
 \end{itemize}
-\section{Background}
+\subsection{Background}
 There are already many services available
 that synchronize your
 files. Dropbox, Google Drive, Microsoft SkyDrive, Apple iCloud
@@ -168,16 +175,8 @@ Something which dropbox will not provide but private dropbox will.
 
 % do you need a section to discuss the design of your solution?
 
-\section{Work Done}
-I have written a program in python which reads user
-settings from a file. Synchronises the appropriate files
-to the appropriate machines when they have been modified.
-Using an efficient two way file synchronising tool called
-unison. I will discuss what I have done and how I have tested
-it in this section.
-
 %Update this section
-\subsection{Virtual Machines, Node networks}
+\section{Virtual Machines, Node networks}
 For testing my program I needed to have a network
 of computers that can be linked together in different
 arrangements easily. I decided to use virtual machines for
@@ -237,7 +236,9 @@ VBoxManage modifyvm "Ubuntu-Test" --intnet2 "intnet"
 VBoxManage startvm "Ubuntu-Test"
 \end{verbatim}
 
-\subsection{Python}
+\newpage
+
+\section{Python}
 I have chosen to use Python to implement
 my program. Python appealed to me because it
 supports many different platforms (Windows, Linux, Mac OS X).
@@ -247,7 +248,7 @@ my program across different operating systems in the future.
 
 %multiproccessing module
 
-\subsection{User control}
+\section{User control}
 One of the main goals of my project is to allow the user
 to have a  large amount of control over how the program
 behaves. I currently have the program reading from
@@ -265,7 +266,10 @@ directories recursively, I can replicate large amounts
 of data without a cluttered configuration file.
 % this doesn't necessarily follow: your config file could have the ability to include/exclude files and/or directories (possibly recursively). That would give you expressiveness, and still terse config files for many cases.
 
-\subsection{Monitoring Directories}
+Another reason I chose directories as my granularity was because it may be
+handy to have a directory full of symlinks pointing to other directories.
+
+\section{Monitoring Directories}
 The application needs to monitor directories for changes
 so that it knows when to perform a sync. The reason I have
 chosen to do this is because synchronising a directory that
@@ -331,13 +335,14 @@ change in the file system below the watched directory.
         Windows implementation. I have chosen only to implement
         my program on linux because portability wasn't in the main
         scope of the project. It would have been nice to look
-        at it further but became too time consuming.
+        at it further but became too time consuming and not interesting
+        from a research perspective.
 % perhaps clarify why you think it wold be appropriate if you still have more to learn about it.
         \end{itemize}
     %\end{comment}
 \end{itemize}
 
-\subsection{Point-to-Point synchronisation}
+\section{Point-to-Point synchronisation}
 After some preliminary analysis of the available file synchronisation
 tools I have found a tool called Unison to be a promising starting
 base for this project. Unison is an open source file synchronisation tool.
@@ -401,29 +406,30 @@ of data that was copied.
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[scale=0.4]{images/line-graph.png}
+        \includegraphics[scale=0.35]{images/line-graph.png}
         \caption{Line - Generated Graph of Topology}
         \label{fig:line_graph}
     \end{subfigure}
-    \begin{subfigure}[b]{0.4\textwidth}
-        \includegraphics[scale=0.4]{images/line-scp-10-fixes.png}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[scale=0.35]{images/line-scp-10-fixes.png}
         \caption{SCP}
         \label{fig:line_scp}
     \end{subfigure}
 
-    \begin{subfigure}[b]{0.4\textwidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[scale=0.4]{images/line-rsync-10-fixes.png}
+        \includegraphics[scale=0.35]{images/line-rsync-10-fixes.png}
         \caption{Rsync}
         \label{fig:line_rsync}
     \end{subfigure}
-    \begin{subfigure}[b]{0.4\textwidth}
-        \includegraphics[scale=0.4]{images/line-uni-10-fixes.png}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[scale=0.35]{images/line-uni-10-fixes.png}
         \caption{Unison}
         \label{fig:line_uni}
     \end{subfigure}
     \caption{Comparison of methods over line topology}
 \end{figure}
+\newpage
 
 \section{When to stop copying}
 After testing my program on some simple topologies one problem became
@@ -484,6 +490,7 @@ sub-nodes varied between nodes when the program was running.
     \caption{Line topology, using unison, two different directories being synced}
     \label{fig:line_uni_2dir_comb_graph}
 \end{figure}
+\newpage
 
 \section{How often to sync}
 So how often should I sync once I noticed a change.
@@ -491,6 +498,21 @@ If lots of small changes are occurring frequently it might be more efficient
 to perform a synchronisation after several changes have occurred. Given that
 there is overhead with each synchronisation, fewer copies means less data
 sent over the network.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/rand-txt-2sleep.png}
+    \caption{2 seconds sleep text file}
+    \label{fig:2sleep_graph}
+\end{figure}
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.5]{images/5sleep-bad.png}
+    \caption{5 seconds sleep text file}
+    \label{fig:5sleep_graph}
+\end{figure}
+\newpage
 
 \section{Unison and temporary files}
 I noticed that when Unison ran it created temporary files in the
@@ -653,7 +675,6 @@ to the user.
 
 \section{Conclusion}
 
-
 \begin{thebibliography}{9}
 
 \bibitem{dotcom-trial}
@@ -682,27 +703,11 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
 \section{Appendices}
 %OPTIONAL
 
-
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/fintime.png}
     \caption{Unison, line, finishing times}
     \label{fig:fintime_graph}
-\end{figure}
-
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/rand-txt-2sleep.png}
-    \caption{2 seconds sleep text file}
-    \label{fig:2sleep_graph}
-\end{figure}
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/5sleep-bad.png}
-    \caption{5 seconds sleep text file}
-    \label{fig:5sleep_graph}
 \end{figure}
 
 \newpage

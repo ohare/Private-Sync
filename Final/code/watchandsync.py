@@ -82,18 +82,21 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 f = open(files,"r");
                 for line in f:
                     l = line.split()
-                    print "local " + str(path) + " modtime: " + modTime
-                    print "Stop " + l[1] + " modtime: " + str(l[2:])
-                    ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
-                    ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
-                    print "local <= stop: " + str(ts1 <= ts2)
-                    #if l[0] == ip and l[1] == path and ts1 <= ts2:
-                    #If IP sending to has sent data more recently don't send back
-                    if l[0] == ip and ts1 <= ts2:
-                        print "Stop = True, file: " + l[0]
-                        stop = True
+                    if self.exclusions(l[1]):
+                        print str(l[1]) + " was in ignore file skipping"
                     else:
-                        stopIPs[l[0]] = [l[1]," ".join(l[2:])]
+                        print "local " + str(path) + " modtime: " + modTime
+                        print "Stop " + l[1] + " modtime: " + str(l[2:])
+                        ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
+                        ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
+                        print "local <= stop: " + str(ts1 <= ts2)
+                        #if l[0] == ip and l[1] == path and ts1 <= ts2:
+                        #If IP sending to has sent data more recently don't send back
+                        if l[0] == ip and ts1 <= ts2:
+                            print "Stop = True, file: " + l[0]
+                            stop = True
+                        else:
+                            stopIPs[l[0]] = [l[1]," ".join(l[2:])]
 
                 if stop:
                     f.close()
@@ -162,14 +165,23 @@ class MyEventHandler(pyinotify.ProcessEvent):
             print e
         return False
 
+    def initFileSync(self,event):
+        if self.exclusions(event.pathname):
+            #print "Excluded returning"
+            return
+        pathparts = event.pathname.split("/")
+        foldName = "/".join(pathparts[0:len(pathparts)-1])
+        print "Removing watch on: " + foldName
+        wm.rm_watch(wm.get_wd(foldName), rec=True)
+        self.fileSync(event)
+        print "Putting watch back on: " + foldName
+        wm.add_watch(foldName.rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
+
     #Sync files
     def fileSync(self,event):
         t = Tools()
         if os.path.isdir(event.pathname):
             print "Watching: ",event.pathname
-        if self.exclusions(event.pathname):
-            print "Excluded returning"
-            return
         for folder in watchedfolders.keys():
             print "For each folder: " + str(folder) + " in watchedfolder keys"
             if folder in event.pathname:
@@ -215,6 +227,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             time.sleep(5)
                             print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
+                        print "Set stop files uniq: " + event.pathname
                         self.setStopFileUniq(ip,myIP,event.pathname,folder)
                         self.endCopy(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname])
@@ -224,19 +237,19 @@ class MyEventHandler(pyinotify.ProcessEvent):
     #    print "Create:",event.pathname
     def process_IN_DELETE(self, event):
         print "Delete: ",event.pathname
-        #self.fileSync(event)
+        #self.initFileSync(event)
     def process_IN_CREATE(self, event):
         print "CREATE: ",event.pathname
-        self.fileSync(event)
+        self.initFileSync(event)
     def process_IN_MOVED_FROM(self, event):
         print "Move from: ",event.pathname
-    #    self.fileSync(event)
+    #    self.initFileSync(event)
     def process_IN_MODIFY(self, event):
         #print "Modify: ",event.pathname
-        self.fileSync(event)
+        self.initFileSync(event)
     def process_IN_MOVED_TO(self, event):
         print "Move to: ",event.pathname
-        self.fileSync(event)
+        self.initFileSync(event)
 
 
 def main():
