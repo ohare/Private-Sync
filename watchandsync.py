@@ -172,7 +172,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         wm.rm_watch(wm.get_wd(foldName), rec=True)
         self.fileSync(event)
         print "Putting watch back on: " + foldName
-        wm.add_watch(foldName,pyinotify.ALL_EVENTS, rec=True, auto_add=True)
+        wm.add_watch(foldName.rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
 
     #Sync files
     def fileSync(self,event):
