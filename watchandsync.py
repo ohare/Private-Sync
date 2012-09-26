@@ -167,7 +167,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
     def initFileSync(self,event):
         pathparts = event.pathname.split("/")
-        foldName = foldName[0:len(pathparts)-1]
+        foldName = "/".join(pathparts[0:len(pathparts)-1])
         print "Removing watch on: " + foldName
         wm.rm_watch(foldName)
         self.fileSync(event)
