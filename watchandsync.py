@@ -215,6 +215,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             time.sleep(5)
                             print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
+                        print "Set stop files uniq: " + event.pathname
                         self.setStopFileUniq(ip,myIP,event.pathname,folder)
                         self.endCopy(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname])

@@ -8,11 +8,11 @@ echo "Starting one"
 echo "scp rten /tmp/${name}/"
 scp rten cal@${vm_addr_arr[$i]}:/tmp/${name}/
 ssh cal@${vm_addr_arr[$i]} "mv /tmp/${name}/rten ${path}/${name}/"
-sleep 10
+sleep 20
 echo "Starting two"
 scp rten2 cal@${vm_addr_arr[$i]}:/tmp/${name}/
 ssh cal@${vm_addr_arr[$i]} "mv /tmp/${name}/rten2 ${path}/${name}/"
-sleep 10
+sleep 20
 echo "Starting three"
 scp rten3 cal@${vm_addr_arr[$i]}:/tmp/${name}/
 ssh cal@${vm_addr_arr[$i]} "mv /tmp/${name}/rten3 ${path}/${name}/"
