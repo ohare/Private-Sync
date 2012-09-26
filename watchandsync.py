@@ -82,18 +82,21 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 f = open(files,"r");
                 for line in f:
                     l = line.split()
-                    print "local " + str(path) + " modtime: " + modTime
-                    print "Stop " + l[1] + " modtime: " + str(l[2:])
-                    ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
-                    ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
-                    print "local <= stop: " + str(ts1 <= ts2)
-                    #if l[0] == ip and l[1] == path and ts1 <= ts2:
-                    #If IP sending to has sent data more recently don't send back
-                    if l[0] == ip and ts1 <= ts2:
-                        print "Stop = True, file: " + l[0]
-                        stop = True
+                    if exclusions(l[1]):
+                        print str(l[1]) + " was in ignore file skipping"
                     else:
-                        stopIPs[l[0]] = [l[1]," ".join(l[2:])]
+                        print "local " + str(path) + " modtime: " + modTime
+                        print "Stop " + l[1] + " modtime: " + str(l[2:])
+                        ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
+                        ts2 = time.strptime(" ".join(l[2:]),"%a %b %d %H:%M:%S %Y")
+                        print "local <= stop: " + str(ts1 <= ts2)
+                        #if l[0] == ip and l[1] == path and ts1 <= ts2:
+                        #If IP sending to has sent data more recently don't send back
+                        if l[0] == ip and ts1 <= ts2:
+                            print "Stop = True, file: " + l[0]
+                            stop = True
+                        else:
+                            stopIPs[l[0]] = [l[1]," ".join(l[2:])]
 
                 if stop:
                     f.close()
