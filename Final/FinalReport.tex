@@ -414,6 +414,8 @@ slightly above where you might expect them to be for the amount
 of data that was copied.
 
 \section{Full graph replication}
+As you can see unison and rsync outperformed scp
+advantage of unison is two-way sync
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
@@ -443,8 +445,12 @@ of data that was copied.
     \end{subfigure}
     \caption{Comparison of methods over line topology}
 \end{figure}
-\newpage
 
+For next graphs I dropped scp as not only is it inferior it is also
+completely wrong the programs behaviour is undefined for changes
+coming from two directions.
+
+\newpage
 \section{When to stop copying}
 After testing my program on some simple topologies one problem became
 clear. Each node would notice changes had occurred to a folder
