@@ -26,8 +26,11 @@
 \begin{document}
 \maketitle
 
+\begin{comment}
 \null
 \vfill
+\end{comment}
+\newpage
 \section{Abstract}
 I have written a program in python which reads user
 settings from a file. Synchronises the appropriate files
@@ -360,10 +363,18 @@ different networks. Naive copying; using rsync, an application
 designed for efficiently copying files in one direction by looking at
 the differences in the files; and unison described above.
 
+\begin{comment}
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/two-point-comp-same.png}
     \caption{Comparison of scp,rsync,unison}
+    \label{fig:point_comp_graph}
+\end{figure}
+\end{comment}
+
+\begin{figure}[htp]
+    \center{\includegraphics[width=1\linewidth]{images/point-to-point.eps}}
+    \caption{Comparison of SCP, Rsync, Unison, between two nodes}
     \label{fig:point_comp_graph}
 \end{figure}
 
@@ -443,23 +454,25 @@ a problem because it could detect that no changes had occur between the nodes
 and would stop syncing after one check (which had minimal overhead).
 
 \begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/line-scp-back.png}
+    %\centering
+    %\includegraphics[scale=0.5]{images/line-scp-back.png}
+    \center{\includegraphics[width=1\linewidth]{images/line-scp-back.eps}}
     \caption{Line topology, using scp, nodes copying data back and forth}
     \label{fig:line_scp_back_forth_graph}
-\end{figure}
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/line-uni-10-tail.png}
-    \caption{Line topology, using unison, unnecessary checking}
-    \label{fig:line_uni_tail_graph}
 \end{figure}
 
 Figure \ref{fig:line_scp_back_forth_graph} shows three 10Mb files being copied to a node
 in a line topology. The problem is that nodeB and nodeC continue to send
 data to each other even after every node has all of the files. NodeA receives
 a lot of data even though it was the source of the file changes. 
+
+\begin{figure}[htp]
+    %\centering
+    %\includegraphics[scale=0.5]{images/line-uni-10-tail.png}
+    \center{\includegraphics[width=1\linewidth]{images/line-uni-10-tail.eps}}
+    \caption{Line topology, using unison, unnecessary checking}
+    \label{fig:line_uni_tail_graph}
+\end{figure}
 
 The data points in figure \ref{fig:line_uni_tail_graph} show that when using
 unison although no extra data was sent unison had to make checks to see
