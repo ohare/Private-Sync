@@ -137,7 +137,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
     def setLastSync(self):
         print "echo \"" + str(datetime.datetime.now())+ "\" > " + homepath + "lastSync"
-        subprocess.call(["echo \"" + str(datetime.datetime.now())+ "\" > " + homepath + "lastSync"])
+        subprocess.call(["echo " + str(datetime.datetime.now())+ " > " + homepath + "lastSync"])
 
     def getLastSync(self):
         f = open(homepath + "lastSync","r")
