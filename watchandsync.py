@@ -183,7 +183,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         for i in range(0, len(watchedfolders[foldName]),4):
             ip = watchedfolders[foldName][i]
             myIP = readnet.getMyIP(ip)
-            for f in glob.glob(foldName):
+            for f in glob.glob(foldName + "/*"):
                 if not self.inStopFile(myIP,f):
                     self.fileSync(f)
 
