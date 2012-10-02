@@ -135,6 +135,30 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename
         subprocess.call(["ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
 
+    def setLastSync(self):
+        print "echo \"" + str(datetime.datetime.now())+ "\" > " + homepath + "lastSync"
+        subprocess.call(["echo \"" + str(datetime.datetime.now())+ "\" > " + homepath + "lastSync"])
+
+    def getLastSync(self):
+        f = open(homepath + "lastSync","r")
+        time = f.read()
+        f.close()
+        return time
+
+    def newerThanLast(self, fileName):
+        stop = False
+        print "Last sync time: " + str(self.getLastSync())
+        ts2 = time.strptime(" ".join(self.getLastSync()),"%a %b %d %H:%M:%S %Y")
+        modTime = self.getModTime(fileName)
+        print "local " + str(fileName) + " modtime: " + modTime
+        ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
+        print "local <= stop: " + str(ts1 <= ts2)
+        if ts1 > ts2:
+            print "Newer file than last sync!"
+            stop = True
+        return stop
+
+
     #Get node name from whoami file
     def getNodeName(self):
         w = open(homepath + "whoami","r")
@@ -175,16 +199,17 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "Removing watch on: " + foldName
         wm.rm_watch(wm.get_wd(foldName), rec=True)
         
+        self.setLastSync()
         self.fileSync(event.pathname)
         
         print "Putting watch back on: " + foldName
         wm.add_watch(foldName.rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
 
         for i in range(0, len(watchedfolders[foldName]),4):
-            ip = watchedfolders[foldName][i]
-            myIP = readnet.getMyIP(ip)
+        #    ip = watchedfolders[foldName][i]
+        #    myIP = readnet.getMyIP(ip)
             for f in glob.glob(foldName + "/*"):
-                if not self.inStopFile(myIP,f):
+                if self.newerThanLast(f):
                     print "init: CONTINUE"
                     self.fileSync(f)
                 else:
