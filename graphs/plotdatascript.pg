@@ -3,7 +3,7 @@
 #set terminal postscript eps color lw 15 "Helvetica" 20
 set terminal postscript eps color lw 2 "Helvetica" 15
 
-set title "Using unison to sync between nodes, line topography"
+set title "Using rsync to sync between nodes, line topography"
 
 set xlabel "Time (Seconds)"
 set ylabel "Data transferred (MB)"

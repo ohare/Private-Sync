@@ -215,4 +215,4 @@ else
     echo "Oops try again"
 fi
 
-neato -Tpng graphs/$1 > graphs/$1-graph.png
+neato -Teps graphs/$1 > graphs/$1-graph.eps
