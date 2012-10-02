@@ -185,7 +185,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
             myIP = readnet.getMyIP(ip)
             for f in glob.glob(foldName + "/*"):
                 if not self.inStopFile(myIP,f):
+                    print "init: CONTINUE"
                     self.fileSync(f)
+                else:
+                    print "init: STOP"
 
     #Sync the files
     def fileSync(self,pathname):
