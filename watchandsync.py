@@ -171,14 +171,83 @@ class MyEventHandler(pyinotify.ProcessEvent):
             return
         pathparts = event.pathname.split("/")
         foldName = "/".join(pathparts[0:len(pathparts)-1])
+
         print "Removing watch on: " + foldName
         wm.rm_watch(wm.get_wd(foldName), rec=True)
-        self.fileSync(event)
+        
+        self.fileSync(event.pathname)
+        
         print "Putting watch back on: " + foldName
         wm.add_watch(foldName.rstrip(),pyinotify.ALL_EVENTS, rec=True, auto_add=True)
 
-    #Sync files
-    def fileSync(self,event):
+        for i in range(0, len(watchedfolders[foldName]),4):
+            ip = watchedfolders[foldName][i]
+            myIP = readnet.getMyIP(ip)
+            for f in glob.glob(foldName):
+                if not self.inStopFile(myIP,f):
+                    self.fileSync(f)
+
+    #Sync the files
+    def fileSync(self,pathname):
+        t = Tools()
+        if os.path.isdir(pathname):
+            print "Watching: ",pathname
+        for folder in watchedfolders.keys():
+            print "For each folder: " + str(folder) + " in watchedfolder keys"
+            if folder in pathname:
+                for i in range(0, len(watchedfolders[folder]),4):
+                    ip = watchedfolders[folder][i]
+                    path = watchedfolders[folder][i+1]
+                    waitTime = watchedfolders[folder][i+2]
+                    lastTime = watchedfolders[folder][i+3]
+                    print "Wait: " + str(waitTime) + " Last: " + str(lastTime) 
+                    print "Current ip and path: " + ip + " " + path
+                    readnet.logIPtraffic(ip, pathname)
+                    myIP = readnet.getMyIP(ip)
+                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + pathname])
+                    print "ssh",ip,"'/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + pathname + "'"
+                    fparts = folder.split("/")
+                    fname = fparts[len(fparts)-1]
+                    #stopIP = self.getStopInfo()
+                    #print "STOP: " + stopIP[0] + " " + stopIP[1]
+                    #if stopIP[0] == ip and stopIP[1] == pathname:
+                    if self.inStopFile(ip,pathname):
+                        print "STOPPED to " + ip + " " + path
+                        #os.remove("./stop");
+                    else:
+                        print "CONTINUE"
+                        t.timeElapsed(lastTime, waitTime)
+                        watchedfolders[folder][i+3] = str(datetime.datetime.now())
+                        t.updateFolderInfo(watchedfolders)
+                        self.beginCopy(ip)
+                        if args.scp:
+                            #print "SCP: For cpFile in " + folder
+                            for cpFile in glob.glob(folder + "/*"): 
+                                #print "SCP GLOB:" + cpFile
+                                print "scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"
+                                subprocess.call(["scp","-rp",cpFile,ip + ":" + cpFile + ".tmp"])
+                                #subprocess.call(["ssh",ip,"yes y | find /tmp/" + fname + " -type f -exec cp -p {} " + path + fname + "/ \; rm /tmp/" + fname])
+                                print "ssh",ip,"mv " + cpFile + ".tmp " + cpFile
+                                subprocess.call(["ssh",ip,"mv " + cpFile + ".tmp " + cpFile])
+                                print "END SCP GLOB"
+                        elif args.rsync:
+                            print "rsync","-rt",folder,ip + ":" + path
+                            subprocess.call(["rsync","-rt",folder,ip + ":" + path])
+                        else:
+                            time.sleep(5)
+                            print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
+                            subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
+                        print "Set stop files uniq: " + pathname
+                        #Set stop file on foreign host
+                        self.setStopFileUniq(ip,myIP,pathname,folder)
+                        #Set stop file for myself to look at
+                        self.setStopFileUniq(myIP,myIP,pathname,folder)
+                        self.endCopy(ip)
+                    subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + pathname])
+                    readnet.logIPtraffic(ip, pathname)
+    
+    #Sync files - DEPRECATED
+    def oldfileSync(self,event):
         t = Tools()
         if os.path.isdir(event.pathname):
             print "Watching: ",event.pathname
@@ -228,7 +297,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
                         print "Set stop files uniq: " + event.pathname
+                        #Set stop file on foreign host
                         self.setStopFileUniq(ip,myIP,event.pathname,folder)
+                        #Set stop file for myself to look at
+                        self.setStopFileUniq(myIP,myIP,event.pathname,folder)
                         self.endCopy(ip)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + event.pathname])
                     readnet.logIPtraffic(ip, event.pathname)
