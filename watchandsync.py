@@ -136,19 +136,24 @@ class MyEventHandler(pyinotify.ProcessEvent):
         subprocess.call(["ssh",ip,"mv " + homepath + "Stop-" + nodename + ".tmp " + homepath + "Stop-" + nodename])
 
     def setLastSync(self):
-        print "echo \"" + str(datetime.datetime.now())+ "\" > " + homepath + "lastSync"
-        subprocess.call(["echo " + str(datetime.datetime.now())+ " > " + homepath + "lastSync"])
+        #print "echo \"" + str(datetime.datetime.now())+ "\" > " + homepath + "lastSync"
+        #subprocess.call(["echo", str(datetime.datetime.now()) + " > " + homepath + "lastSync"])
+        f = open(homepath + "lastSync","w")
+        f.write(str(datetime.datetime.now()))
+        f.close()
 
     def getLastSync(self):
         f = open(homepath + "lastSync","r")
         time = f.read()
         f.close()
-        return time
+        return time.rstrip()
 
     def newerThanLast(self, fileName):
         stop = False
         print "Last sync time: " + str(self.getLastSync())
-        ts2 = time.strptime(" ".join(self.getLastSync()),"%a %b %d %H:%M:%S %Y")
+        FMT = '%Y-%m-%d %H:%M:%S.%f'
+        #datetime.datetime.strptime(dtstamp, FMT)
+        ts2 = time.strptime(self.getLastSync(),FMT)
         modTime = self.getModTime(fileName)
         print "local " + str(fileName) + " modtime: " + modTime
         ts1 = time.strptime(modTime,"%a %b %d %H:%M:%S %Y")
