@@ -220,6 +220,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         watchedfolders[folder][i+3] = str(datetime.datetime.now())
                         t.updateFolderInfo(watchedfolders)
                         self.beginCopy(ip)
+                        self.beginCopy(myIP)
                         if args.scp:
                             #print "SCP: For cpFile in " + folder
                             for cpFile in glob.glob(folder + "/*"): 
@@ -243,6 +244,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         #Set stop file for myself to look at
                         self.setStopFileUniq(myIP,myIP,pathname,folder)
                         self.endCopy(ip)
+                        self.endCopy(myIP)
                     subprocess.call(["ssh",ip,"/usr/bin/python " + homepath + "readnet.py -i " + myIP + " -f " + pathname])
                     readnet.logIPtraffic(ip, pathname)
     
