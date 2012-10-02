@@ -449,6 +449,34 @@ advantage of unison is two-way sync
 For next graphs I dropped scp as not only is it inferior it is also
 completely wrong the programs behaviour is undefined for changes
 coming from two directions.
+\begin{figure}[htp]
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/circ-graph.eps}
+        \caption{Circle - generated graph of topology}
+        \label{fig:circ_graph}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/circ-uni-10-aite.eps}
+        \caption{Unison running over circle topology}
+        \label{fig:circ_uni}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/circ-graph.eps}
+        \caption{Mesh - generated graph of topology}
+        \label{fig:mesh_graph}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/circ-uni-10-aite.eps}
+        \caption{Unison running over mesh topology}
+        \label{fig:line_uni}
+    \end{subfigure}
+    \caption{Comparison of different topologies}
+\end{figure}
 
 \newpage
 \section{When to stop copying}
@@ -555,6 +583,16 @@ to allow a user to omit certain files from the replication by adding
 all files in my programs ignore file to unisons ignore list. Or conversely
 by maintaining a white list of files to sync. This would allow for
 greater granularity when syncing nodes.
+
+\section{Getting my IP, networking issues}
+route etc.
+
+\section{settings and stored data}
+stores files sync time, how up to date
+all graph data could be utilised
+
+\section{wifi vs 3g}
+use settings and a topo with cA and cB
 
 \begin{comment}
 \section{Future work}
