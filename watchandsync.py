@@ -216,6 +216,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
             for f in glob.glob(foldName + "/*"):
                 if self.newerThanLast(f):
                     print "init: CONTINUE"
+                    self.setLastSync()
                     self.fileSync(f)
                 else:
                     print "init: STOP"
