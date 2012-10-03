@@ -169,6 +169,8 @@ def dataPerNode():
         f.close()
     """
 
+    beginning_time = -1
+
     #os.chdir("./logs")
     count = 1
     bytes_field = 4
@@ -176,7 +178,6 @@ def dataPerNode():
     fin = {'nodeA':[0,0],'nodeB':[0,0],'nodeC':[0,0],'nodeD':[0,0]}
     lastNode = ""
     num_mb_dict = {}
-    beginning_time = -1
     for files in glob.glob("*"):
         #print files
         #if files == max_name:
@@ -210,7 +211,9 @@ def dataPerNode():
                         beginning_time = l[date_field]
                     elif int(secondsDiff(beginning_time,l[date_field])) > 0:
                         beginning_time = l[date_field]
-                elapsed = int(secondsDiff(l[date_field],start_time))
+                    #print beginning_time
+                #elapsed = int(secondsDiff(l[date_field],start_time))
+                elapsed = int(secondsDiff(l[date_field],beginning_time))
                 #print elapsed
                 if elapsed in num_mb_dict:
                     num_mb_dict[elapsed] += (long(l[bytes_field]) - prev)
