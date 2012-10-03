@@ -9,10 +9,10 @@ ethcountarr=(1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-folderpath="/home/cal/Documents/t14"
+folderpath="/home/cal/Documents/t15"
 folderpath2="/home/cal/Documents/t02"
 homepath="/home/cal/Documents/Private-Sync/"
-waitTime=10
+waitTime=30
 
 function clear_ifaces() {
     i=0
