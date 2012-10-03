@@ -145,7 +145,8 @@ be integrated into my current system.
 
 %Add more here?
 
-\subsection*{Example use case}
+%\subsection*{Example use case}
+\subsection{Example use case}
 Here is an example use case demonstrating why I find my program useful.
 
 I like to keep all of the data on my laptop backed up to an
@@ -213,7 +214,8 @@ Something which Dropbox will not provide but my system does.
 % do you need a section to discuss the design of your solution?
 
 %Update this section
-\section{Virtual Machines, Node networks}
+\section{Supporting architecture and program development}
+\subsection{Virtual Machines, Node networks}
 For testing my program I needed to have a network
 of computers that can be linked together in different
 arrangements easily. I decided to use virtual machines for
@@ -223,13 +225,45 @@ links between them.
 
 I have used Oracle's VirtualBox software. I chose
 VirtualBox because of its easy to use command
-line interface. I have several scripts that
+line interface.
+My program should be able to run across
+any network of nodes. So I wanted to test
+as many different arrangements as possible.
+I decided that I needed to be able change network
+topologies easily without having to re-write
+my scripts. I built some bash scripts to run on top
+of a program called Graphviz.
+
+``Graphviz is open source graph visualization software''.\footnote{www.graphviz.org}
+I used Graphviz to generate graphs of all the topologies I worked
+with. This made it easy to keep track of what a topology looked like
+which was useful for debugging. It was also useful to display results
+alongside an image of what the topology looks like. Building my
+program on top of Graphviz meant that I could couple the production
+of the topology graph and the configuration of the virtual machines
+together. I never wanted one without the other so this was very useful.
+
+I use Graphviz configuration files to set up my virtual machines
+as well as generate graphs. This means I only have to write a configuration
+file once. Graphviz uses a simple notation which made it easy to have
+a bash script also read this file.
+
+My bash script enables the appropriate network adaptors on
+each virtual machine. Then it sets these adaptors to use an internal
+network which it also creates. I chose to use an internal network
+as the link between any given machines because this way I could
+guarantee that no other programs were running over that interface
+using up network traffic.
+
+\begin{comment}
+I have several scripts that
 call the \texttt{vbmoxmange} command to set up the internal
 network connections between machines and then start up
 the machine itself. This makes switching between
 network configurations very easy as I can just
 run a different script depending on which network
 topology I would like to test.
+\end{comment}
 
 I have decided to start testing my program with
 some simple topologies to see if I can gain any
@@ -266,16 +300,25 @@ performs.
     \caption{Simple network topologies}
 \end{figure}
 
+\begin{comment}
 Snippet from one of my network scripts:
 \begin{verbatim}
 VBoxManage modifyvm "Ubuntu-Test" --nic2 intnet
 VBoxManage modifyvm "Ubuntu-Test" --intnet2 "intnet"
 VBoxManage startvm "Ubuntu-Test"
 \end{verbatim}
+\end{comment}
 
-\newpage
+%\newpage
 
-\section{Python}
+\subsection{Getting my IP, networking issues}
+route etc.
+
+\subsection{settings and stored data}
+stores files sync time, how up to date
+all graph data could be utilised
+
+\subsection{Python}
 I have chosen to use Python to implement
 my program. Python appealed to me because it
 supports many different platforms (Windows, Linux, Mac OS X).
@@ -285,7 +328,7 @@ my program across different operating systems in the future.
 
 %multiproccessing module
 
-\section{User control}
+\subsection{User control}
 One of the main goals of my project is to allow the user
 to have a  large amount of control over how the program
 behaves. I currently have the program reading from
@@ -332,7 +375,10 @@ change in the file system below the watched directory.
         It also had a poor
         user-space interface which uses SIGIO. Inotify only
         uses one file descriptor and returns events to the
-        listener as they occur\cite{inotify-readme}. It works well and does
+        listener as they occur
+        %\footnote{www.kernel.org/pub/linux/kernel/people/rml/inotify/README}
+        \cite{inotify-readme}.
+        It works well and does
         what I need it to do. There is a Python module
         called pyinotify that provides a Python interface
         to inotify, which I have used and tested in my program.
@@ -344,7 +390,10 @@ change in the file system below the watched directory.
 
     \item FSEvents
         \begin{itemize}
-        \item FSEvents is an API in MacOS X\cite{fsevents-intro}. It is similar
+        \item FSEvents is an API in MacOS X
+        %\footnote{https://developer.apple.com/library/mac/#documentation/Darwin/Conceptual/FSEvents_ProgGuide/Introduction/Introduction.html}
+        \cite{fsevents-intro}.
+        It is similar
         to inotify in that it provides a notification to other
         applications when a directory is changed however
         it does not inform you which file in the directory
@@ -353,7 +402,10 @@ change in the file system below the watched directory.
         unchanged files in a directory. There is a Python module
         for FSEvents, as well. 
         
-        I also looked at using the \texttt{kqueue}\cite{kqueue-man} system call that is
+        I also looked at using the \texttt{kqueue}
+        %\footnote{http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man2/kqueue.2.html}
+        \cite{kqueue-man}
+        system call that is
         supported by OS X and FreeBSD. It notifies the user
         when a kernel event occurs. I decided against using
         \texttt{kqueue} as the high level approach of FSEvents,
@@ -558,8 +610,8 @@ if it was about to synchronise a file back to the node it received
 the file from or if it had local changes that were newer than a received
 file it could continue with its sync.
 
-\section{Sub-nodes}
-I chose to classify directories as 'sub nodes' of a graph. The reason I choose
+\section{Dealing with Sub-nodes}
+I chose to classify directories as `sub nodes' of a graph. The reason I choose
 directories is because they are easy to manage a configuration file of directories to
 keep in sync (from the users point of view). If we wanted to only synchronize
 certain files in a directory we could write a unison configuration file with 
@@ -612,6 +664,15 @@ sent over the network.
     \caption{Comparison how frequently to sync}
 \end{figure}
 
+As you can see in figure 
+%\ref{fig:comp_uni_freq}
+when using unison it
+is best to just sync as often as possible. This is because unison only sends
+the difference between files and the network overhead associated with
+synchronising is negligible when dealing with large files.
+
+SCP showed a noticeable difference however...?
+
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/rand-txt-2sleep.png}
@@ -647,15 +708,14 @@ all files in my programs ignore file to unisons ignore list. Or conversely
 by maintaining a white list of files to sync. This would allow for
 greater granularity when syncing nodes.
 
-\section{Getting my IP, networking issues}
-route etc.
 
-\section{settings and stored data}
-stores files sync time, how up to date
-all graph data could be utilised
+\section{Wi-Fi vs 3G}
+Circle topology start at node A, node B is on Wi-Fi and node C is on 3G.
+Results and discussion to come.
 
-\section{wifi vs 3g}
-use settings and a topo with cA and cB
+\section{Mobile Nodes}
+
+\section{Feedback}
 
 \begin{comment}
 \section{Future work}
@@ -816,6 +876,7 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
 
 \end{thebibliography}
 
+\begin{comment}
 \section{Bibliography}
 %OPTIONAL: further reading
 
@@ -824,6 +885,7 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
 
 \section{Index}
 %OPTIONAL
+\end{comment}
 
 %\section{Appendices}
 %OPTIONAL
