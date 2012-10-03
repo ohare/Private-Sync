@@ -32,12 +32,12 @@
 \end{comment}
 \newpage
 \section{Abstract}
-I have written a program in python which reads user
-settings from a file. Synchronises the appropriate files
+I have written a program in Python which reads user
+settings from a file, and synchronises the appropriate files
 to the appropriate machines when they have been modified.
-Using an efficient two way file synchronising tool called
-unison. I will discuss in this paper what I have done and
-how I have tested it.
+It does this using an efficient two way file synchronising tool called
+Unison. I will discuss in this dissertation what I have done and
+how I have tested my program.
 \newpage
 
 \tableofcontents
@@ -548,6 +548,35 @@ If lots of small changes are occurring frequently it might be more efficient
 to perform a synchronisation after several changes have occurred. Given that
 there is overhead with each synchronisation, fewer copies means less data
 sent over the network.
+
+\begin{figure}[htp]
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/line-uni-10-5.eps}
+        \caption{5 second sync}
+        \label{fig:circ_graph}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/line-uni-10-10.eps}
+        \caption{10 second sync}
+        \label{fig:circ_uni}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/line-uni-10-20.eps}
+        \caption{20 second sync}
+        \label{fig:mesh_graph}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{images/line-uni-10-30.eps}
+        \caption{30 seconds sync}
+        \label{fig:line_uni}
+    \end{subfigure}
+    \caption{Comparison how frequently to sync}
+\end{figure}
 
 \begin{figure}[htp]
     \centering

@@ -6,7 +6,7 @@ set terminal postscript eps color lw 2 "Helvetica" 15
 set title "Using unison to sync between nodes, line topography"
 
 set xlabel "Time (Seconds)"
-set ylabel "Data transferred (MB)"
+set ylabel "Data received (MB)"
 
 set key bottom right
 
