@@ -1,14 +1,15 @@
-vm_name_arr=("Ubuntu-Pool" "Ubuntu-Silence" "Ubuntu-Wild" "Ubuntu-Spheros")
-vm_addr_arr=("192.168.0.28" "192.168.0.27" "192.168.0.19" "192.168.0.14")
-intnetarr=("lion" "tiger" "cat" "dog" "fish" "kiwi")
+vm_name_arr=("Ubuntu-Pool" "Ubuntu-Silence" "Ubuntu-Black" "Ubuntu-Spheros" "Ubuntu-Wild")
+vm_addr_arr=("192.168.0.28" "192.168.0.27" "192.168.0.30" "192.168.0.14")
+#Wild = 19
+intnetarr=("lion" "tiger" "cat" "dog" "fish" "kiwi" "swish" "boom" "roar")
 #These should all be in one big dictionary apart from inet names
-letterarr=("a" "b" "c" "d" "e" "f" "g")
-ifcountarr=(2 2 2 2 2 2 2 2 2)
-ethcountarr=(1 1 1 1 1 1 1 1 1)
+letterarr=("a" "b" "c" "d" "e" "f" "g" "h" "i" "j")
+ifcountarr=(2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2)
+ethcountarr=(1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
 incount=1
 bigncount=2
 littlencount=1
-folderpath="/home/cal/Documents/t12"
+folderpath="/home/cal/Documents/t14"
 folderpath2="/home/cal/Documents/t02"
 homepath="/home/cal/Documents/Private-Sync/"
 waitTime=10
