@@ -455,7 +455,7 @@ all files in my programs ignore file to Unisons ignore list. Or conversely
 by maintaining a white list of files to sync. This would allow for
 greater granularity when syncing nodes.
 
-\section{Program Evaluation}
+\section{Program evaluation}
 \subsection{Point-to-Point synchronisation}
 After looking for cross-platform, open source, file synchronisation
 tools, I have found a tool called Unison
@@ -489,7 +489,8 @@ the differences in the files; and Unison described above.
 \begin{figure}[htp]
     \center{\includegraphics[width=1\linewidth]{images/point-to-point.eps}}
     \caption{Comparison of SCP, Rsync, Unison. Three identical 50MB files 
-    with different names are being transfered between two nodes.}
+    with different names are being transfered between two nodes. Each
+    point on the graph represents the start or end of a sync.}
     \label{fig:point_comp_graph}
 \end{figure}
 
@@ -593,15 +594,17 @@ coming from two directions.
 
 \newpage
 \subsection{When to stop copying}
+They way my program works it that Each node notices when changes
+have occurred to a folder it is watching and when a change occurs,
+copy these changes to other nodes that it is connected to.
 After testing my program on some simple topologies one problem became
-clear. Each node would notice changes had occurred to a folder
-it was watching and would then try to copy these changes to other
-nodes that it was connected to. The problem was that if the changes
+clear. 
+The problem was that if the changes
 came from one of its neighbour nodes this would cause an infinite loop
 of two nodes trying to copy changes to each other. This was particularly 
 a problem when using SCP to copy. When using Unison this was not as much of
-a problem because it could detect that no changes had occur between the nodes
-and would stop syncing after one check (which had minimal overhead).
+a problem because it could detect that no changes had occurred between the nodes
+and would stop synchronising after one check (which had minimal overhead).
 
 \begin{figure}[htp]
     %\centering
@@ -611,7 +614,7 @@ and would stop syncing after one check (which had minimal overhead).
     \label{fig:line_scp_back_forth_graph}
 \end{figure}
 
-Figure~\ref{fig:line_scp_back_forth_graph} shows three 10MB files being copied to a node
+Figure~\ref{fig:line_scp_back_forth_graph} shows three 10MB files being copied to nodeA
 in a line topology. The problem is that nodeB and nodeC continue to send
 data to each other even after every node has all of the files. NodeA receives
 a lot of data even though it was the source of the file changes. 
@@ -620,22 +623,24 @@ a lot of data even though it was the source of the file changes.
     %\centering
     %\includegraphics[scale=0.5]{images/line-uni-10-tail.png}
     \center{\includegraphics[width=1\linewidth]{images/line-uni-10-tail.eps}}
-    \caption{Line topology, using Unison, unnecessary checking}
+    \caption{Line topology, using Unison, program continues to check
+    for differences in files even after all nodes are the same.
+    Each point represents an attempted sync.}
     \label{fig:line_uni_tail_graph}
 \end{figure}
 
 The data points in figure~\ref{fig:line_uni_tail_graph} show that when using
-Unison although no extra data was sent Unison had to make checks to see
+Unison, although no extra data was sent, Unison still had to make checks to see
 whether there were any changes or not.
 
 %Change this
-I used a configuration file to get around this problem. Each time a node
-synchronised with another node it would write out a configuration file telling
+I used a control file to get around this problem. Each time a node
+synchronised with another node it would write out a control file telling
 the other node what files had been copied, who sent them and what the
 modification time of the files were. In this way a node could check
-if it was about to synchronise a file back to the node it received
-the file from or if it had local changes that were newer than a received
-file it could continue with its sync.
+if it was about to synchronise a file back to the node it had just received
+the file from or if local changes really had occurred to that file
+that were newer than a received file it should continue with its sync.
 
 \subsection{Dealing with Sub-nodes}
 \label{sec:subnodes}
