@@ -53,7 +53,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         try:
             return time.ctime(os.path.getmtime(path))
         except Exception, e:
-            return ""
+            return time.ctime()
 
     #Deprecated - Check for IP not to copy too
     def getStopInfo(self):
