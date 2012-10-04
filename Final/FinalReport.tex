@@ -402,7 +402,8 @@ change in the file system below the watched directory.
         was changed. This does not matter for my
         application since Unison is smart enough not to copy
         unchanged files in a directory. There is a Python module
-        for FSEvents called MacFSEvents\footnote{http://pypi.python.org/pypi/MacFSEvents/0.2.1}. 
+        for FSEvents called MacFSEvents
+        \footnote{http://pypi.python.org/pypi/MacFSEvents/0.2.1}. 
         
         I also looked at using the \texttt{kqueue}
         \footnote{http://developer.apple.com/library/mac/\#documentation/Darwin/Reference/ManPages/man2/kqueue.2.html}
@@ -410,22 +411,23 @@ change in the file system below the watched directory.
         system call that is
         supported by OS X and FreeBSD. It notifies the user
         when a kernel event occurs. I decided against using
-        \texttt{kqueue} as the high level approach of FSEvents,
-        suits the application's needs.
+        \texttt{kqueue} as the high level approach of FSEvents
+        suits my application's needs.
         \end{itemize}
 
     %\begin{comment}
     \item ReadDirectoryChangesW
         \begin{itemize}
         \item Windows, like the other operating systems
-        I have looked up, provides a nice way of doing this
-        too. There is a function called ReadDirectoryChangesW.
+        I have examined, provides a way of doing this
+        too. There is a function called \texttt{ReadDirectoryChangesW}.
 % you're not implementing ReaddirectoryChangesW - rephrase?
         There is a FileSystemWatcher Class in .NET version 4 and
         above. IronPython might prove to be a good choice for a
-        Windows implementation. I have chosen only to implement
-        my program on linux because portability wasn't in the main
-        scope of the project. It would have been nice to look
+        Windows implementation as it is a version of Python integrated
+        with the .NET framework. I have chosen only to implement
+        my program on Linux because portability was not in the main
+        scope of the project. I would have liked to look
         at it further but became too time consuming and not interesting
         from a research perspective.
 % perhaps clarify why you think it wold be appropriate if you still have more to learn about it.
@@ -449,82 +451,84 @@ My program simply reads from a file with each file pattern to exclude
 listed on a new line. It is easy to add to/remove from. As I said above
 I added .tmp to the file as a default. This could easily be extended
 to allow a user to omit certain files from the replication by adding
-all files in my programs ignore file to unisons ignore list. Or conversely
+all files in my programs ignore file to Unisons ignore list. Or conversely
 by maintaining a white list of files to sync. This would allow for
 greater granularity when syncing nodes.
 
 \section{Program Evaluation}
 \subsection{Point-to-Point synchronisation}
-After some preliminary analysis of the available file synchronisation
-tools I have found a tool called Unison to be a promising starting
+After looking for cross-platform, open source, file synchronisation
+tools, I have found a tool called Unison
+\footnote{http://www.cis.upenn.edu/~bcpierce/unison/}
+to be a promising starting
 base for this project. Unison is an open source file synchronisation tool.
 It supports efficient (\emph{i.e.,} it attempts to only send changes between file versions) file synchronisation between two
-directories (including sub-folders) between two machines (or the same
-machine).
+directories (including sub-folders) between two ``roots''
+that may or may not be on the same machine. Unison calls the
+directories it is synchronising, roots.
 
-I decided to run some tests using unison 
-and the network
-I had set up to determine whether this would make a good base for
+I decided to run some tests using Unison 
+and two machines running on the same network to 
+determine whether this would make a good base for
 my program or not.
 
 I looked at three methods of file synchronisation across
-different networks. Na\"{\i}ve copying; using rsync, an application
+these two machines. Na\"{\i}ve copying; using Rsync, an application
 designed for efficiently copying files in one direction by looking at
-the differences in the files; and unison described above.
+the differences in the files; and Unison described above.
 
 \begin{comment}
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/two-point-comp-same.png}
-    \caption{Comparison of scp,rsync,unison}
+    \caption{Comparison of SCP,Rsync,Unison}
     \label{fig:point_comp_graph}
 \end{figure}
 \end{comment}
 
 \begin{figure}[htp]
     \center{\includegraphics[width=1\linewidth]{images/point-to-point.eps}}
-    \caption{Comparison of SCP, Rsync, Unison, between two nodes}
+    \caption{Comparison of SCP, Rsync, Unison. Three identical 50MB files 
+    with different names are being transfered between two nodes.}
     \label{fig:point_comp_graph}
 \end{figure}
 
-Rsync and unison performed significantly better
+Rsync and Unison performed significantly better
 than the na\"{\i}ve copy method (as expected). After the initial file
-transfer subsequent edits to the file meant much less data had to
-be transmitted over the network, which meant the node graph
+transfer new files added to the directory resulted in much less data
+being transmitted over the network, which meant the node graph
 became up to date much more quickly.
 
-The reason na\"{\i}ve copy sent over 300Mb of data to copy three 50Mb
-files was because my implementation is deliberately na\"{\i}ve, it will
-copy the entire directory each time it is changed. For rsync and
-unison this is not a problem because they work based on the
+The reason na\"{\i}ve copy sent over 300MB of data to copy three 50MB
+files was because my implementation is deliberately na\"{\i}ve; it will
+copy the entire directory each time it is changed. Rsync and
+Unison were able to send less data because they work based on the
 differences between the files. However copy doesn't look at
 the files it just copies everything in the directory tree.
-Hence it will copy 50Mb after file one is created, 100Mb after
-the second file is added and finally 150Mb when all three
-files are present.
+Hence it will copy 50MB after file one is created, 100MB after
+the second file is added and finally 150MB when all three
+files are present for a total of 300MB.
 
-50Mb + 100Mb + 150Mb = 300Mb
-
-Rsync copies the expected 150Mb for three 50Mb files. While
+Rsync copies the expected 150MB for three 50MB files.
 Figure~\ref{fig:point_comp_graph} illustrates another advantage
-of unison over rysnc. The graph shows three zero filled
+of Unison over Rsync. The graph shows three zero filled
 binary files being copied from one node to another one after
 the other. Unison recognised that even though the files were named
-differently they were the same file. Another advantage of unison
+differently they were the same file. Another advantage of Unison
 is that it handles replication in two directions without
-clobbering the files on the other side.
+overwriting the files on the other side.
 
 Each of the three methods I trialled had some overhead associated
-with them. This overhead was due to the ssh tunnel between the
-machines which all three methods used. Unison and rsync also
-require some overhead when checking the differences between the files
+with them. This overhead was due to the secure shell (SSH) tunnel between
+the machines that all three methods used. Unison and Rsync also
+incur some overhead when comparing the differences between the files
 in the directories. This is why the graph shows the three lines
 slightly above where you might expect them to be for the amount
 of data that was copied.
 
 \subsection{Full graph replication}
-As you can see unison and rsync outperformed scp
-advantage of unison is two-way sync
+As you can see Unison and Rsync outperformed SCP
+advantage of Unison is two-way sync
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
@@ -555,7 +559,7 @@ advantage of unison is two-way sync
     \caption{Comparison of methods over line topology}
 \end{figure}
 
-For next graphs I dropped scp as not only is it inferior it is also
+For next graphs I dropped SCP as not only is it inferior it is also
 completely wrong the programs behaviour is undefined for changes
 coming from two directions.
 \begin{figure}[htp]
@@ -595,7 +599,7 @@ it was watching and would then try to copy these changes to other
 nodes that it was connected to. The problem was that if the changes
 came from one of its neighbour nodes this would cause an infinite loop
 of two nodes trying to copy changes to each other. This was particularly 
-a problem when using scp to copy. When using Unison this was not as much of
+a problem when using SCP to copy. When using Unison this was not as much of
 a problem because it could detect that no changes had occur between the nodes
 and would stop syncing after one check (which had minimal overhead).
 
@@ -603,11 +607,11 @@ and would stop syncing after one check (which had minimal overhead).
     %\centering
     %\includegraphics[scale=0.5]{images/line-scp-back.png}
     \center{\includegraphics[width=1\linewidth]{images/line-scp-back.eps}}
-    \caption{Line topology, using scp, nodes copying data back and forth}
+    \caption{Line topology, using SCP, nodes copying data back and forth}
     \label{fig:line_scp_back_forth_graph}
 \end{figure}
 
-Figure~\ref{fig:line_scp_back_forth_graph} shows three 10Mb files being copied to a node
+Figure~\ref{fig:line_scp_back_forth_graph} shows three 10MB files being copied to a node
 in a line topology. The problem is that nodeB and nodeC continue to send
 data to each other even after every node has all of the files. NodeA receives
 a lot of data even though it was the source of the file changes. 
@@ -616,12 +620,12 @@ a lot of data even though it was the source of the file changes.
     %\centering
     %\includegraphics[scale=0.5]{images/line-uni-10-tail.png}
     \center{\includegraphics[width=1\linewidth]{images/line-uni-10-tail.eps}}
-    \caption{Line topology, using unison, unnecessary checking}
+    \caption{Line topology, using Unison, unnecessary checking}
     \label{fig:line_uni_tail_graph}
 \end{figure}
 
 The data points in figure~\ref{fig:line_uni_tail_graph} show that when using
-unison although no extra data was sent unison had to make checks to see
+Unison although no extra data was sent Unison had to make checks to see
 whether there were any changes or not.
 
 %Change this
@@ -638,7 +642,7 @@ file it could continue with its sync.
 I chose to classify directories as `sub nodes' of a graph. The reason I choose
 directories is because they are easy to manage a configuration file of directories to
 keep in sync (from the users point of view). If we wanted to only synchronize
-certain files in a directory we could write a unison configuration file with 
+certain files in a directory we could write a Unison configuration file with 
 exclusions/inclusions in it. The other reason directories are a good choice
 is because I can have different directories in different places on different
 file systems by using symbolic links. I wanted to see how the freshness of different
@@ -647,7 +651,7 @@ sub-nodes varied between nodes when the program was running.
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/line-uni-2dir-comb.png}
-    \caption{Line topology, using unison, two different directories being synced}
+    \caption{Line topology, using Unison, two different directories being synced}
     \label{fig:line_uni_2dir_comb_graph}
 \end{figure}
 \newpage
@@ -690,8 +694,8 @@ sent over the network.
 
 As you can see in figure 
 %\ref{fig:comp_uni_freq}
-when using unison it
-is best to just sync as often as possible. This is because unison only sends
+when using Unison it
+is best to just sync as often as possible. This is because Unison only sends
 the difference between files and the network overhead associated with
 synchronising is negligible when dealing with large files.
 
