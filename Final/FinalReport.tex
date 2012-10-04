@@ -31,7 +31,7 @@
 \vfill
 \end{comment}
 \newpage
-\section{Abstract}
+\section*{Abstract}
 I have written a program in Python which reads user
 settings from a file, and synchronises the appropriate files
 to the appropriate machines when they have been modified.
@@ -204,7 +204,7 @@ fails. My program is aimed at addressing these issues.
 \end{figure}
 
 I have already described the personal network shown in
-figure \ref{fig:personal_graph}. Figure \ref{fig:corp_graph}
+figure~\ref{fig:personal_graph}. Figure~\ref{fig:corp_graph}
 shows a graph of a corporate network, this
 is another example use case. It will have many of the same
 basic needs as the personal graph. The coloured rings represent
@@ -349,50 +349,52 @@ of data without a cluttered configuration file.
 Another reason I chose directories as my granularity was because it may be
 handy to have a directory full of symlinks pointing to other directories.
 
-\section{Monitoring Directories}
+\section{Program mechanics}
+\subsection{Monitoring Directories}
 The application needs to monitor directories for changes
+(see section~\ref{sec:subnodes})
 so that it knows when to perform a sync. The reason I have
 chosen to do this is because synchronising a directory that
-has not been changed is a waste of time and my application
-is designed to be as efficient as possible. I do not
+has not been changed is a waste of time. I do not
 however want to be continually polling the watched
 directories to see if there have been any changes made.
-This would be a significant waste of CPU time. Instead
+This would be a significant waste of CPU time and the input/output
+time associated with checking the disk. Instead
 I have looked into ways of being notified of a
 change in the file system below the watched directory.
 \begin{itemize}
     \item Inotify
         \begin{itemize}
-        \item Inotify is a linux kernel feature that has been
+        \item Inotify is a kernel feature that has been
         included in the Linux kernel since version 2.6.
         It is used to watch directories for changes
         and notify listeners when a change occurs. Inotify
         is inode based and replaced dnotify, an older system
-        which provided the same function. Dnotify however was
+        that provided the same functionality. Dnotify however was
         inefficient, it opened up the file descriptors for
         each directory it was watching which meant the backing
         device could not be unmounted. 
         It also had a poor
-        user-space interface which uses SIGIO. Inotify only
+        user-space interface which used SIGIO. Inotify only
         uses one file descriptor and returns events to the
         listener as they occur
-        %\footnote{www.kernel.org/pub/linux/kernel/people/rml/inotify/README}
-        \cite{inotify-readme}.
-        It works well and does
-        what I need it to do. There is a Python module
-        called pyinotify that provides a Python interface
-        to inotify, which I have used and tested in my program.
+        \footnote{www.kernel.org/pub/linux/kernel/people/rml/inotify/README}
+        %\cite{inotify-readme}.
+        There is a Python module
+        called pyinotify\footnote{http://pyinotify.sourceforge.net/}
+        that provides a Python interface
+        to inotify, which I have used in my program.
         Another reason I chose inotify was because different kinds
         of changes triggered different inotify events. So I
         can differentiate between a file being deleted, created
-        or modified \emph{etc}.
+        or modified, \emph{etc}.
         \end{itemize}
 
     \item FSEvents
         \begin{itemize}
         \item FSEvents is an API in MacOS X
-        %\footnote{https://developer.apple.com/library/mac/#documentation/Darwin/Conceptual/FSEvents_ProgGuide/Introduction/Introduction.html}
-        \cite{fsevents-intro}.
+        \footnote{https://developer.apple.com/library/mac/\#documentation/Darwin/Conceptual/FSEvents\_ProgGuide/Introduction/Introduction.html}
+        %\cite{fsevents-intro}.
         It is similar
         to inotify in that it provides a notification to other
         applications when a directory is changed however
@@ -400,11 +402,11 @@ change in the file system below the watched directory.
         was changed. This does not matter for my
         application since Unison is smart enough not to copy
         unchanged files in a directory. There is a Python module
-        for FSEvents, as well. 
+        for FSEvents called MacFSEvents\footnote{http://pypi.python.org/pypi/MacFSEvents/0.2.1}. 
         
         I also looked at using the \texttt{kqueue}
-        %\footnote{http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man2/kqueue.2.html}
-        \cite{kqueue-man}
+        \footnote{http://developer.apple.com/library/mac/\#documentation/Darwin/Reference/ManPages/man2/kqueue.2.html}
+        %\cite{kqueue-man}
         system call that is
         supported by OS X and FreeBSD. It notifies the user
         when a kernel event occurs. I decided against using
@@ -431,7 +433,28 @@ change in the file system below the watched directory.
     %\end{comment}
 \end{itemize}
 
-\section{Point-to-Point synchronisation}
+\subsection{Unison and temporary files}
+I noticed that when Unison ran it created temporary files in the
+directory and once these files had been fully copied it renamed
+them to their intended name. The problem with this was that my program
+was picking up these temporary files as they were created and trying to
+copy them to the next node, only to find that these files no longer existed.
+To get around this problem I decided to implement a filter on the files to
+be copied. The program filters out files that contain ".tmp" in the filename.
+Unison is not the only program that uses temporary files. I decided that this
+should be a user set preference given that users may want to filter out different
+files.
+
+My program simply reads from a file with each file pattern to exclude
+listed on a new line. It is easy to add to/remove from. As I said above
+I added .tmp to the file as a default. This could easily be extended
+to allow a user to omit certain files from the replication by adding
+all files in my programs ignore file to unisons ignore list. Or conversely
+by maintaining a white list of files to sync. This would allow for
+greater granularity when syncing nodes.
+
+\section{Program Evaluation}
+\subsection{Point-to-Point synchronisation}
 After some preliminary analysis of the available file synchronisation
 tools I have found a tool called Unison to be a promising starting
 base for this project. Unison is an open source file synchronisation tool.
@@ -483,7 +506,7 @@ files are present.
 50Mb + 100Mb + 150Mb = 300Mb
 
 Rsync copies the expected 150Mb for three 50Mb files. While
-Figure \ref{fig:point_comp_graph} illustrates another advantage
+Figure~\ref{fig:point_comp_graph} illustrates another advantage
 of unison over rysnc. The graph shows three zero filled
 binary files being copied from one node to another one after
 the other. Unison recognised that even though the files were named
@@ -499,7 +522,7 @@ in the directories. This is why the graph shows the three lines
 slightly above where you might expect them to be for the amount
 of data that was copied.
 
-\section{Full graph replication}
+\subsection{Full graph replication}
 As you can see unison and rsync outperformed scp
 advantage of unison is two-way sync
 \begin{figure}[htp]
@@ -540,32 +563,32 @@ coming from two directions.
         \centering
         \includegraphics[scale=0.5]{images/circ-graph.eps}
         \caption{Circle - generated graph of topology}
-        \label{fig:circ_graph}
+        \label{fig:full_circ_graph}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
         \includegraphics[scale=0.5]{images/circ-uni-10-aite.eps}
         \caption{Unison running over circle topology}
-        \label{fig:circ_uni}
+        \label{fig:full_circ_uni}
     \end{subfigure}
 
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
         \includegraphics[scale=0.5]{images/mesh-graph.eps}
         \caption{Mesh - generated graph of topology}
-        \label{fig:mesh_graph}
+        \label{fig:full_mesh_graph}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
         \includegraphics[scale=0.5]{images/mesh-uni-10-aite.eps}
         \caption{Unison running over mesh topology}
-        \label{fig:line_uni}
+        \label{fig:full_mesh_uni}
     \end{subfigure}
     \caption{Comparison of different topologies}
 \end{figure}
 
 \newpage
-\section{When to stop copying}
+\subsection{When to stop copying}
 After testing my program on some simple topologies one problem became
 clear. Each node would notice changes had occurred to a folder
 it was watching and would then try to copy these changes to other
@@ -584,7 +607,7 @@ and would stop syncing after one check (which had minimal overhead).
     \label{fig:line_scp_back_forth_graph}
 \end{figure}
 
-Figure \ref{fig:line_scp_back_forth_graph} shows three 10Mb files being copied to a node
+Figure~\ref{fig:line_scp_back_forth_graph} shows three 10Mb files being copied to a node
 in a line topology. The problem is that nodeB and nodeC continue to send
 data to each other even after every node has all of the files. NodeA receives
 a lot of data even though it was the source of the file changes. 
@@ -597,7 +620,7 @@ a lot of data even though it was the source of the file changes.
     \label{fig:line_uni_tail_graph}
 \end{figure}
 
-The data points in figure \ref{fig:line_uni_tail_graph} show that when using
+The data points in figure~\ref{fig:line_uni_tail_graph} show that when using
 unison although no extra data was sent unison had to make checks to see
 whether there were any changes or not.
 
@@ -610,7 +633,8 @@ if it was about to synchronise a file back to the node it received
 the file from or if it had local changes that were newer than a received
 file it could continue with its sync.
 
-\section{Dealing with Sub-nodes}
+\subsection{Dealing with Sub-nodes}
+\label{sec:subnodes}
 I chose to classify directories as `sub nodes' of a graph. The reason I choose
 directories is because they are easy to manage a configuration file of directories to
 keep in sync (from the users point of view). If we wanted to only synchronize
@@ -628,7 +652,7 @@ sub-nodes varied between nodes when the program was running.
 \end{figure}
 \newpage
 
-\section{How often to sync}
+\subsection{How often to sync}
 So how often should I sync once I noticed a change.
 If lots of small changes are occurring frequently it might be more efficient
 to perform a synchronisation after several changes have occurred. Given that
@@ -640,26 +664,26 @@ sent over the network.
         \centering
         \includegraphics[scale=0.5]{images/line-uni-10-5.eps}
         \caption{5 second sync}
-        \label{fig:circ_graph}
+        \label{fig:line_uni_10_5}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
         \includegraphics[scale=0.5]{images/line-uni-10-10.eps}
         \caption{10 second sync}
-        \label{fig:circ_uni}
+        \label{fig:line_uni_10_10}
     \end{subfigure}
 
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
         \includegraphics[scale=0.5]{images/line-uni-10-20.eps}
         \caption{20 second sync}
-        \label{fig:mesh_graph}
+        \label{fig:line_uni_10_20}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
         \includegraphics[scale=0.5]{images/line-uni-10-30.eps}
         \caption{30 seconds sync}
-        \label{fig:line_uni}
+        \label{fig:line_uni_10_30}
     \end{subfigure}
     \caption{Comparison how frequently to sync}
 \end{figure}
@@ -688,34 +712,22 @@ SCP showed a noticeable difference however...?
 \end{figure}
 \newpage
 
-\section{Unison and temporary files}
-I noticed that when Unison ran it created temporary files in the
-directory and once these files had been fully copied it renamed
-them to their intended name. The problem with this was that my program
-was picking up these temporary files as they were created and trying to
-copy them to the next node, only to find that these files no longer existed.
-To get around this problem I decided to implement a filter on the files to
-be copied. The program filters out files that contain ".tmp" in the filename.
-Unison is not the only program that uses temporary files. I decided that this
-should be a user set preference given that users may want to filter out different
-files.
 
-My program simply reads from a file with each file pattern to exclude
-listed on a new line. It is easy to add to/remove from. As I said above
-I added .tmp to the file as a default. This could easily be extended
-to allow a user to omit certain files from the replication by adding
-all files in my programs ignore file to unisons ignore list. Or conversely
-by maintaining a white list of files to sync. This would allow for
-greater granularity when syncing nodes.
-
-
-\section{Wi-Fi vs 3G}
+\subsection{Wi-Fi vs 3G}
 Circle topology start at node A, node B is on Wi-Fi and node C is on 3G.
 Results and discussion to come.
 
-\section{Mobile Nodes}
 
-\section{Feedback}
+\section{Conclusion}
+\subsection{Future Work}
+\subsubsection{Mobile Nodes}
+
+\subsubsection{Feedback}
+
+\subsection{Results}
+My program does better than na\"{\i}ve copying, works in a variety
+of situations allows for fine grained user control.
+
 
 \begin{comment}
 \section{Future work}
@@ -809,7 +821,7 @@ and taking snapshots of the graph as it is at that time.
     \label{fig:mobile_node}
 \end{figure}
 
-In figure \ref{fig:mobile_node} node two intermittently has a 
+In figure~\ref{fig:mobile_node} node two intermittently has a 
 connection to a subset of
 nodes 1,3 and 4. The edges in grey are links that
 are not always present.
@@ -854,12 +866,9 @@ of the graph and pass that (potentially) useful information
 to the user.
 \end{comment}
 
-\section{Results}
+%\section{Results}
 
-\section{Conclusion}
-My program does better than na\"{\i}ve copying, works in a variety
-of situations allows for fine grained user control.
-
+\begin{comment}
 \begin{thebibliography}{9}
 
 %\bibitem{dotcom-trial}
@@ -875,6 +884,7 @@ Apple Inc. \url{https://developer.apple.com/library/mac/#documentation/Darwin/Co
 Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man2/kqueue.2.html}
 
 \end{thebibliography}
+\end{comment}
 
 \begin{comment}
 \section{Bibliography}
