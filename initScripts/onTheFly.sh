@@ -57,6 +57,7 @@ function search_letters() {
 }
 
 function vbmMOD {
+    #Set the NIC to intnet on the VM and attach it to the given network(*@\label{lst:mod_vm_nic}@*)
     echo "VBoxManage modifyvm $1 --nic$3 intnet"
     VBoxManage modifyvm $1 --nic$3 intnet
     echo "VBoxManage modifyvm $1 --intnet$3 $2"

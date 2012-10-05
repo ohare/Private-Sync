@@ -57,6 +57,7 @@ function search_letters() {
 }
 
 function vbmMOD {
+    #Set the NIC to intnet on the VM and attach it to the given network(*@\label{lst:mod_vm_nic}@*)
     echo "VBoxManage modifyvm $1 --nic$3 intnet"
     VBoxManage modifyvm $1 --nic$3 intnet
     echo "VBoxManage modifyvm $1 --intnet$3 $2"
@@ -121,7 +122,7 @@ function ifconf2 {
 if [ $2 == "vm" ]; then
     clear_ifaces
 
-    #(*@\label{lst:read_dot_file}@*)
+    #Read in the DOT script(*@\label{lst:read_dot_file}@*)
     while read line         
     do         
         first=$(echo "$line" | awk '{print $1}')
