@@ -121,6 +121,7 @@ function ifconf2 {
 if [ $2 == "vm" ]; then
     clear_ifaces
 
+    #Read in the DOT script(*@\label{lst:read_dot_file}@*)
     while read line         
     do         
         first=$(echo "$line" | awk '{print $1}')

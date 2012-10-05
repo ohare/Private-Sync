@@ -232,9 +232,9 @@ as many different arrangements as possible.
 I decided that I needed to be able change network
 topologies easily without having to re-write
 my scripts. I built some bash scripts to run on top
-of a program called Graphviz.
+of a program called Graphviz\footnote{www.graphviz.org}.
 
-``Graphviz is open source graph visualization software''.\footnote{www.graphviz.org}
+Graphviz is open source software for generating graphs.
 I used Graphviz to generate graphs of all the topologies I worked
 with. This made it easy to keep track of what a topology looked like
 which was useful for debugging. It was also useful to display results
@@ -243,10 +243,17 @@ program on top of Graphviz meant that I could couple the production
 of the topology graph and the configuration of the virtual machines
 together. I never wanted one without the other so this was very useful.
 
-I use Graphviz configuration files to set up my virtual machines
-as well as generate graphs. This means I only have to write a configuration
-file once. Graphviz uses a simple notation which made it easy to have
-a bash script also read this file.
+Graphviz takes input from scripts written in DOT language\footnote{
+http://www.graphviz.org/doc/info/lang.html}. DOT language is a simple
+graph description language.
+I have written a script to read in these DOT files and interpret
+the graph to set up my virtual machines\footnote{Appendix~\ref{sec:WatchAndSync}
+ line~\ref{lst:read_dot_file} onwards}.
+My script also calls a program called \texttt{neato} (part of Graphviz) to generate graphs.
+This means I only have to write one DOT file to get a graph of
+my network topology and set up my virtual machines.
+%Graphviz uses a simple notation which made it easy to have
+%a bash script also read this file.
 
 My bash script enables the appropriate network adaptors on
 each virtual machine. Then it sets these adaptors to use an internal
@@ -917,13 +924,18 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
     \label{fig:fintime_graph}
 \end{figure}
 
+\lstset{escapeinside={(*@}{@*)}}
+
 \section{WatchAndSync.py}
+\label{sec:WatchAndSync}
 \lstinputlisting[numbers=left,language=python,breaklines=true]{code/watchandsync.py}
 
 \section{ReadNet.py}
+\label{sec:ReadNet}
 \lstinputlisting[numbers=left,language=python,breaklines=true]{code/readnet.py}
 
 \section{onTheFly.sh}
+\label{sec:onTheFly}
 \lstinputlisting[numbers=left,language=bash,breaklines=true]{code/onTheFly.sh}
 
 \end{document}
