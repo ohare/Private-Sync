@@ -35,7 +35,7 @@ def getMyIP(ipaddr):
             #print word[1]
             return word[1]
 
-#Log interface coresponding to ipaddr
+#Log interface coresponding to ipaddr(*@\label{lst:log_ip}@*)
 def logIPtraffic(ipaddr, folder):
     route = subprocess.check_output("ip route get " + ipaddr,shell=True)
     words = route.split()
@@ -47,6 +47,7 @@ def logIPtraffic(ipaddr, folder):
             break
     writeIface(interface, folder)
 
+#Write the upload/download data for a given interface and folder
 def writeIface(iface, folder):
     ifs = subprocess.check_output("ifconfig -s",shell=True)
     ilines = ifs.split("\n")
