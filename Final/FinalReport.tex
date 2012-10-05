@@ -355,7 +355,7 @@ are using the network connection as you
 would expect in a real world application
 of my program. I found a tool called
 NetHogs\footnote{http://nethogs.sourceforge.net/}.
-NetHods runs on linux and monitors the
+NetHogs runs on Linux and monitors the
 amount of data sent over the network by any
 given process. I also looked at 
 using Iotop\footnote{http://guichaz.free.fr/iotop/}.
@@ -366,9 +366,29 @@ over the network. However I decided that monitoring
 network traffic was a more useful statistic
 as I could also see the \texttt{ssh} overhead
 associated with a transfer.
-
-
-\subsection{Getting my IP, networking issues}
+An interesting challenge I faced when I was trying
+to log network usage was what interface to log
+data for. Initially I logged the traffic of all of the
+interfaces on the machine\footnote{Appendix~\ref{sec:ReadNet}
+line~\ref{lst:log_all}}. The flaws in this approach
+became apparent very quickly, machines with an
+internet connection sometimes used large amounts
+of data which skewed the data. It also did not work
+with machines that were on more than one internal
+network as they might be sending/receiving data
+on both of the networks at the same time. I overcame
+this problem by using a built in Linux command \texttt{ip}.
+I always had an IP address to send data too, so all
+I needed to do was run \texttt{ip route get \{IP address\}}
+and examine the route information to see which interface
+was being used for communication to that IP 
+address\footnote{Appendix~\ref{sec:ReadNet} line~\ref{lst:log_ip}}.
+Once I had the interface name I would then record that
+data before and after a sync occurred for that given
+interface. I would also do this on the machine I
+was sending data too. This would give me timestamps
+of when data was
+\subsection{Getting my IP, networking}
 route etc.
 
 \subsection{settings and stored data}
@@ -426,7 +446,7 @@ change in the file system below the watched directory.
         included in the Linux kernel since version 2.6.
         It is used to watch directories for changes
         and notify listeners when a change occurs. Inotify
-        is inode based and replaced dnotify, an older system
+        is inode based and replaced Dnotify, an older system
         that provided the same functionality. Dnotify however was
         inefficient, it opened up the file descriptors for
         each directory it was watching which meant the backing
@@ -438,11 +458,11 @@ change in the file system below the watched directory.
         \footnote{www.kernel.org/pub/linux/kernel/people/rml/inotify/README}
         %\cite{inotify-readme}.
         There is a Python module
-        called pyinotify\footnote{http://pyinotify.sourceforge.net/}
+        called Pyinotify\footnote{http://pyinotify.sourceforge.net/}
         that provides a Python interface
-        to inotify, which I have used in my program.
-        Another reason I chose inotify was because different kinds
-        of changes triggered different inotify events. So I
+        to Inotify, which I have used in my program.
+        Another reason I chose Inotify was because different kinds
+        of changes triggered different Inotify events. So I
         can differentiate between a file being deleted, created
         or modified, \emph{etc}.
         \end{itemize}
@@ -453,7 +473,7 @@ change in the file system below the watched directory.
         \footnote{https://developer.apple.com/library/mac/\#documentation/Darwin/Conceptual/FSEvents\_ProgGuide/Introduction/Introduction.html}
         %\cite{fsevents-intro}.
         It is similar
-        to inotify in that it provides a notification to other
+        to Inotify in that it provides a notification to other
         applications when a directory is changed however
         it does not inform you which file in the directory
         was changed. This does not matter for my
@@ -515,8 +535,8 @@ greater granularity when syncing nodes.
 \section{Program evaluation}
 \subsection{Point-to-Point synchronisation}
 After looking for cross-platform, open source, file synchronisation
-tools, I have found a tool called Unison
-\footnote{http://www.cis.upenn.edu/~bcpierce/unison/}
+tools, I have found a tool called
+Unison\footnote{http://www.cis.upenn.edu/~bcpierce/unison/}
 to be a promising starting
 base for this project. Unison is an open source file synchronisation tool.
 It supports efficient (\emph{i.e.,} it attempts to only send changes between file versions) file synchronisation between two

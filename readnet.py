@@ -89,7 +89,7 @@ def writeIface(iface, folder):
             if(split == "RX" or split == "TX"):
                 nex = split
 
-#Log all interfaces
+#Log all interfaces(*@\label{lst:log_all}@*)
 def main():
     ifs = subprocess.check_output("ifconfig -s",shell=True)
     ilines = ifs.split("\n")
