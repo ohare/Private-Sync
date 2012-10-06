@@ -12,7 +12,7 @@ littlencount=1
 folderpath="/home/cal/Documents/t18"
 folderpath2="/home/cal/Documents/t02"
 homepath="/home/cal/Documents/Private-Sync/"
-waitTime=11
+waitTime=1
 
 function clear_ifaces() {
     i=0

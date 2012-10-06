@@ -353,7 +353,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "Move from: ",event.pathname
     #    self.initFileSync(event)
     def process_IN_MODIFY(self, event):
-        #print "Modify: ",event.pathname
+        print "Modify: ",event.pathname
         self.initFileSync(event)
     def process_IN_MOVED_TO(self, event):
         print "Move to: ",event.pathname
