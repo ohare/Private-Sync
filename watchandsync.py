@@ -379,7 +379,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         #self.initFileSync(event)
     def process_IN_CREATE(self, event):
         print "CREATE: ",event.pathname
-        thread.start_new_thread(self.initFileSync, (event))
+        thread.start_new_thread(self.initFileSync, (event,))
         #self.initFileSync(event)
     def process_IN_MOVED_FROM(self, event):
         print "Move from: ",event.pathname
@@ -387,11 +387,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
     def process_IN_MODIFY(self, event):
         print "Modify: ",event.pathname
         self.initFileSync(event)
-        thread.start_new_thread(self.initFileSync, (event))
+        thread.start_new_thread(self.initFileSync, (event,))
     def process_IN_MOVED_TO(self, event):
         print "Move to: ",event.pathname
         self.initFileSync(event)
-        thread.start_new_thread(self.initFileSync, (event))
+        thread.start_new_thread(self.initFileSync, (event,))
 
 
 def main():

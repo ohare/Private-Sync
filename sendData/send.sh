@@ -1,6 +1,6 @@
 vm_addr_arr=("192.168.0.28" "192.168.0.27" "192.168.0.30" "192.168.0.14")
 path=/home/cal/Documents
-name=t19
+name=t20
 i=0
 echo "ssh cal@${vm_addr_arr[$i]} \"mkdir /tmp/${name}\""
 ssh cal@${vm_addr_arr[$i]} "mkdir /tmp/${name}"
