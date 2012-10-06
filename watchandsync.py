@@ -164,12 +164,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
         print "Remote sync time: " + str(remoteTime)
         FMT = '%Y-%m-%d %H:%M:%S.%f'
         #datetime.datetime.strptime(dtstamp, FMT)
-        ts2 = time.strptime(localTime,FMT)
+        ts1 = time.strptime(localTime,FMT)
         #ts1 = time.strptime(remoteTime,"%a %b %d %H:%M:%S %Y")
-        ts1 = time.strptime(remoteTime,FMT)
+        ts2 = time.strptime(remoteTime,FMT)
         print "local <= stop: " + str(ts1 <= ts2)
-        if ts1 > ts2:
-            print "local sync newer than remote sync!"
+        if ts1 <= ts2:
+            print "local sync <= than remote sync!"
             stop = True
         return stop
 
@@ -278,7 +278,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                         print "CONTINUE"
                         t.timeElapsed(lastTime, waitTime)
 
-                        if not self.isnodefresh(ip):
+                        if self.isnodefresh(ip):
                             print "Remote host has changes, stoping..."
                             return
 
