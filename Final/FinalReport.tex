@@ -438,7 +438,7 @@ all graph data could be utilised
 I have chosen to use Python to implement
 my program. Python appealed to me because it
 supports many different platforms (Windows, Linux, Mac OS~X).
-This is useful because it means I will (hopefully)
+This is useful because it means I will
 encounter fewer compatibility problems when running
 my program across different operating systems in the future.
 
@@ -684,6 +684,8 @@ of data that was copied.
 \subsection{Full graph replication}
 As you can see Unison and Rsync outperformed SCP
 advantage of Unison is two-way sync
+
+\begin{comment}
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
@@ -713,6 +715,37 @@ advantage of Unison is two-way sync
     \end{subfigure}
     \caption{Comparison of methods over line topology}
 \end{figure}
+\end{comment}
+
+\pagebreak
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[height=0.4\textheight]{images/line-graph.eps}
+    \caption{Generated graph of line topology}
+    \label{fig:line_graph}
+\end{figure}
+
+\begin{figure}[hb!]
+    \centering
+    \includegraphics[height=0.4\textheight]{images/line-scp-10-fixes.eps}
+    \caption{Program running using SCP and random 10MB}
+    \label{fig:line_scp}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[height=0.4\textheight]{images/line-rsync-10-fixes.eps}
+    \caption{Rsync}
+    \label{fig:line_rsync}
+\end{figure}
+
+\begin{figure}[hb!]
+    \centering
+    \includegraphics[height=0.4\textheight]{images/line-uni-10-fixes.eps}
+    \caption{Unison}
+    \label{fig:line_uni}
+\end{figure}
+\pagebreak
 
 For next graphs I dropped SCP as not only is it inferior it is also
 completely wrong the programs behaviour is undefined for changes
