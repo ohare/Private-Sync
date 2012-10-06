@@ -22,23 +22,23 @@ sleep ${wait}
 echo "Starting five"
 echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
 ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
-sleep ${wait}
-echo "Starting six"
-echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
-ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
-sleep ${wait}
-echo "Starting seven"
-echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
-ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
-sleep ${wait}
-echo "Starting eight"
-echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
-ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
-sleep ${wait}
-echo "Starting nine"
-echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
-ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
-sleep ${wait}
-echo "Starting ten"
-echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
-ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
+#sleep ${wait}
+#echo "Starting six"
+#echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
+#ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
+#sleep ${wait}
+#echo "Starting seven"
+#echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
+#ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
+#sleep ${wait}
+#echo "Starting eight"
+#echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
+#ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
+#sleep ${wait}
+#echo "Starting nine"
+#echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
+#ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"
+#sleep ${wait}
+#echo "Starting ten"
+#echo "ssh cal@${vm_addr_arr[$i]} \"date >> ${path}/${name}/smallchange\""
+#ssh cal@${vm_addr_arr[$i]} "date >> ${path}/${name}/smallchange"

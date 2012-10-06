@@ -18,7 +18,6 @@
 %% Now actually use the newly defined style.
 \urlstyle{leo}
 
-
 \title{ Private Dropbox \\ Final Report \\ COSC480}
 \author{Calum O'Hare \\ Supervisor: David Eyers}
 \date{}
@@ -421,7 +420,7 @@ is a feature I would like to add in the future, I discuss this
 possibility further in section~\ref{sec:feedback}.
 
 
-\section{Program mechanics}
+\section{Program design}
 
 \begin{comment}
 \subsection{settings and stored data}
@@ -778,6 +777,7 @@ to perform a synchronisation after several changes have occurred. Given that
 there is overhead with each synchronisation, fewer copies means less data
 sent over the network.
 
+\begin{comment}
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
@@ -806,16 +806,138 @@ sent over the network.
     \end{subfigure}
     \caption{Comparison how frequently to sync}
 \end{figure}
+\end{comment}
 
-As you can see in Figure 
-%\ref{fig:comp_uni_freq}
-when using Unison it
-is best to just sync as often as possible. This is because Unison only sends
-the difference between files and the network overhead associated with
-synchronising is negligible when dealing with large files.
+Figures~\ref{fig:line_uni_10_5},
+\ref{fig:line_uni_10_10},\ref{fig:line_uni_10_20},
+and~\ref{fig:line_uni_10_30} show my program running
+using Unison to sync 10MB over a network arranged in
+a line topology. The files were moved into the watched
+directory in ten second intervals. You can see that there isn't much
+difference between the graphs apart from in Figure~\ref{fig:line_uni_10_5} 
+the time taken for all of the nodes to become up to date
+is shorter than the others. In the case of Unison it
+is best just to sync as often as possible because Unison
+only sends file differences the only saving when sending
+multiple changes at a time is on the ssh overhead
+and the overhead associated with Unison comparing the
+files. However this overhead is negligible when the files
+are of any meaningful size.
 
-SCP showed a noticeable difference however...?
+Figures~\ref{fig:line_scp_10_5},
+\ref{fig:line_scp_10_10},\ref{fig:line_scp_10_20},
+and~\ref{fig:line_scp_10_30} show the same 10MB files
+being transferred every 10 seconds over the same line topology
+as previously
+mentioned except I used the SCP option on my program for
+these tests. You can see that
+Figure~\ref{fig:line_scp_10_20} (20 second delay) took less time than
+in Figure~\ref{fig:line_scp_10_30} (30 second delay)
+to replicate the
+data from the initial node (A) to the last node (D) in
+the graph. You can also notice that when the delay was
+set to less than or equal to the time the files were
+being created (10 seconds) that my program behaved 
+in a seemingly random fashion with some nodes receiving less data
+than others. However you can see that in Figure~\ref{
+line_scp_10_11} that the graph became more uniform as
+soon as I increased the delay to 11 seconds.
 
+These results reinforced my idea that the delay should
+be set through a configuration file by the user since
+the appropriate delay will vary based on how often
+the files change. This is currently the case with my
+program, users can set a different (or the same)
+delay for each folder that they are watching. I
+also allow the user to use the `*' wild card character
+to tell the program to sync as often as possible. Based
+on my findings I would recommend to any user that
+the delay be set to more than the frequency that the files
+are changing but not too high as that slows down
+the system. If the user is using Unison they should
+set the delay time to be `*' (sync as often as possible)
+unless they are trying to synchronise very small files.
+
+\newpage
+\begin{figure}[ht!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-uni-10-5.eps}
+\caption{Five second delay between synchronising 10MB files over a line topology
+using Unison}
+\label{fig:line_uni_10_5}
+\end{figure}
+
+\begin{figure}[hb!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-uni-10-10.eps}
+\caption{Ten second delay between synchronising 10MB files over a line topology
+using Unison}
+\label{fig:line_uni_10_10}
+\end{figure}
+
+\newpage
+\begin{figure}[ht!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-uni-10-20.eps}
+\caption{Twenty second delay between synchronising 10MB files over a line topology
+using Unison}
+\label{fig:line_uni_10_20}
+\end{figure}
+
+\begin{figure}[hb!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-uni-10-30.eps}
+\caption{Thirty second delay between synchronising 10MB files over a line topology
+using Unison}
+\label{fig:line_uni_10_30}
+\end{figure}
+\newpage
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-scp-10-5.eps}
+\caption{Five second delay between synchronising 10MB files over a line topology
+using SCP}
+\label{fig:line_scp_10_5}
+\end{figure}
+
+\begin{figure}[hb!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-scp-10-10.eps}
+\caption{Ten second delay between synchronising 10MB files over a line topology
+using SCP}
+\label{fig:line_scp_10_10}
+\end{figure}
+
+\newpage
+\begin{figure}[ht!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-scp-10-11.eps}
+\caption{Eleven second delay between synchronising 10MB files over a line topology
+using SCP}
+\label{fig:line_scp_10_11}
+\end{figure}
+
+
+\begin{figure}[hb!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-scp-10-20.eps}
+\caption{Twenty second delay between synchronising 10MB files over a line topology
+using SCP}
+\label{fig:line_scp_10_20}
+\end{figure}
+\newpage
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[height=0.4\textheight]{images/line-scp-10-30.eps}
+\caption{Thirty second delay between synchronising 10MB files over a line topology
+using SCP}
+\label{fig:line_scp_10_30}
+\end{figure}
+\newpage
+
+\begin{comment}
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/rand-txt-2sleep.png}
@@ -830,7 +952,7 @@ SCP showed a noticeable difference however...?
     \label{fig:5sleep_graph}
 \end{figure}
 \newpage
-
+\end{comment}
 
 \subsection{Wi-Fi vs 3G}
 Circle topology start at node A, node B is on Wi-Fi and node C is on 3G.
@@ -1097,15 +1219,16 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
 
 \lstset{escapeinside={(*@}{@*)}}
 
-\section{WatchAndSync.py}
+\section{Program listings}
+\subsection{WatchAndSync.py}
 \label{sec:WatchAndSync}
 \lstinputlisting[numbers=left,language=python,breaklines=true]{code/watchandsync.py}
 
-\section{ReadNet.py}
+\subsection{ReadNet.py}
 \label{sec:ReadNet}
 \lstinputlisting[numbers=left,language=python,breaklines=true]{code/readnet.py}
 
-\section{onTheFly.sh}
+\subsection{onTheFly.sh}
 \label{sec:onTheFly}
 \lstinputlisting[numbers=left,language=bash,breaklines=true]{code/onTheFly.sh}
 

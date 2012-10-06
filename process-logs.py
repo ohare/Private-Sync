@@ -7,8 +7,8 @@ parser.add_argument("-d","--dir",action="store_true",help="Generate data based o
 parser.add_argument("-a","--all",action="store_true",help="Generate data for all traffic on nodes")
 args = parser.parse_args()
 
-divide_by = 1024 * 1024
-#divide_by = 1
+#divide_by = 1024 * 1024
+divide_by = 1
 
 class dataPoint:
     def __init__(self, time, data, path):
