@@ -7,8 +7,8 @@ parser.add_argument("-d","--dir",action="store_true",help="Generate data based o
 parser.add_argument("-a","--all",action="store_true",help="Generate data for all traffic on nodes")
 args = parser.parse_args()
 
-#divide_by = 1024 * 1024
-divide_by = 1
+divide_by = 1024 * 1024
+#divide_by = 1
 
 class dataPoint:
     def __init__(self, time, data, path):
@@ -95,7 +95,8 @@ def dataPerDirNode():
                         beginning_time = l[date_field]
                     elif int(secondsDiff(beginning_time,l[date_field])) > 0:
                         beginning_time = l[date_field]
-                elapsed = int(secondsDiff(l[date_field],start_time))
+                #elapsed = int(secondsDiff(l[date_field],start_time))
+                elapsed = int(secondsDiff(l[date_field],beginning_time))
                 #print elapsed
 
                 if elapsed in num_mb_dict:

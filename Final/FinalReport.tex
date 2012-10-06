@@ -30,13 +30,15 @@
 \vfill
 \end{comment}
 \newpage
-\section*{Abstract}
+%\section*{Abstract}
+\begin{abstract}
 I have written a program in Python which reads user
 settings from a file, and synchronises the appropriate files
 to the appropriate machines when they have been modified.
 It does this using an efficient two way file synchronising tool called
 Unison. I will discuss in this dissertation what I have done and
 how I have tested my program.
+\end{abstract}
 \newpage
 
 \tableofcontents
@@ -419,8 +421,12 @@ such as the IP data is being sent to or received from. This
 is a feature I would like to add in the future, I discuss this
 possibility further in section~\ref{sec:feedback}.
 
-
+\newpage
 \section{Program design}
+In this section I discuss the design decisions I have
+made when building my program.
+
+%Merge user control and sub-nodes
 
 \begin{comment}
 \subsection{settings and stored data}
@@ -544,7 +550,45 @@ change in the file system below the watched directory.
     %\end{comment}
 \end{itemize}
 
+\subsection{Dealing with Sub-nodes}
+\label{sec:subnodes}
+I chose to classify directories as `sub nodes' of a graph. 
+The reason I choose directories was because I thought it
+would be easier for a user to maintain the configuration file.
+A configuration file listing every file to be synchronised could
+become very cluttered.
+%The reason I choose
+%directories is because they are easy to manage a configuration
+%file of directories to
+%keep in sync (from the users point of view).
+If a user wanted to synchronize
+certain files in a directory they could write a Unison configuration file with 
+exclusions/inclusions in it or use my programs built in ignore
+list (see Section~\ref{sec:uni_and_tmp})
+%The other reason directories are a good choice
+%is because I can have different directories in different places on different
+%file systems by using symbolic links.
+I wanted to see how the freshness of different
+sub-nodes varied between nodes when the program was running so I tag
+each sub-node when logging information about the programs run 
+(see Section~\ref{sec:iface_mon} for more
+details on logging). Figure~\ref{fig:line_uni_2dir_comb_graph}
+shows a network with two sub-nodes. I alternated between creating
+10MB files in each sub-node. The data transferred for the second
+sub-node trails the first sub-node in time but a similar amount
+of data is transferred over time.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=1\textwidth]{images/line-uni-dir-comb.eps}
+    \caption{Line topology synchronising using Unison. Two different directories are being synchronised, 10MB files are sent to each directory alternately every
+    ten seconds.}
+    \label{fig:line_uni_2dir_comb_graph}
+\end{figure}
+\newpage
+
 \subsection{Unison and temporary files}
+\label{sec:uni_and_tmp}
 I noticed that when Unison ran it created temporary files in the
 directory and once these files had been fully copied it renamed
 them to their intended name. The problem with this was that my program
@@ -564,6 +608,7 @@ all files in my programs ignore file to Unisons ignore list. Or conversely
 by maintaining a white list of files to sync. This would allow for
 greater granularity when syncing nodes.
 
+\newpage
 \section{Program evaluation}
 \subsection{Point-to-Point synchronisation}
 After looking for cross-platform, open source, file synchronisation
@@ -751,25 +796,6 @@ if it was about to synchronise a file back to the node it had just received
 the file from or if local changes really had occurred to that file
 that were newer than a received file it should continue with its sync.
 
-\subsection{Dealing with Sub-nodes}
-\label{sec:subnodes}
-I chose to classify directories as `sub nodes' of a graph. The reason I choose
-directories is because they are easy to manage a configuration file of directories to
-keep in sync (from the users point of view). If we wanted to only synchronize
-certain files in a directory we could write a Unison configuration file with 
-exclusions/inclusions in it. The other reason directories are a good choice
-is because I can have different directories in different places on different
-file systems by using symbolic links. I wanted to see how the freshness of different
-sub-nodes varied between nodes when the program was running.
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/line-uni-2dir-comb.png}
-    \caption{Line topology, using Unison, two different directories being synced}
-    \label{fig:line_uni_2dir_comb_graph}
-\end{figure}
-\newpage
-
 \subsection{How often to sync}
 So how often should I sync once I noticed a change.
 If lots of small changes are occurring frequently it might be more efficient
@@ -839,8 +865,8 @@ the graph. You can also notice that when the delay was
 set to less than or equal to the time the files were
 being created (10 seconds) that my program behaved 
 in a seemingly random fashion with some nodes receiving less data
-than others. However you can see that in Figure~\ref{
-line_scp_10_11} that the graph became more uniform as
+than others. However you can see that in Figure~\ref{fig:line_scp_10_11}
+that the graph became more uniform as
 soon as I increased the delay to 11 seconds.
 
 These results reinforced my idea that the delay should
@@ -958,9 +984,8 @@ using SCP}
 Circle topology start at node A, node B is on Wi-Fi and node C is on 3G.
 Results and discussion to come.
 
-
-\section{Conclusion}
-\subsection{Future Work}
+\newpage
+\section{Future Work}
 My project ended up requiring a lot of initial set up
 time getting the testing infrastructure ready to
 produce different networks and graphs without requiring
@@ -972,9 +997,9 @@ when nodes leave and join the graph \emph{i.e.} when
 nodes leave a network and then join a new network, or
 rejoin the old one. I would also have been interested
 in seeing how I could have improved the performance
-of the program with that data I am collecting.
+of the program with the data I am collecting.
 
-\subsubsection{Mobile Nodes}
+\subsection{Mobile Nodes}
 \label{sec:mobile}
 Connections between nodes in the graph (edges) may
 change over time. This could be because one of the nodes
@@ -984,51 +1009,66 @@ not up at a given point in time. I have represented
 edges that behave in this way as grey on the diagram below.
 I will refer to nodes with grey edges as `mobile' nodes.
 
-It will be interesting to see how mobile nodes affect how
-up to date the nodes in the graph are. We might expect that
-nodes that are not available for very long periods lag behind
-others that are. We might also expect that if a mobile
+It would have been interesting to see how mobile nodes affect how
+up to date the nodes in the graph are. I predict that
+nodes that are not available for very long periods would lag behind
+others that are available. I wanted to see what would be
+the most effective way of getting these mobile nodes
+up to date quickly. Giving mobile nodes priority over
+normal nodes might be one solution.
+I expect that if a mobile
 node is a link between two parts of the network that
-these two parts fall out of synchronisation. I want to look
-at how nodes in the graph may get smarter about how
-they use unreliable edges. I will do this by having
-the edges up or down at different points in time
-and taking snapshots of the graph as it is at that time.
+these two parts will fall out of synchronisation when the node
+leaves the graph. I wanted to look
+at how nodes in the graph may 
+rely less on unreliable edges. I would like my program
+to associate a cost with each edge and prioritise edges
+with lower costs when synchronising data. Another option
+would be to only use reliable edges and fall back to using
+unreliable edges if necessary. Classifying edges could be
+done by cost or by how often an edge is available.
 
-%Insert mobile node image
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/mobile-node.png}
-    \caption{Node two moves within the graph}
+    \caption{Node two intermittently has a connection to a subset
+    of nodes 1,3 and 4. The edges in grey are links that are not
+    always present.}
     \label{fig:mobile_node}
 \end{figure}
 
-In Figure~\ref{fig:mobile_node} node two intermittently has a 
-connection to a subset of
-nodes 1,3 and 4. The edges in grey are links that
-are not always present.
+\pagebreak
 
-\subsubsection{Feedback}
+\subsection{Feedback}
 \label{sec:feedback}
-My program keeps logs of what is happening with
-the system at the current point in time. 
-It should log:
-\begin{itemize}
-    \item what the current user settings are.
-    \item how much data is being transferred between the nodes.
-    \item which links between nodes are being used the most.
-    \item how up to date each part of the graph is.
-\end{itemize}
+My program currently keeps detailed logs of the
+system state. Logs are kept of the amount of data
+transferred between the machines, which files were updated
+and when, the last time the data being watched was updated
+by another client (see Section~\ref{sec:iface_mon} for more details
+on logging).
+I currently have scripts to generate graphs of the data used
+and the time taken for the graph to become up to date.
+I would have like to integrate these scripts my program
+to show an end user a graphical representation of the
+program running. Integrating my current graph scripts
+should be trivial I could just shell out to them if
+I really had to. What would have been very interesting
+to look at would be to see if I could use data gathered
+from previous runs of the program to see if my program
+could estimate future performance based on changes
+made to the settings file (like how often to sync a
+given sub-node). I envisaged each of the clients
+sharing their data with each other to get a view
+of the network as a whole and then looking at nodes
+that were out of date as candidates for a shorter
+sync delay time etc. In hind sight I think that this
+would have been quite an undertaking, requiring
+significant time to develop and should not have
+been in the scope of this project.
 
-I will then look at presenting this information
-in a meaningful way to the user.
-One way to do this would be when the user changes the
-settings. Private dropbox could then estimate whether that
-change will speed up or slow down overall synchronisation
-of the graph and pass that (potentially) useful information
-to the user.
-
-\subsection{Results}
+\newpage
+\section{Conclusion}
 I have shown that my program does better than na\"{\i}ve copying,
 works in a variety of situations allows for fine grained user control.
 
@@ -1219,6 +1259,7 @@ Apple Inc. \url{http://developer.apple.com/library/mac/#documentation/Darwin/Ref
 
 \lstset{escapeinside={(*@}{@*)}}
 
+\newpage
 \section{Program listings}
 \subsection{WatchAndSync.py}
 \label{sec:WatchAndSync}
