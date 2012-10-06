@@ -271,9 +271,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
             print "CONTINUE"
             t.timeElapsed(lastTime, waitTime)
 
-            if self.isnodefresh(ip):
-                print "Remote host has changes, stoping..."
-                return
+            #if self.isnodefresh(ip):
+            #    print "Remote host has changes, stoping..."
+            #    return
 
             watchedfolders[folder][i+3] = str(datetime.datetime.now())
             t.updateFolderInfo(watchedfolders)
