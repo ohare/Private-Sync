@@ -1,4 +1,4 @@
-import pyinotify, os, subprocess, argparse, socket, time, glob, datetime
+import pyinotify, os, subprocess, argparse, socket, time, glob, datetime, thread
 import readnet
 
 wm = pyinotify.WatchManager()
@@ -148,6 +148,32 @@ class MyEventHandler(pyinotify.ProcessEvent):
         f.close()
         return time.rstrip()
 
+    #Is the other node less fresh than this one?
+    def isnodefresh(self, ip):
+        print "scp","-rp",ip + ":" + homepath + "lastSync","/tmp/lastSync"
+        subprocess.call(["scp","-rp",ip + ":" + homepath + "lastSync","/tmp/lastSync"])
+
+        f = open("/tmp/lastSync","r")
+        remoteTime = f.read().rstrip()
+        f.close()
+
+        localTime = getLastSync()
+
+        stop = False
+        print "Local sync time: " + str(localTime)
+        print "Remote sync time: " + str(remoteTime)
+        FMT = '%Y-%m-%d %H:%M:%S.%f'
+        #datetime.datetime.strptime(dtstamp, FMT)
+        ts2 = time.strptime(localTime,FMT)
+        #ts1 = time.strptime(remoteTime,"%a %b %d %H:%M:%S %Y")
+        ts1 = time.strptime(remoteTime,FMT)
+        print "local <= stop: " + str(ts1 <= ts2)
+        if ts1 > ts2:
+            print "local sync newer than remote sync!"
+            stop = True
+        return stop
+
+
     def newerThanLast(self, fileName):
         stop = False
         print "Last sync time: " + str(self.getLastSync())
@@ -251,6 +277,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     else:
                         print "CONTINUE"
                         t.timeElapsed(lastTime, waitTime)
+
+                        if not self.isnodefresh(ip):
+                            print "Remote host has changes, stoping..."
+                            return
+
                         watchedfolders[folder][i+3] = str(datetime.datetime.now())
                         t.updateFolderInfo(watchedfolders)
                         self.beginCopy(ip)
@@ -269,7 +300,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             print "rsync","-rt",folder,ip + ":" + path
                             subprocess.call(["rsync","-rt",folder,ip + ":" + path])
                         else:
-                            time.sleep(5)
+                            #time.sleep(5)
                             print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
                         print "Set stop files uniq: " + pathname
@@ -329,7 +360,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                             print "rsync","-rt",folder,ip + ":" + path
                             subprocess.call(["rsync","-rt",folder,ip + ":" + path])
                         else:
-                            time.sleep(5)
+                            #time.sleep(5)
                             print "unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname
                             subprocess.call(["unison","-batch","-confirmbigdel=false","-times",folder,"ssh://" + ip + "/" + path + fname])
                         print "Set stop files uniq: " + event.pathname
@@ -348,16 +379,19 @@ class MyEventHandler(pyinotify.ProcessEvent):
         #self.initFileSync(event)
     def process_IN_CREATE(self, event):
         print "CREATE: ",event.pathname
-        self.initFileSync(event)
+        thread.start_new_thread(self.initFileSync(event), ())
+        #self.initFileSync(event)
     def process_IN_MOVED_FROM(self, event):
         print "Move from: ",event.pathname
     #    self.initFileSync(event)
     def process_IN_MODIFY(self, event):
         print "Modify: ",event.pathname
         self.initFileSync(event)
+        thread.start_new_thread(self.initFileSync(event), ())
     def process_IN_MOVED_TO(self, event):
         print "Move to: ",event.pathname
         self.initFileSync(event)
+        thread.start_new_thread(self.initFileSync(event), ())
 
 
 def main():
