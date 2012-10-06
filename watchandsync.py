@@ -157,7 +157,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         remoteTime = f.read().rstrip()
         f.close()
 
-        localTime = getLastSync()
+        localTime = self.getLastSync()
 
         stop = False
         print "Local sync time: " + str(localTime)
