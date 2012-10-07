@@ -368,6 +368,7 @@ VBoxManage startvm "Ubuntu-Test"
 
 %\newpage
 
+\pagebreak
 \subsection{Reading network statistics}
 \label{sec:iface_mon}
 In order to gather network traffic statistics
@@ -502,6 +503,7 @@ Another reason I chose directories as my granularity was because it may be
 handy to have a directory full of symlinks pointing to other directories.
 % this doesn't necessarily follow: your config file could have the ability to include/exclude files and/or directories (possibly recursively). That would give you expressiveness, and still terse config files for many cases.
 
+%\pagebreak
 \subsection{Monitoring directories}
 The application needs to monitor directories for changes
 (see section~\ref{sec:subnodes})
@@ -899,17 +901,17 @@ this point I decided to continue using just Unison.
 
 \pagebreak
 
-\begin{figure}[hb!]
+\begin{figure}[ht!]
     \centering
-    \includegraphics[height=0.5\textheight]{images/circ-uni-almost.eps}
+    \includegraphics[height=0.4\textheight]{images/circ-uni-almost.eps}
     \caption{My program running using Unison on a circle topology.
     A 10MB file filled with random
     data is being sent every 10 seconds to node A for thirty seconds.}
     \label{fig:full_circ_uni}
 \end{figure}
-\begin{figure}[ht!]
+\begin{figure}[hb!]
     \centering
-    \includegraphics[height=0.5\textheight]{images/mesh-uni-almost.eps}
+    \includegraphics[height=0.4\textheight]{images/mesh-uni-almost.eps}
     \caption{My program running using Unison on a mesh topology.
     A 10MB file filled with random
     data is being sent every 10 seconds to node A for thirty seconds.}
@@ -955,7 +957,7 @@ stopped it.
 %data to each other even after every node has all of the files. NodeA receives
 %a lot of data even though it was the source of the file changes. 
 
-\begin{figure}[htp]
+\begin{figure}[ht!]
     %\centering
     %\includegraphics[scale=0.5]{images/line-uni-10-tail.png}
     \center{\includegraphics[width=1\linewidth]{images/line-uni-10-tail.eps}}
@@ -978,6 +980,7 @@ if it was about to synchronise a file back to the node it had just received
 the file from, or if local changes really had occurred to that file
 that were newer than a received file it should continue with its sync.
 
+\pagebreak
 \subsection{How often to sync}
 So how often should I sync once I notice a change?
 If lots of small changes are occurring frequently it might be more efficient
@@ -1221,9 +1224,9 @@ see that it already has the changes node A was going to send so it aborts.
 Node B has already got the files because they travelled through the graph
 in the other direction and reached node B before A was ready to send.
 
-\begin{figure}[htp]
+\begin{figure}[hb!]
     \centering
-    \includegraphics[height=0.5\textheight]{images/circ-uni-thread-100.eps}
+    \includegraphics[height=0.4\textheight]{images/circ-uni-thread-100.eps}
     \caption{Node A is connected to node B by 3G, the other links are all Wi-Fi. Three 10MB files are sent to node A over ten second intervals. Node A has a longer delay on sending over 3G than Wi-Fi and node B is the last node to receive the changes.}
     \label{fig:circ_uni_thread_100}
 \end{figure}
@@ -1276,9 +1279,9 @@ would be to preference reliable edges and only fall back to using
 unreliable edges when necessary. Classifying edges could be
 done by cost or by how often an edge is available.
 
-\begin{figure}[htp]
+\begin{figure}[hb!]
     \centering
-    \includegraphics[scale=0.5]{images/mobile-node.png}
+    \includegraphics[height=0.2\textheight]{images/mobile-node.png}
     \caption{Node two intermittently has a connection to a subset
     of nodes 1, 3 and 4. The edges in grey are links that are not
     always present.}
