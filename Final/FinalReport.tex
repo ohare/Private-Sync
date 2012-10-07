@@ -684,6 +684,7 @@ slightly above where you might expect them to be for the amount
 of data that was copied.
 
 \subsection{Full graph replication}
+\label{sec:full_graph_rep}
 I ran tests on a simple line topology (Shown in
 Figure~\ref{fig:line_graph}) of all three of my
 programs file synchronisation techniques.
@@ -792,7 +793,7 @@ program running over different network topologies.
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \centering
-        \includegraphics[scale=0.5]{images/circ-uni-10-aite.eps}
+        %\includegraphics[scale=0.5]{images/circ-uni-10-aite.eps}
         \caption{Unison running over circle topology}
         \label{fig:full_circ_uni}
     \end{subfigure}
@@ -833,13 +834,13 @@ program running over different network topologies.
 
 \begin{figure}[hb!]
     \centering
-    \includegraphics[height=0.5\textheight]{images/circ-uni-10-aite.eps}
+    \includegraphics[height=0.5\textheight]{images/circ-uni-almost.eps}
     \caption{Unison running over circle topology}
     \label{fig:full_circ_uni}
 \end{figure}
 \begin{figure}[ht!]
     \centering
-    \includegraphics[height=0.5\textheight]{images/mesh-uni-10-aite.eps}
+    \includegraphics[height=0.5\textheight]{images/mesh-uni-almost.eps}
     \caption{Unison running over mesh topology, 10MB files sent 10 seconds
     apart to node A.}
     \label{fig:full_mesh_uni}
@@ -1080,14 +1081,31 @@ using SCP}
 \end{comment}
 
 \subsection{Wi-Fi vs 3G}
-Circle topology start at node A, node B is on Wi-Fi and node C is on 3G.
-Results and discussion to come.
+An important use case of my program was where one machine was connected
+by a 3G network or some other link that a user would not want to use
+often.  I wanted to make sure that my program could be set to prefer
+some links to others for example to use Wi-Fi whenever possible and try not to
+use 3G. I designated the link between node A and node B as a 3G link
+in my circle topology (see Figure~\ref{fig:full_circ_graph} in Section~\ref{sec:full_graph_rep}). Node A is linked directly to node B by a slow link and indirectly
+by fast links (Wi-Fi link to node D, node D links to node C and node C links
+to node B all designated as Wi-Fi links). Previously in Figure~\ref{fig:full_circ_uni} (Section~\ref{sec:full_graph_rep}) node A sent data to
+node B and D which then propagated to node C.
+In Figure~\ref{fig:circ_uni_thread_100} node B receives data last only after nodes D and C have got the changes.
+This is because I set the delay time to 100 seconds between node A and node B
+as if it were a 3G link that we do not want to use very often all the other
+nodes had delay times of 10 seconds on their links. My program
+spawns multiple threads for each link when a change has occurred in a
+watched directory. The thread for the 3G link then sleeps for 100 seconds
+and when it wakes looks at the control files of the remote machine to
+see that it already has the changes node A was going to send so it aborts.
+Node B has already got the files because the travelled through the graph
+in the other direction and reached node B before A was ready to send.
 
 \begin{figure}[htp]
     \centering
     \includegraphics[height=0.5\textheight]{images/circ-uni-thread-100.eps}
+    \caption{Node A is connected to node B by 3G, the other links are all Wi-Fi. Three 10MB files are sent to node A over ten second intervals. Node A has a longer delay on sending over 3G than Wi-Fi and node B is the last node to receive the changes.}
     \label{fig:circ_uni_thread_100}
-    \caption{nodeB is connected by 3G}
 \end{figure}
 
 \newpage
