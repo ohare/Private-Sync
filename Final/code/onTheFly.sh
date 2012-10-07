@@ -1,3 +1,10 @@
+#########################
+#                       #
+#    Manipulate VM's    #
+#     Calum O'Hare      #
+#         2012          #
+#                       #
+#########################
 vm_name_arr=("Ubuntu-Pool" "Ubuntu-Silence" "Ubuntu-Black" "Ubuntu-Spheros" "Ubuntu-Wild")
 vm_addr_arr=("192.168.0.28" "192.168.0.27" "192.168.0.30" "192.168.0.14")
 #Wild = 19
