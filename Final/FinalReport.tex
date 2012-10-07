@@ -45,6 +45,16 @@ how I have tested my program.
 \newpage
 
 \section{Introduction}
+Dropbox is a well known online file hosting tool which will
+keep your data synchronised across multiple devices. I feel
+that there is a need for a private file synchronisation tool
+controlled by the end user rather than a corporation. In this
+section I will outline my project goals which explain how
+my program differs from Dropbox and others. Give background
+information about the alternatives like Dropbox and what the
+problems with these solutions are. Outline an example
+use case which shows why my program will be useful.
+
 \subsection{Project goals}
 The aim of this project was to develop a file synchronisation tool.
 Similar to  Dropbox (and others) its main function should be to
@@ -65,7 +75,7 @@ running different operating systems. Clients may be connected to
 different networks, with different costs of access, including being disconnected
 from the Internet at times.
 
-\item The user should be able to choose what to replicate and how often to do
+\item Permit the user to choose what to replicate and how often to do
 it within different sets of files. Choosing what to replicate could be done
 based on file name, file types, file size \emph{etc}. They system should
 allow for fine-grained user control for the majority of the program's functionality.
@@ -78,7 +88,7 @@ functionality, \emph{e.g.}, how often, and what, to replicate within different s
 taken for the files to become fully up to date),
 cost (bandwidth, disk space used). These statistics could also possibly lead
 to a heuristic for when to synchronise a given file. For example if a file is
-updated and a node has many neighbours to potentially send the file too. Perhaps
+updated and a node has many neighbours to potentially send the file too then perhaps
 choosing the neighbour whose links has the lowest cost would be a good choice
 to send the data to first.
 
@@ -94,7 +104,7 @@ relates to the fine-grained controls mentioned above.
 There are already many services available
 that can synchronize your files between different devices. 
 Dropbox, Google Drive, Microsoft SkyDrive, Apple iCloud
-are all examples of cloud based solutions for distributing
+are all examples of cloud-based solutions for distributing
 your files across your devices. The problems with these
 services is privacy and availability. Storing your data with a
 third party gives them access to your documents. If you
@@ -102,14 +112,13 @@ are a commercial organisation with sensitive information
 this might be concerning. You could
 of course choose to encrypt your files. Encrypting your files adds
 two slow extra steps, encrypting them before you upload and decrypting
-files before you can use them, this is less than ideal. 
+files before you can use them. This is less than ideal. 
 You also cannot guarantee
 that you will always be able to access your data, if
 the company that hosts your data goes bankrupt or
 decides to shutdown their service
 you could lose all
 of your data with little or no warning. 
-
 For example Megaupload, a file hosting service,
 has recently been shut down by the United States Department of
 Justice for alleged copyright infringement. According to
@@ -121,27 +130,27 @@ There are other possible approaches to replicating files
 across multiple computers. For example you could use
 version control systems like Subversion, Mercurial, and
 CVS. One problem with these is that they are
-centralised (they rely on a central server), should that
+centralised (they rely on a central server); should that
 server fail the replication will break. Not only
 that, they create a bottleneck at the server which can slow
 replication down.
-Cloud based solutions are often centralised. 
+Cloud-based solutions are often centralised. 
 Another problem is that even if they are decentralised
-like git, they will not automatically push updates to other
+like Git, they will not automatically push updates to other
 working sets. This could be accomplished with some
-cron scripts or a post-commit hook to get git to
+Cron scripts or a post-commit hook to get Git to
 propagate data onwards. Git might have made a promising
-base to build my application on top of, the only real
+base to build my application on top of; the only real
 problem was the version control overhead that comes with
 it. Old revisions would take up space on the hard disk
 and require more data to be transmitted across network links.
 I decided that as a file synchronisation program, revision
-history was out off scope and that my program would
-deal with just keeping files in sync. Using git would be
+history was out of scope and that my program would
+deal with just keeping files in sync. Using Git would be
 an interesting extension to my program and could easily
 be integrated into my current system.
 
-%How about git? It is a distributed tool.
+%How about Git? It is a distributed tool.
 %Auto push updates to other working sets can be done with a few crond scripts
 
 %Add more here?
@@ -205,8 +214,9 @@ fails. My program is aimed at addressing these issues.
     \caption{Example use cases}
 \end{figure}
 
-I have already described the personal network shown in
-Figure~\ref{fig:personal_graph}. Figure~\ref{fig:corp_graph}
+The personal network shown in
+Figure~\ref{fig:personal_graph} is a graphical representation
+of my description above. Figure~\ref{fig:corp_graph}
 shows a graph of a corporate network, this
 is another example use case. It will have many of the same
 basic needs as the personal graph. The coloured rings represent
@@ -224,16 +234,16 @@ is designed to run across a network of computers I needed
 to be able to manipulate the test machines automatically
 because doing things manually would be too time consuming
 in the long run. In this section I will discuss how I
-control a network of virtual machines for testing. How
+control a network of virtual machines for testing, how
 I manage the networks between them and how I monitor
 these networks to gather performance statistics on
 my program.
 
-\subsection{Virtual Machines and node networks}
+\subsection{Virtual machines and node networks}
 \label{sec:vm_network}
 For testing my program I needed to have a network
-of computers that can be linked together in different
-arrangements easily. I decided to use virtual machines for
+of computers that could easily be linked together in different
+arrangements. I decided to use virtual machines for
 this job since it means I do not need to have a large number
 of physical machines. I can create new machines very easily,
 and manipulate the links between them.
@@ -251,20 +261,20 @@ of a program called Graphviz\footnote{www.graphviz.org}.
 
 Graphviz is open source software for generating graphs.
 I used Graphviz to generate graphs of all the topologies I worked
-with. This made it easy to keep track of what a topology looked like
+with. This made it easy to keep track of what a topology looks like
 which was useful for debugging. It was also useful to display results
 alongside an image of what the topology looks like. Building my
 program on top of Graphviz meant that I could couple the production
 of the topology graph and the configuration of the virtual machines
 together. I never wanted one without the other so this was very useful.
 
-Graphviz takes input from scripts written in DOT language\footnote{
-http://www.graphviz.org/doc/info/lang.html}. DOT language is a simple
+Graphviz takes input from scripts written in DOT language.\footnote{
+http://www.graphviz.org/doc/info/lang.html} DOT language is a simple
 graph description language.
 I have written a script to read in these DOT files and interpret
 the graph to set up my virtual machines\footnote{Appendix~\ref{sec:onTheFly}
  line~\ref{lst:read_dot_file} onwards}.
-My script also calls a program called \texttt{neato} (part of Graphviz) to generate graphs.
+My script also calls a program called Neato (part of Graphviz) to generate graphs.
 This means I only have to write one DOT file to get a graph of
 my network topology and set up my virtual machines.
 %Graphviz uses a simple notation which made it easy to have
@@ -275,12 +285,12 @@ each virtual machine\footnote{Appendix~\ref{sec:onTheFly} line~\ref{lst:mod_vm_n
 It does this by calling the \texttt{VboxManage} command which provides
 a command line interface to virtual box's functionality and allows
 me to configure the virtual machines to my liking.
-Then it sets an internal network and attach's these adaptors to use that
+Then it sets an internal network and attaches these adaptors to use that
 network. 
 I chose to use an internal network
 as the link between any given machines because this way I could
 guarantee my program
-was the only programs using the interface.
+was the only program using the interface.
 This helped me monitor the network traffic generated by
 my program (see Section~\ref{sec:iface_mon}).
 I sniffed network traffic using packet sniffing tool
@@ -308,8 +318,8 @@ performs.
 \end{comment}
 
 I started initial tests by writing some simple network topology DOT
-scripts. The reason I only choose to use simple topologies
-when testing my programs. I did this because it is easier to
+scripts. The reason I chose to use simple topologies
+when testing my programs was  because it is easier to
 visualise how my program runs from the data if the topologies
 are simple. The other reason I chose to do this is because
 it is easy to extrapolate from a few simple topologies and
@@ -360,7 +370,7 @@ VBoxManage startvm "Ubuntu-Test"
 In order to gather network traffic statistics
 I chose to monitor the upload and download
 data collected by the interfaces over time.
-Given that my program was to only program
+Given that my program was the only program
 using these interfaces I did not have to
 differentiate between different processes
 using the network.
@@ -387,14 +397,14 @@ to log network usage was what interface to log
 data for. Initially I logged the traffic data of all of the
 interfaces on the machine\footnote{Appendix~\ref{sec:ReadNet}
 line~\ref{lst:log_all}}. The flaws in this approach
-became apparent very quickly, machines with an
+became apparent very quickly; machines with an
 internet connection sometimes used large amounts
-of data which skewed the data. It also did not work
+of data which interfered with the results. It also did not work
 with machines that were on more than one internal
 network as they might be sending/receiving data
 on both of the networks at the same time. I overcame
 this problem by using a built in Linux command \texttt{ip}.
-I always had an IP address to send data too, so all
+I always had an IP address to send data to, so all
 I needed to do was run \texttt{ip route get \{IP address\}}
 and examine the route information to see which interface
 was being used for communication to that IP 
@@ -402,7 +412,7 @@ address\footnote{Appendix~\ref{sec:ReadNet} line~\ref{lst:log_ip}}.
 Once I had the interface name I would then record that
 data before and after a sync occurred for that given
 interface. I would also do this on the machine I
-was sending data too. This would give me timestamps
+was sending data to. This would give me timestamps
 of when a sync was initiated and when it finished.
 Knowing the network traffic statistics before and after
 a sync also allowed me to determine how much data each
@@ -410,8 +420,8 @@ machine sent or received during a transfer or over
 any given time period. I also decided to include
 the folder being synchronised in the log files.
 This was useful for differentiating which sub-node
-was being synchronised. See Section \ref{sec:subnodes} for
-further details on sub-nodes. A line starting with
+was being synchronised (See Section \ref{sec:subnodes} for
+further details on sub-nodes). A line starting with
 a \# in my log file denotes a comment. Folder names
 are a specialised version of a comment a \#D indicates
 a folder name. In this way my logging system is robust
@@ -425,7 +435,11 @@ possibility further in section~\ref{sec:feedback}.
 \newpage
 \section{Program design}
 In this section I discuss the design decisions I have
-made when building my program.
+made when building my program. This section details
+why I chose to use Unison, Python and Inotify to
+build a file synchronisation tool. Some of my design
+decisions came from running test cases of the program
+and reacting to the results I obtained.
 
 %Merge user control and sub-nodes
 
@@ -454,17 +468,18 @@ which directories they want to watch and where those
 directories should be synchronised to.
 % give some examples
 
-I chose to use directories as my granularity for replication
-as opposed to files because keeping track of a large list
-of files may become unwieldy,
+%I chose to use directories as my granularity for replication
+%as opposed to files because keeping track of a large list
+%of files may become unwieldy,
 % possibly, but you need to be clear what type of unwieldiness you're talking about.
-and because I replicate
+I chose to replicate directories rather than files
+because keeping track of a large list of files may become unwieldy.
+Because I replicate
 directories recursively, I can replicate large amounts
 of data without a cluttered configuration file.
-% this doesn't necessarily follow: your config file could have the ability to include/exclude files and/or directories (possibly recursively). That would give you expressiveness, and still terse config files for many cases.
-
 Another reason I chose directories as my granularity was because it may be
 handy to have a directory full of symlinks pointing to other directories.
+% this doesn't necessarily follow: your config file could have the ability to include/exclude files and/or directories (possibly recursively). That would give you expressiveness, and still terse config files for many cases.
 
 \subsection{Monitoring Directories}
 The application needs to monitor directories for changes
@@ -564,7 +579,7 @@ become very cluttered.
 %keep in sync (from the users point of view).
 If a user wanted to synchronize
 certain files in a directory they could write a Unison configuration file with 
-exclusions/inclusions in it or use my programs built in ignore
+exclusions/inclusions in it or use my program's built-in ignore
 list (see Section~\ref{sec:uni_and_tmp})
 %The other reason directories are a good choice
 %is because I can have different directories in different places on different
@@ -611,6 +626,13 @@ greater granularity when syncing nodes.
 
 \newpage
 \section{Program evaluation}
+During the development of my program I ran tests after major
+changes so that I would know if the program was behaving the
+way I expected or not. In this way I could make changes if
+unforeseen problems occurred. In this section I discuss
+the results from my testing, how my program influenced these
+results and how my results influenced my program.
+
 \subsection{Point-to-Point synchronisation}
 \label{sec:point_to_point}
 After looking for cross-platform, open source, file synchronisation
@@ -691,8 +713,8 @@ programs file synchronisation techniques.
 Figure~\ref{fig:line_scp} shows SCP performing
 poorly compared to Figure~\ref{fig:line_rsync} (Rsync)
 and Figure~\ref{fig:line_uni} (Unison). Using Unison and
-Rsync each node only received $\approx$30MB given that
-30MB of data was sent to nodeA this is a pleasing
+Rsync each node only received $\approx$30MB, given that
+30MB of data was sent to node A this is a pleasing
 result. SCP on the other hand sent much more data
 than necessary as I have explored in 
 Section~\ref{sec:point_to_point}. 
@@ -741,29 +763,32 @@ Section~\ref{sec:point_to_point}.
 \begin{figure}[hb!]
     \centering
     \includegraphics[height=0.4\textheight]{images/line-scp-10-fixes.eps}
-    \caption{Program running using SCP and random 10MB}
+    \caption{Program running using SCP and random 10MB files being sent every 10 seconds to node A.}
     \label{fig:line_scp}
 \end{figure}
 
 \begin{figure}[ht!]
     \centering
     \includegraphics[height=0.4\textheight]{images/line-rsync-10-fixes.eps}
-    \caption{Rsync}
+    \caption{Program running using Rsync and random 10MB files being sent every 10 seconds to node A.}
     \label{fig:line_rsync}
 \end{figure}
 
 \begin{figure}[hb!]
     \centering
     \includegraphics[height=0.4\textheight]{images/line-uni-10-fixes.eps}
-    \caption{Unison}
+    \caption{Program running using Unison and random 10MB files being sent every 10 seconds to node A.}
     \label{fig:line_uni}
 \end{figure}
 \pagebreak
 
-My program worked on a line topology so I moved on to other topologies
-to test. Figure~\ref{fig:full_circ_graph} and Figure~\ref{fig:full_mesh_graph}
-were the topology graphs generated by my set up scripts (see
-Section~\ref{sec:vm_network}). 
+My program ran smoothly on a line topology so I
+set up some new topologies as shown in 
+Figure~\ref{fig:full_circ_graph} and Figure~\ref{fig:full_mesh_graph}.
+These were the topology graphs generated by my set up scripts (see
+Section~\ref{sec:vm_network}) I designed them to be a circle
+(Figure~\ref{fig:full_circ_graph}) and a connected mesh
+(Figure~\ref{fig:full_mesh_graph}). 
 For these tests I stopped using SCP and Rsync as they do
 not handle two way synchronising. If there
 are changes coming from two different directions
@@ -775,13 +800,13 @@ one side will be overwritten. Unison on the other
 hand will prompt the user for which changes they
 want to keep. Given that Rysnc and Unison both
 performed similarly in my previous tests up to
-this point I decided to continue just using Unison.
-My program ran fine with all the topologies that
+this point I decided to continue using just Unison.
+My program ran as expected with all the topologies that
 I tested in on when using Unison (see Figures
 \ref{fig:full_circ_uni} and \ref{fig:full_mesh_uni}).
-This was one of my main objectives to have my
-program running over different network topologies.
-
+With the completion of these tests I had achieved
+one of my main objectives; to have my program running over
+different network topologies.
 
 \begin{comment}
 \begin{figure}[htp]
@@ -848,9 +873,9 @@ program running over different network topologies.
 
 \newpage
 \subsection{When to stop copying}
-They way my program works it that Each node notices when changes
+The way my program works is that Each node notices when changes
 have occurred to a folder it is watching and when a change occurs,
-copy these changes to other nodes that it is connected to.
+it copies these changes to other nodes that it is connected to.
 After testing my program on some simple topologies one problem became
 clear. 
 The problem was that if the changes
@@ -868,7 +893,7 @@ and would stop synchronising after one check (which had minimal overhead).
     \label{fig:line_scp_back_forth_graph}
 \end{figure}
 
-Figure~\ref{fig:line_scp_back_forth_graph} shows three 10MB files being copied to nodeA
+Figure~\ref{fig:line_scp_back_forth_graph} shows three 10MB files being copied to node A
 in a line topology. The problem is that nodeB and nodeC continue to send
 data to each other even after every node has all of the files. NodeA receives
 a lot of data even though it was the source of the file changes. 
@@ -888,16 +913,16 @@ Unison, although no extra data was sent, Unison still had to make checks to see
 whether there were any changes or not.
 
 %Change this
-I used a control file to get around this problem. Each time a node
+To fix this problem I used a control file. Each time a node
 synchronised with another node it would write out a control file telling
 the other node what files had been copied, who sent them and what the
 modification time of the files were. In this way a node could check
 if it was about to synchronise a file back to the node it had just received
-the file from or if local changes really had occurred to that file
+the file from, or if local changes really had occurred to that file
 that were newer than a received file it should continue with its sync.
 
 \subsection{How often to sync}
-So how often should I sync once I noticed a change.
+So how often should I sync once I noticed a change?
 If lots of small changes are occurring frequently it might be more efficient
 to perform a synchronisation after several changes have occurred. Given that
 there is overhead with each synchronisation, fewer copies means less data
@@ -944,10 +969,10 @@ difference between the graphs apart from in Figure~\ref{fig:line_uni_10_5}
 the time taken for all of the nodes to become up to date
 is shorter than the others. In the case of Unison it
 is best just to sync as often as possible because Unison
-only sends file differences the only saving when sending
+only sends file differences. The only saving when sending
 multiple changes at a time is on the ssh overhead
 and the overhead associated with Unison comparing the
-files. However this overhead is negligible when the files
+files. This overhead is negligible when the files
 are of any meaningful size.
 
 Figures~\ref{fig:line_scp_10_5},
@@ -1193,9 +1218,32 @@ been in the scope of this project.
 
 \newpage
 \section{Conclusion}
-I have shown that my program does better than na\"{\i}ve copying,
-works in a variety of situations allows for fine grained user control.
-
+In this dissertation I discussed the need for a private file
+synchronisation tool. I outlined the faults with
+current synchronisation tools such as Dropbox. My program
+aims to address these shortcomings. I detailed the
+implementation details of my program and the design
+decisions I made. I showed how I changed my design
+when I came across issues.
+I tested my program in as many different situations that
+I thought would be useful. I have shown that my program
+performs better than na\"{\i}ve copying,
+works in a variety of situations and behaves in general
+how I expect it too.
+I achieved my goals of creating a decentralised
+file synchronisation tool that will run across any network configuration.
+My program allows for fine grained user control
+of settings like which files should be replicated and how
+often they should be synchronised. My program generates
+logs of data transferred and the files being synchronised,
+this did not lead to detailed statistics about how
+the program behaved or heuristics on future behaviour
+as I intended. However I was able to generate
+graphs from my log files and this could be extended in
+a future implementation of my program. Once the user
+has written their configuration files the program
+operates autonomously as intended. My program works
+as intended as a file synchronisation tool and addresses
 
 \begin{comment}
 \section{Future work}
