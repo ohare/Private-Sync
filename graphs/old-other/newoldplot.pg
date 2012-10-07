@@ -2,7 +2,7 @@
 #set terminal png
 set terminal postscript eps color lw 2 "Helvetica" 15
 
-set title "Synchronising between two nodes"
+#set title "Synchronising between two nodes"
 
 set xlabel "Time (Seconds)"
 set ylabel "Data transferred (MB)"
