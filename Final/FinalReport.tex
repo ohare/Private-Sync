@@ -95,11 +95,11 @@ allow for fine-grained user control for the majority of the program's functional
 functionality, \emph{e.g.}, how often, and what, to replicate within different sets of files. 'What' could be file name, file type, file size, \emph{etc}.
 \end{comment}
 
-\item Show statistics about which files are being replicated, efficiency (time
+\item Show statistics about which files are being replicated, their efficiency (time
 taken for the files to become fully up to date),
-cost (bandwidth, disk space used). These statistics could also possibly lead
+and cost (bandwidth, disk space used). These statistics could also possibly lead
 to a heuristic for when to synchronise a given file. For example if a file is
-updated and a node has many neighbours to potentially send the file to then perhaps
+updated and a node has many neighbours to potentially send the file to. Perhaps
 choosing the neighbour whose links has the lowest cost would be a good choice
 to send the data to first.
 
@@ -232,7 +232,8 @@ shows a graph of a corporate network, this
 is another example use case. It will have many of the same
 basic needs as the personal graph. The coloured rings represent
 the need for different policies for different machines in a network.
-Something which Dropbox will not provide but my system does.
+Unlike Dropbox this is an advantage my system provides.
+%Something which Dropbox will not provide but my system does.
 
 % do you need a section to discuss the design of your solution?
 
@@ -380,7 +381,7 @@ I looked at the possibility of gathering
 statistics on a network where other processes
 are using the network connection as you
 would expect in a real world application
-of my program. I found a tool called
+of my program. For this I found a tool called
 NetHogs\footnote{http://nethogs.sourceforge.net/}.
 NetHogs runs on Linux and monitors the
 amount of data sent over the network by any
@@ -461,6 +462,21 @@ supports many different platforms (Windows, Linux, Mac OS~X).
 This is useful because it means I will
 encounter fewer compatibility problems when running
 my program across different operating systems in the future.
+
+\subsection{Unison}
+\label{sec:unison}
+After looking for cross-platform, open source, file synchronisation
+tools, I have found a tool called
+Unison\footnote{\url{http://www.cis.upenn.edu/~bcpierce/unison/}}
+to be a promising starting
+base for this project. Unison is an open source file synchronisation tool.
+It supports efficient (\emph{i.e.,} it attempts to only send changes between file versions) file synchronisation between two
+directories (including sub-folders) between two ``roots''
+that may or may not be on the same machine. Unison calls the
+directories it is synchronising, roots.
+Section~\ref{sec:point_to_point} looks at how efficient Unison
+is at copying files.
+
 
 %multiproccessing module
 
@@ -645,15 +661,6 @@ and how my results influenced my program.
 
 \subsection{Point-to-Point synchronisation}
 \label{sec:point_to_point}
-After looking for cross-platform, open source, file synchronisation
-tools, I have found a tool called
-Unison\footnote{\url{http://www.cis.upenn.edu/~bcpierce/unison/}}
-to be a promising starting
-base for this project. Unison is an open source file synchronisation tool.
-It supports efficient (\emph{i.e.,} it attempts to only send changes between file versions) file synchronisation between two
-directories (including sub-folders) between two ``roots''
-that may or may not be on the same machine. Unison calls the
-directories it is synchronising, roots.
 I decided to run some tests using Unison 
 and two machines running on the same network to 
 determine whether Unison copies data efficiently.
@@ -661,7 +668,7 @@ determine whether Unison copies data efficiently.
 I looked at three methods of file synchronisation across
 these two machines. Na\"{\i}ve copying using SCP; using Rsync, an application
 designed for efficiently copying files in one direction by looking at
-the differences in the files; and Unison described above.
+the differences in the files; and Unison as described in Section~\ref{sec:unison}.
 
 \begin{comment}
 \begin{figure}[htp]
