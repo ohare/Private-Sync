@@ -57,14 +57,14 @@ strategies, this makes it unique from other file replication tools.
 \newpage
 
 \section{Introduction}
-Dropbox is a well known online file hosting tool which will
+Dropbox is a well known online file hosting tool that will
 keep your data synchronised across multiple devices. I feel
 that there is a need for a private file synchronisation tool
 controlled by the end user rather than a corporation. In this
 section I will outline my project goals which explain how
-my program differs from Dropbox and others. Give background
+my program differs from Dropbox and others; give background
 information about the alternatives like Dropbox and what the
-problems with these solutions are. Outline an example
+problems with these solutions are; outline an example
 use case which shows why my program will be useful.
 
 \subsection{Project goals}
@@ -100,7 +100,7 @@ functionality, \emph{e.g.}, how often, and what, to replicate within different s
 taken for the files to become fully up to date),
 cost (bandwidth, disk space used). These statistics could also possibly lead
 to a heuristic for when to synchronise a given file. For example if a file is
-updated and a node has many neighbours to potentially send the file too then perhaps
+updated and a node has many neighbours to potentially send the file to then perhaps
 choosing the neighbour whose links has the lowest cost would be a good choice
 to send the data to first.
 
@@ -140,7 +140,7 @@ unique files\footnote{http://computerworld.co.nz/news.nsf/news/kim-dotcom-wants-
 
 There are other possible approaches to replicating files
 across multiple computers. For example you could use
-version control systems like Subversion, Mercurial, and
+version control systems like Subversion and
 CVS. One problem with these is that they are
 centralised (they rely on a central server); should that
 server fail the replication will break. Not only
@@ -148,7 +148,7 @@ that, they create a bottleneck at the server which can slow
 replication down.
 Cloud-based solutions are often centralised. 
 Another problem is that even if they are decentralised
-like Git, they will not automatically push updates to other
+like Git or Mercurial, they will not automatically push updates to other
 working sets. This could be accomplished with some
 Cron scripts or a post-commit hook to get Git to
 propagate data onwards. Git might have made a promising
@@ -178,7 +178,7 @@ Documents are mostly scripts and programs that I am writing for
 University or work projects. Documents also include reports for
 assessment. These documents change very frequently and are very important
 to me. Often these are small files (but not always). My music collection
-changes relatively infrequently, files are around $\approx$5MB and I like to
+changes relatively infrequently, files are $\approx$5MB and I like to
 have a relatively current backup of this collection. My movie collection
 contains fairly large files but I do not need it to be backed up very often
 as it does not change very much and I do not care if I loose some of these
@@ -487,7 +487,7 @@ Another reason I chose directories as my granularity was because it may be
 handy to have a directory full of symlinks pointing to other directories.
 % this doesn't necessarily follow: your config file could have the ability to include/exclude files and/or directories (possibly recursively). That would give you expressiveness, and still terse config files for many cases.
 
-\subsection{Monitoring Directories}
+\subsection{Monitoring directories}
 The application needs to monitor directories for changes
 (see section~\ref{sec:subnodes})
 so that it knows when to perform a sync. The reason I have
@@ -572,7 +572,7 @@ change in the file system below the watched directory.
     %\end{comment}
 \end{itemize}
 
-\subsection{Dealing with Sub-nodes}
+\subsection{Dealing with sub-nodes}
 \label{sec:subnodes}
 I chose to classify directories as `sub nodes' of a graph. 
 The reason I choose directories was because I thought it
@@ -1195,8 +1195,9 @@ shows the amount of data received by each node.}
 
 \subsection{Wi-Fi vs 3G}
 An important use case of my program was where one machine was connected
-by a 3G network or some other link that a user would not want to use
-often.  I wanted to make sure that my program could be set to prefer
+by a link that a user would not want to use very
+often. For example a node might be connected by a 3G link which is slow
+and expensive to use. I wanted to make sure that my program could be set to prefer
 some links to others. For example to use Wi-Fi whenever possible and try not to
 use 3G. I designated the link between node A and node B as a 3G link
 in my circle topology (see Figure~\ref{fig:full_circ_graph} in Section~\ref{sec:full_graph_rep}). Node A is linked directly to node B by a slow link and indirectly
@@ -1229,15 +1230,18 @@ produce different networks and graphs without requiring
 user input. As such this drew time away from other
 areas of research that I had originally planned to
 investigate. The main two areas that I would liked
-to have spent more time looking at were what happens
-when nodes leave and join the graph \emph{i.e.} when
+to have spent more time looking at were mobile nodes
+and user/system feedback of data.
+When nodes leave and join the graph \emph{i.e.}\ when
 nodes leave a network and then join a new network, or
-rejoin the old one. I would also have been interested
+rejoin the old one I call this a mobile node.
+I would also have been interested
 in seeing how I could have improved the performance
-of the program with the data I am collecting.
+of the program using the statistics the program
+gathers as it runs.
 %Empty sentence at the end this part needs to be re-written
 
-\subsection{Mobile Nodes}
+\subsection{Mobile nodes}
 \label{sec:mobile}
 Connections between nodes in the graph (edges) may
 change over time. This could be because one of the nodes
@@ -1287,11 +1291,11 @@ by another client (see Section~\ref{sec:iface_mon} for more details
 on logging).
 I currently have scripts to generate graphs of the data used
 and the time taken for the graph to become up to date.
-I would have like to integrate these scripts my program
+I would have liked to integrate these scripts into my program
 to show an end user a graphical representation of the
 program running. Integrating my current graph scripts
-should be trivial. I could just shell out to them if
-I really had to. What would have been very interesting
+should be easy since these scripts are written in python
+and so is my main program. What would have been very interesting
 to look at would be to see if I could use data gathered
 from previous runs of the program to see if my program
 could estimate future performance based on changes
@@ -1300,7 +1304,7 @@ given sub-node). I envisaged each of the clients
 sharing their data with each other to get a view
 of the network as a whole and then looking at nodes
 that were out of date as candidates for a shorter
-sync delay time etc. In hindsight I think that this
+sync delay time \emph{etc.} In hindsight I think that this
 would have been quite an undertaking, requiring
 significant time to develop and should not have
 been in the scope of this project.
@@ -1321,7 +1325,7 @@ works in a variety of situations and behaves in general
 how I expect it too.
 I achieved my goals of creating a decentralised
 file synchronisation tool that will run across any network configuration.
-My program allows for fine grained user control
+My program allows for fine-grained user control
 of settings such as which files should be replicated and how
 often they should be synchronised. My program generates
 logs of data transferred and the files being synchronised.
