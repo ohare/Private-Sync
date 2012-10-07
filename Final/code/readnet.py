@@ -1,5 +1,13 @@
 import subprocess, datetime, socket, argparse
 
+#########################
+#                       #
+#   Read Network Data   #
+#     Calum O'Hare      #
+#         2012          #
+#                       #
+#########################
+
 homepath = "/home/cal/Documents/Private-Sync/"
 #homepath = "/Users/calum/Documents/Private-Sync/"
 

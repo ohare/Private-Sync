@@ -1218,7 +1218,8 @@ This is because I set the delay time to 100 seconds between node A and node B
 as if it were a 3G link that we do not want to use very often. All the other
 nodes had delay times of 10 seconds on their links. My program
 spawns multiple threads for each link when a change has occurred in a
-watched directory. The thread for the 3G link then sleeps for 100 seconds
+watched directory (see Appendix~\ref{sec:WatchAndSync} line~\ref{lst:spawn_thread}).
+The thread for the 3G link then sleeps for 100 seconds
 and when it wakes looks at the control files of the remote machine to
 see that it already has the changes node A was going to send so it aborts.
 Node B has already got the files because they travelled through the graph
