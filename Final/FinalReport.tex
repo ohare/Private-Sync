@@ -522,12 +522,12 @@ change in the file system below the watched directory.
         It is used to watch directories for changes
         and notify listeners when a change occurs. Inotify
         is inode based and replaced Dnotify, an older system
-        that provided the same functionality. Dnotify however was
+        that provided the same functionality. Dnotify was
         inefficient, it opened up the file descriptors for
         each directory it was watching which meant the backing
         device could not be unmounted. 
         It also had a poor
-        user-space interface which used SIGIO. Inotify only
+        user-space interface which used SIGIO. In contrast Inotify only
         uses one file descriptor and returns events to the
         listener as they occur
         \footnote{www.kernel.org/pub/linux/kernel/people/rml/inotify/README}
@@ -562,7 +562,7 @@ change in the file system below the watched directory.
         %\cite{kqueue-man}
         system call that is
         supported by MacOS~X and FreeBSD. It notifies the user
-        when a kernel event occurs. I decided against using
+        when a kernel event occurs. However I decided against using
         \texttt{kqueue} as the high level approach of FSEvents
         suits my application's needs.
         \end{itemize}
@@ -580,7 +580,7 @@ change in the file system below the watched directory.
         with the .NET framework. I have chosen only to implement
         my program on Linux because portability was not in the main
         scope of the project. I would have liked to look
-        at it further but became too time consuming and not interesting
+        at it further but it became too time consuming and not interesting
         from a research perspective.
 % perhaps clarify why you think it wold be appropriate if you still have more to learn about it.
         \end{itemize}
@@ -632,12 +632,12 @@ them to their intended name. The problem with this was that my program
 was picking up these temporary files as they were created and trying to
 copy them to the next node, only to find that these files no longer existed.
 To get around this problem I decided to implement a filter on the files to
-be copied. The program filters out files that contain ".tmp" in the filename.
+be copied. The program filters out files that contain ".tmp" in the file name.
 Unison is not the only program that uses temporary files. I decided that this
 should be a user set preference given that users may want to filter out different
 files.
 
-My program simply reads from a file with each file pattern to exclude
+My program simply reads from a file with each file name pattern to exclude
 listed on a new line. It is easy to add to/remove from. As I said above
 I added .tmp to the file as a default. This could easily be extended
 to allow a user to omit certain files from the replication by adding
