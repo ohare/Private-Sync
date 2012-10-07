@@ -32,12 +32,15 @@
 \newpage
 %\section*{Abstract}
 \begin{abstract}
-I have written a program in Python which reads user
-settings from a file, and synchronises the appropriate files
-to the appropriate machines when they have been modified.
-It does this using an efficient two way file synchronising tool called
-Unison. I will discuss in this dissertation what I have done and
-how I have tested my program.
+Private Dropbox is a file synchronisation tool designed to
+keep files in sync across multiple devices. It is decentralised
+unlike many other file hosting service like Dropbox.
+%I have written a program in Python which reads user
+%settings from a file, and synchronises the appropriate files
+%to the appropriate machines when they have been modified.
+%It does this using an efficient two-way file synchronising tool called
+%Unison. I will discuss in this dissertation what I have done and
+%how I have tested my program.
 \end{abstract}
 \newpage
 
@@ -272,11 +275,11 @@ Graphviz takes input from scripts written in DOT language.\footnote{
 http://www.graphviz.org/doc/info/lang.html} DOT language is a simple
 graph description language.
 I have written a script to read in these DOT files and interpret
-the graph to set up my virtual machines\footnote{Appendix~\ref{sec:onTheFly}
+the graph to set-up my virtual machines\footnote{Appendix~\ref{sec:onTheFly}
  line~\ref{lst:read_dot_file} onwards}.
 My script also calls a program called Neato (part of Graphviz) to generate graphs.
 This means I only have to write one DOT file to get a graph of
-my network topology and set up my virtual machines.
+my network topology and set-up my virtual machines.
 %Graphviz uses a simple notation which made it easy to have
 %a bash script also read this file.
 
@@ -301,7 +304,7 @@ internal networks.
 
 \begin{comment}
 I have several scripts that
-call the \texttt{vbmoxmange} command to set up the internal
+call the \texttt{vbmoxmange} command to set-up the internal
 network connections between machines and then start up
 the machine itself. This makes switching between
 network configurations very easy as I can just
@@ -403,7 +406,7 @@ of data which interfered with the results. It also did not work
 with machines that were on more than one internal
 network as they might be sending/receiving data
 on both of the networks at the same time. I overcame
-this problem by using a built in Linux command \texttt{ip}.
+this problem by using a built-in Linux command \texttt{ip}.
 I always had an IP address to send data to, so all
 I needed to do was run \texttt{ip route get \{IP address\}}
 and examine the route information to see which interface
@@ -585,7 +588,7 @@ list (see Section~\ref{sec:uni_and_tmp})
 %is because I can have different directories in different places on different
 %file systems by using symbolic links.
 I wanted to see how the freshness of different
-sub-nodes varied between nodes when the program was running so I tag
+sub-nodes varied between nodes when the program was running so I tagged
 each sub-node when logging information about the programs run 
 (see Section~\ref{sec:iface_mon} for more
 details on logging). Figure~\ref{fig:line_uni_2dir_comb_graph}
@@ -597,7 +600,7 @@ of data is transferred over time.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=1\textwidth]{images/line-uni-dir-comb.eps}
-    \caption{Line topology synchronising using Unison. Two different directories are being synchronised, 10MB files are sent to each directory alternately every
+    \caption{Line topology synchronisation using Unison. Two different directories are being synchronised with 10MB files are sent to each directory alternately every
     ten seconds.}
     \label{fig:line_uni_2dir_comb_graph}
 \end{figure}
@@ -620,7 +623,7 @@ My program simply reads from a file with each file pattern to exclude
 listed on a new line. It is easy to add to/remove from. As I said above
 I added .tmp to the file as a default. This could easily be extended
 to allow a user to omit certain files from the replication by adding
-all files in my programs ignore file to Unisons ignore list. Or conversely
+all files in my program's ignore file to Unison's ignore list, or conversely
 by maintaining a white list of files to sync. This would allow for
 greater granularity when syncing nodes.
 
@@ -672,6 +675,9 @@ the differences in the files; and Unison described above.
     \label{fig:point_comp_graph}
 \end{figure}
 
+%Jump right in here with out referencing graph at all, needs to be clearer
+%Replace naive copy with SCP since every one knows what SCP is.
+Figure~\ref{fig:point_comp_graph} shows how 
 Rsync and Unison performed significantly better
 than the na\"{\i}ve copy method (as expected). After the initial file
 transfer new files added to the directory resulted in much less data
@@ -709,7 +715,7 @@ of data that was copied.
 \label{sec:full_graph_rep}
 I ran tests on a simple line topology (Shown in
 Figure~\ref{fig:line_graph}) of all three of my
-programs file synchronisation techniques.
+program's file synchronisation techniques.
 Figure~\ref{fig:line_scp} shows SCP performing
 poorly compared to Figure~\ref{fig:line_rsync} (Rsync)
 and Figure~\ref{fig:line_uni} (Unison). Using Unison and
@@ -783,17 +789,17 @@ Section~\ref{sec:point_to_point}.
 \pagebreak
 
 My program ran smoothly on a line topology so I
-set up some new topologies as shown in 
+set-up some new topologies as shown in 
 Figure~\ref{fig:full_circ_graph} and Figure~\ref{fig:full_mesh_graph}.
-These were the topology graphs generated by my set up scripts (see
+These were the topology graphs generated by my set-up scripts (see
 Section~\ref{sec:vm_network}) I designed them to be a circle
 (Figure~\ref{fig:full_circ_graph}) and a connected mesh
 (Figure~\ref{fig:full_mesh_graph}). 
 For these tests I stopped using SCP and Rsync as they do
-not handle two way synchronising. If there
+not handle two-way synchronising. If there
 are changes coming from two different directions
 in the graph one side will potentially overwrite
-the other sides changes when using SCP or Rsync.
+the other side's changes when using SCP or Rsync.
 Rsync does a better job than SCP as it copies the
 differences but if there are conflicting changes
 one side will be overwritten. Unison on the other
@@ -802,7 +808,7 @@ want to keep. Given that Rysnc and Unison both
 performed similarly in my previous tests up to
 this point I decided to continue using just Unison.
 My program ran as expected with all the topologies that
-I tested in on when using Unison (see Figures
+I tested it on when using Unison (see Figures
 \ref{fig:full_circ_uni} and \ref{fig:full_mesh_uni}).
 With the completion of these tests I had achieved
 one of my main objectives; to have my program running over
@@ -875,7 +881,7 @@ different network topologies.
 \subsection{When to stop copying}
 The way my program works is that Each node notices when changes
 have occurred to a folder it is watching and when a change occurs,
-it copies these changes to other nodes that it is connected to.
+it copies these changes to other connected nodes.
 After testing my program on some simple topologies one problem became
 clear. 
 The problem was that if the changes
@@ -894,7 +900,7 @@ and would stop synchronising after one check (which had minimal overhead).
 \end{figure}
 
 Figure~\ref{fig:line_scp_back_forth_graph} shows three 10MB files being copied to node A
-in a line topology. The problem is that nodeB and nodeC continue to send
+in a line topology. The problem is that node B and node C continue to send
 data to each other even after every node has all of the files. NodeA receives
 a lot of data even though it was the source of the file changes. 
 
@@ -916,13 +922,13 @@ whether there were any changes or not.
 To fix this problem I used a control file. Each time a node
 synchronised with another node it would write out a control file telling
 the other node what files had been copied, who sent them and what the
-modification time of the files were. In this way a node could check
+modification times of the files were. In this way a node could check
 if it was about to synchronise a file back to the node it had just received
 the file from, or if local changes really had occurred to that file
 that were newer than a received file it should continue with its sync.
 
 \subsection{How often to sync}
-So how often should I sync once I noticed a change?
+So how often should I sync once I notice a change?
 If lots of small changes are occurring frequently it might be more efficient
 to perform a synchronisation after several changes have occurred. Given that
 there is overhead with each synchronisation, fewer copies means less data
@@ -960,13 +966,13 @@ sent over the network.
 \end{comment}
 
 Figures~\ref{fig:line_uni_10_5},
-\ref{fig:line_uni_10_10},\ref{fig:line_uni_10_20},
+\ref{fig:line_uni_10_10}, \ref{fig:line_uni_10_20},
 and~\ref{fig:line_uni_10_30} show my program running
 using Unison to sync 10MB over a network arranged in
 a line topology. The files were moved into the watched
-directory in ten second intervals. You can see that there isn't much
-difference between the graphs apart from in Figure~\ref{fig:line_uni_10_5} 
-the time taken for all of the nodes to become up to date
+directory in ten second intervals. You can see that there is not much
+difference between the graphs except Figure~\ref{fig:line_uni_10_5} 
+where the time taken for all of the nodes to become up to date
 is shorter than the others. In the case of Unison it
 is best just to sync as often as possible because Unison
 only sends file differences. The only saving when sending
@@ -976,17 +982,21 @@ files. This overhead is negligible when the files
 are of any meaningful size.
 
 Figures~\ref{fig:line_scp_10_5},
-\ref{fig:line_scp_10_10},\ref{fig:line_scp_10_20},
+\ref{fig:line_scp_10_10}, \ref{fig:line_scp_10_20},
 and~\ref{fig:line_scp_10_30} show the same 10MB files
 being transferred every 10 seconds over the same line topology
 as previously
 mentioned except I used the SCP option on my program for
-these tests. You can see that
-Figure~\ref{fig:line_scp_10_20} (20 second delay) took less time than
+these tests.
+Figure~\ref{fig:line_scp_10_20} shows that
+(20 second delay) the time taken for all nodes to get
+the changes was less than
 in Figure~\ref{fig:line_scp_10_30} (30 second delay)
-to replicate the
-data from the initial node (A) to the last node (D) in
-the graph. You can also notice that when the delay was
+%to replicate the
+%data from the initial node (A) to the last node (D) in
+%the graph. 
+%TODO
+You can also notice that when the delay was
 set to less than or equal to the time the files were
 being created (10 seconds) that my program behaved 
 in a seemingly random fashion with some nodes receiving less data
@@ -1003,12 +1013,17 @@ delay for each folder that they are watching. I
 also allow the user to use the `*' wild card character
 to tell the program to sync as often as possible. Based
 on my findings I would recommend to any user that
+%TODO
+%This bit is worded unclearly
 the delay be set to more than the frequency that the files
 are changing but not too high as that slows down
 the system. If the user is using Unison they should
 set the delay time to be `*' (sync as often as possible)
 unless they are trying to synchronise very small files.
+%that the delay value be greater than the time the files
+%are changed
 
+%TODO: Captions aren't right the need to say what the figure shows
 \newpage
 \begin{figure}[ht!]
 \centering
@@ -1109,7 +1124,7 @@ using SCP}
 An important use case of my program was where one machine was connected
 by a 3G network or some other link that a user would not want to use
 often.  I wanted to make sure that my program could be set to prefer
-some links to others for example to use Wi-Fi whenever possible and try not to
+some links to others. For example to use Wi-Fi whenever possible and try not to
 use 3G. I designated the link between node A and node B as a 3G link
 in my circle topology (see Figure~\ref{fig:full_circ_graph} in Section~\ref{sec:full_graph_rep}). Node A is linked directly to node B by a slow link and indirectly
 by fast links (Wi-Fi link to node D, node D links to node C and node C links
@@ -1117,13 +1132,13 @@ to node B all designated as Wi-Fi links). Previously in Figure~\ref{fig:full_cir
 node B and D which then propagated to node C.
 In Figure~\ref{fig:circ_uni_thread_100} node B receives data last only after nodes D and C have got the changes.
 This is because I set the delay time to 100 seconds between node A and node B
-as if it were a 3G link that we do not want to use very often all the other
+as if it were a 3G link that we do not want to use very often. All the other
 nodes had delay times of 10 seconds on their links. My program
 spawns multiple threads for each link when a change has occurred in a
 watched directory. The thread for the 3G link then sleeps for 100 seconds
 and when it wakes looks at the control files of the remote machine to
 see that it already has the changes node A was going to send so it aborts.
-Node B has already got the files because the travelled through the graph
+Node B has already got the files because they travelled through the graph
 in the other direction and reached node B before A was ready to send.
 
 \begin{figure}[htp]
@@ -1135,7 +1150,7 @@ in the other direction and reached node B before A was ready to send.
 
 \newpage
 \section{Future Work}
-My project ended up requiring a lot of initial set up
+My project ended up requiring a lot of initial set-up
 time getting the testing infrastructure ready to
 produce different networks and graphs without requiring
 user input. As such this drew time away from other
@@ -1147,6 +1162,7 @@ nodes leave a network and then join a new network, or
 rejoin the old one. I would also have been interested
 in seeing how I could have improved the performance
 of the program with the data I am collecting.
+%Empty sentence at the end this part needs to be re-written
 
 \subsection{Mobile Nodes}
 \label{sec:mobile}
@@ -1173,15 +1189,15 @@ at how nodes in the graph may
 rely less on unreliable edges. I would like my program
 to associate a cost with each edge and prioritise edges
 with lower costs when synchronising data. Another option
-would be to only use reliable edges and fall back to using
-unreliable edges if necessary. Classifying edges could be
+would be to preference reliable edges and only fall back to using
+unreliable edges when necessary. Classifying edges could be
 done by cost or by how often an edge is available.
 
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=0.5]{images/mobile-node.png}
     \caption{Node two intermittently has a connection to a subset
-    of nodes 1,3 and 4. The edges in grey are links that are not
+    of nodes 1, 3 and 4. The edges in grey are links that are not
     always present.}
     \label{fig:mobile_node}
 \end{figure}
@@ -1192,8 +1208,8 @@ done by cost or by how often an edge is available.
 \label{sec:feedback}
 My program currently keeps detailed logs of the
 system state. Logs are kept of the amount of data
-transferred between the machines, which files were updated
-and when, the last time the data being watched was updated
+transferred between the machines; which files were updated
+and when; and the last time the data being watched was updated
 by another client (see Section~\ref{sec:iface_mon} for more details
 on logging).
 I currently have scripts to generate graphs of the data used
@@ -1201,7 +1217,7 @@ and the time taken for the graph to become up to date.
 I would have like to integrate these scripts my program
 to show an end user a graphical representation of the
 program running. Integrating my current graph scripts
-should be trivial I could just shell out to them if
+should be trivial. I could just shell out to them if
 I really had to. What would have been very interesting
 to look at would be to see if I could use data gathered
 from previous runs of the program to see if my program
@@ -1211,7 +1227,7 @@ given sub-node). I envisaged each of the clients
 sharing their data with each other to get a view
 of the network as a whole and then looking at nodes
 that were out of date as candidates for a shorter
-sync delay time etc. In hind sight I think that this
+sync delay time etc. In hindsight I think that this
 would have been quite an undertaking, requiring
 significant time to develop and should not have
 been in the scope of this project.
@@ -1233,154 +1249,18 @@ how I expect it too.
 I achieved my goals of creating a decentralised
 file synchronisation tool that will run across any network configuration.
 My program allows for fine grained user control
-of settings like which files should be replicated and how
+of settings such as which files should be replicated and how
 often they should be synchronised. My program generates
-logs of data transferred and the files being synchronised,
-this did not lead to detailed statistics about how
+logs of data transferred and the files being synchronised.
+This did not lead to detailed statistics about how
 the program behaved or heuristics on future behaviour
 as I intended. However I was able to generate
 graphs from my log files and this could be extended in
 a future implementation of my program. Once the user
 has written their configuration files the program
-operates autonomously as intended. My program works
-as intended as a file synchronisation tool and addresses
-
-\begin{comment}
-\section{Future work}
-\subsection{Full node graph replication}
-I am going to be looking into the most efficient way to
-replicate data between many nodes in a graph, where nodes are machines
-running the program and edges in the graph are connections
-between machines such as over Wi-Fi, USB, or through the internet, \emph{etc}.
-Each connection may have different properties associated
-with it, for example each link may have a different cost
-associated. The two costs that I am most interested in
-are data throughput and latency. There may be data caps to worry about
-(for 3G especially) or costs associated with usage
-(this could be money charged per megabyte used or
-the time cost of sending a lot of data over an (potentially)
-already busy/important channel). The link may be down
-temporarily or may rarely be up. The task here will be
-to find algorithms that give as near to optimal as possible,
-given certain conditions and preferences,
-to shift data between all the necessary nodes
-efficiently and with minimal cost. 
-Cost will most likely involve keeping the number
-of bytes passed over the network(s) to a minimum.
-Efficiency will depend on personal preference and
-the situation, ideally one would not want to have
-to be waiting on replication to occur but this
-should not come at the expense of extreme cost, however.
-There will be an infinite number of use cases for this
-project which means an infinite number of graphs,
-however I will attempt to look at common use cases
-and as many different types of graph as possible.
-
-\subsection{Sub-Nodes}
-
-The other aspect of the ``multiple nodes in the graph'' problem
-is that each node will most likely be made up of many smaller nodes.
-Each user will be unlikely to select the root directory of the
-file system to synchronise, which means they may select a few
-different directories on the file system. This gives us ‘sub nodes’
-that the main node is still the machine as above. The sub nodes are
-an individual directory or set of directories that are set to be replicated.
-The reason this is interesting is because each of these ‘sub nodes’
-may have different synchronisation settings (see fine-grained controls).
-This leaves us with the possibility of machines being fully up to date,
-partially up to date, or completely out of date with all other nodes in
-the graph. 
-
-An example of this potential situation is shown below.
-This sort of graph ties in with the statistics/feedback side of the
-project. How out of date is the graph at any given time?
-If the graph contains out of date data, do we ever expect it
-to get back  to being completely up to date? How long do we expect
-this to take? How do these facts reflect on the synchronisation settings
-we chose? Can we improve on the ‘performance’ by tweaking the settings?
-
-%Insert sub node image
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/sub-node.png}
-    \caption{Graph of sub nodes within nodes}
-    \label{fig:sub_node}
-\end{figure}
-
-\newpage
-\subsection{Mobile nodes}
-
-Connections between nodes in the graph (edges) may
-change over time. This could be because one of the nodes
-is a laptop and joins different networks at different
-times or because a network/machine is unreliable and is
-not up at a given point in time. I have represented
-edges that behave in this way as grey on the diagram below.
-I will refer to nodes with grey edges as `mobile' nodes.
-
-It will be interesting to see how mobile nodes affect how
-up to date the nodes in the graph are. We might expect that
-nodes that are not available for very long periods lag behind
-others that are. We might also expect that if a mobile
-node is a link between two parts of the network that
-these two parts fall out of synchronisation. I want to look
-at how nodes in the graph may get smarter about how
-they use unreliable edges. I will do this by having
-the edges up or down at different points in time
-and taking snapshots of the graph as it is at that time.
-
-%Insert mobile node image
-\begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.5]{images/mobile-node.png}
-    \caption{Node two moves within the graph}
-    \label{fig:mobile_node}
-\end{figure}
-
-In Figure~\ref{fig:mobile_node} node two intermittently has a 
-connection to a subset of
-nodes 1,3 and 4. The edges in grey are links that
-are not always present.
-
-\newpage
-\subsection{More user control}
-
-Due to the highly unpredictable nature of the graph the user
-should be able to greatly affect how the program runs.
-A user should be able to set how often replication occurs and
-under what conditions it should occur \emph{e.g.} only when
-connected to a certain network.
-
-For example replicate
-‘my documents’ \texttt{/Users/Calum/Documents} on my laptop every hour to
-work but only when connected to the work Wi-Fi network.
-There should be some intelligent indication of how certain options
-may affect performance which relates to the next section. This
-may be able to be estimated by looking at previous running settings
-and seeing what effect they had on the network. This ties in with the
-next section.
-
-\subsection{Feedback}
-% OK - I'm assuming this is into mental notes rather than proposed text. Overall, I think it wold be good for you to overview and justify your high-level plan, as well as the more detailed aspects.
-
-Private dropbox should keep logs of what is happening with
-the system at the current point in time. 
-It should log:
-\begin{itemize}
-    \item what the current user settings are.
-    \item how much data is being transferred between the nodes.
-    \item which links between nodes are being used the most.
-    \item how up to date each part of the graph is.
-\end{itemize}
-
-I will then look at presenting this information
-in a meaningful way to the user.
-One way to do this would be when the user changes the
-settings. Private dropbox could then estimate whether that
-change will speed up or slow down overall synchronisation
-of the graph and pass that (potentially) useful information
-to the user.
-\end{comment}
+operates autonomously as intended. My program has
+been a success and does its job of replicating
+files well.
 
 %\section{Results}
 
