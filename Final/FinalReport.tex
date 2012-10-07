@@ -912,30 +912,42 @@ this point I decided to continue using just Unison.
 
 \newpage
 \subsection{When to stop copying}
-The way my program works is that Each node notices when changes
+The way my program works is that each node notices when changes
 have occurred to a folder it is watching and when a change occurs,
-it copies these changes to other connected nodes.
+it copies these changes to other nodes specified in the configuration
+file.
 After testing my program on some simple topologies one problem became
-clear. 
-The problem was that if the changes
-came from one of its neighbour nodes this would cause an infinite loop
-of two nodes trying to copy changes to each other. This was particularly 
-a problem when using SCP to copy. When using Unison this was not as much of
-a problem because it could detect that no changes had occurred between the nodes
-and would stop synchronising after one check (which had minimal overhead).
+clear; if the changes
+came from one of its neighbour nodes the node would notice the change
+and send data back to its neighbour this would cause an infinite loop
+of two nodes trying to copy changes to each other.
+When using Unison this was not as much of
+a problem because Unison can detect that no changes had occurred between the nodes
+and would stop synchronising after one check (which had minimal overhead). However
+for SCP this was a big issue.
 
 \begin{figure}[htp]
     %\centering
     %\includegraphics[scale=0.5]{images/line-scp-back.png}
     \center{\includegraphics[width=1\linewidth]{images/line-scp-back.eps}}
-    \caption{Line topology, using SCP, nodes copying data back and forth}
+    \caption{My program using SCP running on a line topology.
+    10MB files are being sent every ten seconds to node A. 
+    All of the nodes receive more data than they should
+    because they are constantly propagating changes to their
+    neighbours.}
     \label{fig:line_scp_back_forth_graph}
 \end{figure}
 
-Figure~\ref{fig:line_scp_back_forth_graph} shows three 10MB files being copied to node A
-in a line topology. The problem is that node B and node C continue to send
-data to each other even after every node has all of the files. NodeA receives
-a lot of data even though it was the source of the file changes. 
+Figure~\ref{fig:line_scp_back_forth_graph} shows each node receives
+more data than it should. Node B and node C receive over 120MB worth of
+data even though there was only 30MB worth of changes and node A
+receives over 60MB even though it was the source
+of the file changes. My program would have run forever if I had not
+stopped it.
+
+%The problem is that node B and node C continue to send
+%data to each other even after every node has all of the files. NodeA receives
+%a lot of data even though it was the source of the file changes. 
 
 \begin{figure}[htp]
     %\centering
@@ -1009,7 +1021,7 @@ where the time taken for all of the nodes to become up to date
 is shorter than the others. In the case of Unison it
 is best just to sync as often as possible because Unison
 only sends file differences. The only saving when sending
-multiple changes at a time is on the ssh overhead
+multiple changes at a time is on the SSH overhead
 and the overhead associated with Unison comparing the
 files. This overhead is negligible when the files
 are of any meaningful size.
@@ -1032,13 +1044,18 @@ in Figure~\ref{fig:line_scp_10_30} (30 second delay)
 You can also notice that when the delay was
 set to less than or equal to the time the files were
 being created (10 seconds) that my program behaved 
-in a seemingly random fashion with some nodes receiving less data
-than others. However you can see that in Figure~\ref{fig:line_scp_10_11}
+in an erratic fashion with some nodes receiving less data
+than others. This could indicate an error in my program
+or that the data simply takes an odd way through
+the graph as it is being replicated as soon as possible.
+The data is still replicated in full to each node in the
+graph however.
+You can see that in Figure~\ref{fig:line_scp_10_11}
 that the graph became more uniform as
 soon as I increased the delay to 11 seconds.
 
 These results reinforced my idea that the delay should
-be set through a configuration file by the user since
+be set through a configuration file since
 the appropriate delay will vary based on how often
 the files change. This is currently the case with my
 program, users can set a different (or the same)
@@ -1048,9 +1065,14 @@ to tell the program to sync as often as possible. Based
 on my findings I would recommend to any user that
 %TODO
 %This bit is worded unclearly
-the delay be set to more than the frequency that the files
-are changing but not too high as that slows down
-the system. If the user is using Unison they should
+%the delay be set to more than the frequency that the files
+%are changing but not too high as that slows down
+%the system. 
+the delay time be greater than the average time between
+modification of the files but as short as possible as
+long delay times slow down replication proportional
+to the delay time.
+If the user is using Unison they should
 set the delay time to be `*' (sync as often as possible)
 unless they are trying to synchronise very small files.
 %that the delay value be greater than the time the files
@@ -1060,78 +1082,96 @@ unless they are trying to synchronise very small files.
 \newpage
 \begin{figure}[ht!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-uni-10-5.eps}
-\caption{Five second delay between synchronising 10MB files over a line topology
-using Unison}
+\includegraphics[height=0.38\textheight]{images/line-uni-10-5.eps}
+\caption{My program running on a line topology using Unison.
+The delay to synchronise time is set to five seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_uni_10_5}
 \end{figure}
 
 \begin{figure}[hb!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-uni-10-10.eps}
-\caption{Ten second delay between synchronising 10MB files over a line topology
-using Unison}
+\includegraphics[height=0.38\textheight]{images/line-uni-10-10.eps}
+\caption{My program running on a line topology using Unison.
+The delay to synchronise time is set to ten seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_uni_10_10}
 \end{figure}
 
 \newpage
 \begin{figure}[ht!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-uni-10-20.eps}
-\caption{Twenty second delay between synchronising 10MB files over a line topology
-using Unison}
+\includegraphics[height=0.38\textheight]{images/line-uni-10-20.eps}
+\caption{My program running on a line topology using Unison.
+The delay to synchronise time is set to twenty seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_uni_10_20}
 \end{figure}
 
 \begin{figure}[hb!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-uni-10-30.eps}
-\caption{Thirty second delay between synchronising 10MB files over a line topology
-using Unison}
+\includegraphics[height=0.38\textheight]{images/line-uni-10-30.eps}
+\caption{My program running on a line topology using Unison.
+The delay to synchronise time is set to thirty seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_uni_10_30}
 \end{figure}
 \newpage
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-scp-10-5.eps}
-\caption{Five second delay between synchronising 10MB files over a line topology
-using SCP}
+\includegraphics[height=0.38\textheight]{images/line-scp-10-5.eps}
+\caption{My program running on a line topology using SCP.
+The delay to synchronise time is set to five seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_scp_10_5}
 \end{figure}
 
 \begin{figure}[hb!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-scp-10-10.eps}
-\caption{Ten second delay between synchronising 10MB files over a line topology
-using SCP}
+\includegraphics[height=0.38\textheight]{images/line-scp-10-10.eps}
+\caption{My program running on a line topology using SCP.
+The delay to synchronise time is set to ten seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_scp_10_10}
 \end{figure}
 
 \newpage
 \begin{figure}[ht!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-scp-10-11.eps}
-\caption{Eleven second delay between synchronising 10MB files over a line topology
-using SCP}
+\includegraphics[height=0.38\textheight]{images/line-scp-10-11.eps}
+\caption{My program running on a line topology using SCP.
+The delay to synchronise time is set to eleven seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_scp_10_11}
 \end{figure}
 
 
 \begin{figure}[hb!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-scp-10-20.eps}
-\caption{Twenty second delay between synchronising 10MB files over a line topology
-using SCP}
+\includegraphics[height=0.38\textheight]{images/line-scp-10-20.eps}
+\caption{My program running on a line topology using SCP.
+The delay to synchronise time is set to twenty seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_scp_10_20}
 \end{figure}
 \newpage
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[height=0.4\textheight]{images/line-scp-10-30.eps}
-\caption{Thirty second delay between synchronising 10MB files over a line topology
-using SCP}
+\includegraphics[height=0.38\textheight]{images/line-scp-10-30.eps}
+\caption{My program running on a line topology using SCP.
+The delay to synchronise time is set to thirty seconds.
+10MB files are being sent every ten seconds to node A. The graph
+shows the amount of data received by each node.}
 \label{fig:line_scp_10_30}
 \end{figure}
 \newpage
