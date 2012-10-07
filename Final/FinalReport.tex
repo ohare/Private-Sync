@@ -239,65 +239,72 @@ Something which Dropbox will not provide but my system does.
 
 %Update this section
 \newpage
-\section{Supporting architecture and program development}
+\section{Architecture and program development}
 Before I could begin developing my program, I needed to
 have a test environment to run it in. Given that my program
 is designed to run across a network of computers I needed
-to be able to manipulate the test machines automatically
-because doing things manually would be too time consuming
+to be able to change links between machines and add or
+remove machines automatically for testing purposes.
+Doing this manipulation of the network manually would be too time consuming
 in the long run. In this section I will discuss how I
-control a network of virtual machines for testing, how
-I manage the networks between them and how I monitor
-these networks to gather performance statistics on
-my program.
+control a virtual network of virtual machines for testing, how
+I manage the links between them and how I monitor
+these links to gather performance statistics regarding the
+execution of my program.
 
 \subsection{Virtual machines and node networks}
 \label{sec:vm_network}
 For testing my program I needed to have a network
 of computers that could easily be linked together in different
-arrangements. I decided to use virtual machines for
-this job since it means I do not need to have a large number
+arrangements. I think of a network of machines as a graph, where
+each machine is a node of the graph and the links between machines
+are edges in the graph. I decided to use virtual machines for
+my network since it means I do not need to have a large number
 of physical machines. I can create new machines very easily,
 and manipulate the links between them.
 
 I have used Oracle's VirtualBox software. I chose
-VirtualBox because of its easy to use command
+VirtualBox because of its straight forward command
 line interface.
 My program should be able to run across
-any network of nodes. So I wanted to test
-as many different arrangements as possible.
+any network of nodes. For this reason I wanted
+the potential to be able to test a given arrangement
+of nodes.
 I decided that I needed to be able change network
 topologies easily without having to re-write
-my scripts. I built some bash scripts to run on top
-of a program called Graphviz\footnote{www.graphviz.org}.
+my scripts. 
 
-Graphviz is open source software for generating graphs.
+I built some Bash scripts to run on top
+of a program called Graphviz.\footnote{www.graphviz.org}
+Graphviz is open source software for generating graphical
+representations of graphs.
 I used Graphviz to generate graphs of all the topologies I worked
 with. This made it easy to keep track of what a topology looks like
 which was useful for debugging. It was also useful to display results
 alongside an image of what the topology looks like. Building my
 program on top of Graphviz meant that I could couple the production
-of the topology graph and the configuration of the virtual machines
-together. I never wanted one without the other so this was very useful.
+of the topology graph and the configuration of the virtual machines.
+I never wanted one without the other so this was very useful.
 
 Graphviz takes input from scripts written in DOT language.\footnote{
 http://www.graphviz.org/doc/info/lang.html} DOT language is a simple
 graph description language.
 I have written a script to read in these DOT files and interpret
-the graph to set-up my virtual machines\footnote{Appendix~\ref{sec:onTheFly}
- line~\ref{lst:read_dot_file} onwards}.
-My script also calls a program called Neato (part of Graphviz) to generate graphs.
+the graph to set-up my virtual machines (see Appendix~\ref{sec:onTheFly}
+ line~\ref{lst:read_dot_file} onwards).
+My script also calls a program called Neato (part of Graphviz) to generate 
+graphical presentations of graphs.
 This means I only have to write one DOT file to get a graph of
 my network topology and set-up my virtual machines.
 %Graphviz uses a simple notation which made it easy to have
-%a bash script also read this file.
+%a Bash script also read this file.
 
 My Bash script enables the appropriate network adaptors on
-each virtual machine\footnote{Appendix~\ref{sec:onTheFly} line~\ref{lst:mod_vm_nic}}.
-It does this by calling the \texttt{VboxManage} command which provides
-a command line interface to virtual box's functionality and allows
-me to configure the virtual machines to my liking.
-Then it sets an internal network and attaches these adaptors to use that
+each virtual machine (see Appendix~\ref{sec:onTheFly} line~\ref{lst:mod_vm_nic}).
+It does this by calling the \texttt{VboxManage}, command which provides
+a command line interface to VirtualBox's functionality and allows
+me to configure the virtual machines to meet my needs.
+Then it creates an internal network and attaches these adaptors to use that
 network. 
 I chose to use an internal network
 as the link between any given machines because this way I could
@@ -307,36 +314,20 @@ This helped me monitor the network traffic generated by
 my program (see Section~\ref{sec:iface_mon}).
 I sniffed network traffic using packet sniffing tool
 Wireshark\footnote{http://www.wireshark.org/}
-when nothing was running and also when my program was running
-to verify nothing unexpected was using the interfaces attached to
+when my program was not running and also when my program was running
+to verify that no other programs were using the interfaces attached to
 internal networks.
-
-\begin{comment}
-I have several scripts that
-call the \texttt{vbmoxmange} command to set-up the internal
-network connections between machines and then start up
-the machine itself. This makes switching between
-network configurations very easy as I can just
-run a different script depending on which network
-topology I would like to test.
-
-I have decided to start testing my program with
-some simple topologies to see if I can gain any
-insight into how best to replicate data around
-a network with many nodes. The next step will
-be to use those principles and start running
-more complicated networks to see how the program
-performs.
-\end{comment}
 
 I started initial tests by writing some simple network topology DOT
 scripts. The reason I chose to use simple topologies
 when testing my programs was  because it is easier to
 visualise how my program runs from the data if the topologies
 are simple. The other reason I chose to do this is because
-it is easy to extrapolate from a few simple topologies and
+more complex topologies can be thought of as being made up
+of many simple topologies. In this way I might be able to
 generate a model of how more complicated topologies might
-behave.
+behave by looking at how the program runs in simpler
+topologies.
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
@@ -360,7 +351,7 @@ behave.
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
         \includegraphics[clip,trim=45mm 40mm 45mm 20mm,width=0.5\textwidth]{images/other-topo.pdf}
-        \caption{Other topology}
+        \caption{More complex topology}
         \label{fig:other_topology}
     \end{subfigure}
     \caption{Simple network topologies}
@@ -386,29 +377,30 @@ Given that my program was the only program
 using these interfaces I did not have to
 differentiate between different processes
 using the network.
-I looked at the possibility of extending this
-to run on a network where other processes
+I looked at the possibility of gathering
+statistics on a network where other processes
 are using the network connection as you
 would expect in a real world application
 of my program. I found a tool called
 NetHogs\footnote{http://nethogs.sourceforge.net/}.
 NetHogs runs on Linux and monitors the
 amount of data sent over the network by any
-given process. I also looked at 
-using Iotop\footnote{http://guichaz.free.fr/iotop/}.
-Iotop provides the amount of data being written
-to disk by each process. This was useful because
-the amount of data written relates closely to the amount
-of data sent over the network.
-However I decided that monitoring
-network traffic was a more useful statistic
-as I could also see the \texttt{ssh} overhead
-associated with a transfer.
+given process.
+%I also looked at 
+%using Iotop\footnote{http://guichaz.free.fr/iotop/}.
+%Iotop provides the amount of data being written
+%to disk by each process. This was useful because
+%the amount of data written relates closely to the amount
+%of data sent over the network.
+%However I decided that monitoring
+%network traffic was a more useful statistic
+%as I could also see the \texttt{ssh} overhead
+%associated with a transfer.
 An interesting challenge I faced when I was trying
 to log network usage was what interface to log
 data for. Initially I logged the traffic data of all of the
-interfaces on the machine\footnote{Appendix~\ref{sec:ReadNet}
-line~\ref{lst:log_all}}. The flaws in this approach
+interfaces on the machine (see appendix~\ref{sec:ReadNet}
+line~\ref{lst:log_all}). The flaws in this approach
 became apparent very quickly; machines with an
 internet connection sometimes used large amounts
 of data which interfered with the results. It also did not work
@@ -420,7 +412,7 @@ I always had an IP address to send data to, so all
 I needed to do was run \texttt{ip route get \{IP address\}}
 and examine the route information to see which interface
 was being used for communication to that IP 
-address\footnote{Appendix~\ref{sec:ReadNet} line~\ref{lst:log_ip}}.
+address (see appendix~\ref{sec:ReadNet} line~\ref{lst:log_ip}).
 Once I had the interface name I would then record that
 data before and after a sync occurred for that given
 interface. I would also do this on the machine I
@@ -430,18 +422,20 @@ Knowing the network traffic statistics before and after
 a sync also allowed me to determine how much data each
 machine sent or received during a transfer or over
 any given time period. I also decided to include
-the folder being synchronised in the log files.
+the folder's name being synchronised in the log files.
 This was useful for differentiating which sub-node
-was being synchronised (See Section \ref{sec:subnodes} for
-further details on sub-nodes). A line starting with
-a \# in my log file denotes a comment. Folder names
-are a specialised version of a comment a \#D indicates
-a folder name. In this way my logging system is robust
-to future changes to my program, I would not have to
-make changes to my scripts which process logs and generate graphs
-if I decided to add more detailed information to my logs,
-such as the IP data is being sent to or received from. This
-is a feature I would like to add in the future, I discuss this
+(See Section \ref{sec:subnodes} for
+further details on sub-nodes)
+was being synchronised.
+%A line starting with
+%a \# in my log file denotes a comment. Folder names
+%are a specialised version of a comment a \#D indicates
+%a folder name. In this way my logging system is robust
+%to future changes to my program, I would not have to
+%make changes to my scripts which process logs and generate graphs
+It would be trivial to add more detailed information to my logs,
+such as the IP data is being sent to or received from.
+This is a feature I would like to add in the future: I discuss this
 possibility further in section~\ref{sec:feedback}.
 
 \newpage
@@ -640,30 +634,33 @@ greater granularity when syncing nodes.
 \section{Program evaluation}
 During the development of my program I ran tests after major
 changes so that I would know if the program was behaving the
-way I expected or not. In this way I could make changes if
-unforeseen problems occurred. In this section I discuss
-the results from my testing, how my program influenced these
-results and how my results influenced my program.
+way I expected or not.
+When problems arose such as machines continuously polling each
+other for changes. I made adjustments to my program to address
+these problems.
+%In this way I could make changes if
+%unforeseen problems occurred.
+In this section I discuss
+the results from testing my program
+and how my results influenced my program.
 
 \subsection{Point-to-Point synchronisation}
 \label{sec:point_to_point}
 After looking for cross-platform, open source, file synchronisation
 tools, I have found a tool called
-Unison\footnote{http://www.cis.upenn.edu/~bcpierce/unison/}
+Unison\footnote{\url{http://www.cis.upenn.edu/~bcpierce/unison/}}
 to be a promising starting
 base for this project. Unison is an open source file synchronisation tool.
 It supports efficient (\emph{i.e.,} it attempts to only send changes between file versions) file synchronisation between two
 directories (including sub-folders) between two ``roots''
 that may or may not be on the same machine. Unison calls the
 directories it is synchronising, roots.
-
 I decided to run some tests using Unison 
 and two machines running on the same network to 
-determine whether this would make a good base for
-my program or not.
+determine whether Unison copies data efficiently.
 
 I looked at three methods of file synchronisation across
-these two machines. Na\"{\i}ve copying; using Rsync, an application
+these two machines. Na\"{\i}ve copying using SCP; using Rsync, an application
 designed for efficiently copying files in one direction by looking at
 the differences in the files; and Unison described above.
 
@@ -688,29 +685,34 @@ the differences in the files; and Unison described above.
 %Replace naive copy with SCP since every one knows what SCP is.
 Figure~\ref{fig:point_comp_graph} shows how 
 Rsync and Unison performed significantly better
-than the na\"{\i}ve copy method (as expected). After the initial file
-transfer new files added to the directory resulted in much less data
-being transmitted over the network, which meant the node graph
+than SCP (as expected). After the initial file
+transfer, new files added to the directory resulted in much less data
+being transmitted over the network, which meant the node graph (see
+Section~\ref{sec:vm_network})
 became up to date much more quickly.
 
-The reason na\"{\i}ve copy sent over 300MB of data to copy three 50MB
-files was because my implementation is deliberately na\"{\i}ve; it will
-copy the entire directory each time it is changed. Rsync and
+Figure~\ref{fig:point_comp_graph} shows that SCP sent over 300MB
+of data to copy three 50MB
+files. This was because SCP is na\"{\i}ve; when it is told to copy a
+directory it will copy the entire directory without looking at
+the files inside.
+This means SCP copies the entire directory each time the directory
+is changed. Rsync and
 Unison were able to send less data because they work based on the
-differences between the files. However copy doesn't look at
-the files it just copies everything in the directory tree.
-Hence it will copy 50MB after file one is created, 100MB after
+differences between the files. 
+SCP however will copy 50MB after file one is created, 100MB after
 the second file is added and finally 150MB when all three
 files are present for a total of 300MB.
 
 Rsync copies the expected 150MB for three 50MB files.
 Figure~\ref{fig:point_comp_graph} illustrates another advantage
-of Unison over Rsync. The graph shows three zero filled
-binary files being copied from one node to another one after
-the other. Unison recognised that even though the files were named
-differently they were the same file. Another advantage of Unison
+of Unison over Rsync. The graph shows three zero-filled
+binary files being copied from one node to the other, one file at
+a time. Unison recognised that even though the files were named
+differently they had the same content. Another advantage of Unison
 is that it handles replication in two directions without
-overwriting the files on the other side.
+overwriting the files on one node when two nodes have
+conflicting changes.
 
 Each of the three methods I trialled had some overhead associated
 with them. This overhead was due to the secure shell (SSH) tunnel between
